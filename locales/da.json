@@ -1,0 +1,14 @@
+{
+	"INTERNAL_SERVER_ERROR": "En intern serverfejl er opstået.",
+	"RECORD_CREATED": "Optegnelsen er blevet oprettet",
+	"RECORD_UPDATED": "Optegnelsen er blevet opdateret",
+	"RECORD_DELETED": "Optegnelsen er blevet slettet",
+	"RECORD_FETCHED": "Optegnelsen er blevet hentet",
+	"RECORD_DOES_NOT_EXISTS": "Optegnelsen eksisterer ikke",
+	"RECORD_ALREADY_EXISTS": "Optegnelsen eksisterer allerede",
+	"UNAUTHORIZED": "Uautoriseret!",
+	"SESSION_EXPIRE": "Din session er udløbet, log venligst ind igen",
+	"FORBIDDEN": "Du har ikke tilladelse til at få adgang til dette modul",
+	"UNABLE_TO_VERIFY_REQUEST_DATA": "Noget gik galt, prøv venligst igen senere eller kontakt os!",
+	"Hello": "Hello"
+}

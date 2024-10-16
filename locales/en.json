@@ -1,0 +1,13 @@
+{
+	"INTERNAL_SERVER_ERROR": "An internal server error has occurred.",
+	"RECORD_CREATED": "The record has been created successfully",
+	"RECORD_UPDATED": "The record has been updated successfully",
+	"RECORD_DELETED": "The record has been deleted successfully",
+	"RECORD_FETCHED": "The record has been fetched successfully",
+	"RECORD_DOES_NOT_EXISTS": "The record does not exist",
+	"RECORD_ALREADY_EXISTS": "The record already exists",
+	"UNAUTHORIZED": "Unauthorized!",
+	"SESSION_EXPIRE": "Your session is expired, please login again",
+	"FORBIDDEN": "You do not authorization for accessing this module",
+	"UNABLE_TO_VERIFY_REQUEST_DATA": "Something went wrong, please try again later or contact us!"
+}
