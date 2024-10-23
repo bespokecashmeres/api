@@ -10,5 +10,27 @@
 	"SESSION_EXPIRE": "Din session er udløbet, log venligst ind igen",
 	"FORBIDDEN": "Du har ikke tilladelse til at få adgang til dette modul",
 	"UNABLE_TO_VERIFY_REQUEST_DATA": "Noget gik galt, prøv venligst igen senere eller kontakt os!",
-	"Hello": "Hello"
+	"LOGIN_SUCCESSFULLY": "Logget ind!",
+	"LOGOUT_SUCCESSFULLY": "Logget ud!",
+	"OLD_PASSWORD_INCORRECT": "Gammel adgangskode er forkert",
+	"PASSWORD_RESET_SUCCESSFULLY": "Adgangskode nulstillet!",
+	"FORGOT_PASSWORD_SUCCESS": "Et link til nulstilling af adgangskode er blevet sendt til din e-mail",
+	"FORGOT_PASSWORD_SET_NEW_FAILED": "Kunne ikke indstille en ny adgangskode",
+	"FORGOT_PASSWORD_SET_NEW_SUCCESS": "Du har med succes indstillet en ny adgangskode",
+	"USER_CREATED_SUCCESSFULLY": "Bruger oprettet",
+	"USER_UPDATED_SUCCESSFULLY": "Bruger opdateret",
+
+	"COUNTRY_NAME_EXISTS": "Country name is already exists",
+	"COUNTRY_CODE_EXISTS": "Country code is already exists","USER_DOES_NOT_EXIST": "User does not exists",
+	"UNABLE_TO_CREATE_USER": "Unable to create user",
+	"UNABLE_TO_UPDATE_USER": "Unable to update user",
+	"EMAIL_NOT_VERIFIED": "Email is not verified",
+	"MOBILE_NUMBER_EXISTS": "Mobile number is already exists",
+	"EMAIL_EXISTS": "Email is already exists",
+	"INVALID_USER_CRED": "Invalid credentials",
+	"ACCOUNT_SUSPENDED": "Your account has been suspended",
+	"EMAIL_VERIFICATION_MAIL": "Your email address is not verified yet. Please check your inbox and follow the link we sent to complete your registration",
+	"EMAIL_VERIFICATION_SUCCESS": "Your email has been successfully verified! You can now log in and start using your account",
+	"EMAIL_VERIFICATION_FAILED": "The verification link has expired. Please log in again to receive a new verification email",
+	"EMAIL_ALREADY_VERIFIED": "Your email address has already been verified! You can log in to your account"
 }

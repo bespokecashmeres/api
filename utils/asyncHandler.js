@@ -15,14 +15,14 @@ exports.asyncHandler = (requestHandler) => {
             const resStatusCode = err.code && err.code >= 400 && err.code <= 599 ? err.code : httpStatusCodes.ERROR;
             if (err && err.stack) {
                 logger.info("Async Handler Response", {
-                    meta: { req, error: customError || err.message || res.__(serverResponseMessage.ERROR), time: moment(new Date()).format(timeFormat) },
+                    meta: { req, error: customError || err.message || res.__(serverResponseMessage.INTERNAL_SERVER_ERROR), time: moment(new Date()).format(timeFormat) },
                 });
             }
             return res.status(httpStatusCodes.SUCCESS).json({
-                statusCode: resStatusCode,
+                code: resStatusCode,
                 status: httpResponses.ERROR,
                 success: false,
-                message: customError || err.message || res.__(serverResponseMessage.ERROR),
+                message: customError || err.message || res.__(serverResponseMessage.INTERNAL_SERVER_ERROR),
             });
         });
     };

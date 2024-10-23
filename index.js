@@ -4,11 +4,17 @@ const { config } = require("./config/config");
 const { port } = config;
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const authModule = require("./src/Modules/Admin/Authentication/routes");
+const countryModule = require("./src/Modules/Admin/Country/routes");
+const adminUserModule = require("./src/Modules/Admin/Users/routes");
+const wholeSalerAuthModule = require("./src/Modules/WholeSaler/Authentication/routes");
+
 const { logger } = require("./utils/logger");
 const connectToDatabase = require("./database/db");
 const i18n = require('./utils/i18n');
 const path = require("path");
 const axios = require('axios');
+
 
 app.use(i18n.init);
 
@@ -57,6 +63,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Modules
+authModule(app);
+adminUserModule(app);
+wholeSalerAuthModule(app);
+countryModule(app);
 
 app.use(express.static(path.join(__dirname, 'public')));
 

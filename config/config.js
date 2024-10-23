@@ -17,6 +17,7 @@ exports.config = {
   EMAIL_PORT: process.env.EMAIL_PORT,
   EMAIL_SECURE: process.env.EMAIL_SECURE,
   RESET_PASSWORD: "Reset Password",
+  EMAIL_VARIFICATION: "Email Varification",
   AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY,
   AWS_SECRET_KEY: process.env.AWS_SECRET_KEY,
   AWS_REGION: process.env.AWS_REGION,

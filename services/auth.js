@@ -4,6 +4,7 @@ const { config } = require("../config/config");
 const { httpStatusCodes } = require("../utils/http-status-codes");
 const { httpResponses } = require("../utils/http-responses");
 const { serverResponseMessage } = require("../config/message");
+const { getUserById } = require("../src/Modules/Admin/Authentication/dbQuery");
 
 // module.exports.verifyToken = () => {
 //   return (req, res, next) => {
@@ -26,6 +27,17 @@ exports.verifyToken = function (req, res, next) {
         statusCode: httpResponses.SESSION_EXPIRE,
         message: res.__(serverResponseMessage.SESSION_EXPIRE),
       });
+    }
+    if (!decoded?.emailVerificationToken && decoded.userType === "ws") {
+      const user = await getUserById(decoded.userId);
+      if (!user.is_profile_verified) {
+        return res.status(httpStatusCodes.SUCCESS).send({
+          status: false,
+          code: httpStatusCodes.UNAUTHORIZED,
+          statusCode: httpResponses.EMAIL_NOT_VERIFIED,
+          message: res.__(serverResponseMessage.EMAIL_NOT_VERIFIED),
+        });
+      }
     }
     req.userId = decoded.userId;
     req.decodedToken = decoded;

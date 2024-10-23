@@ -10,7 +10,7 @@ exports.success = function (code, status, message, data) {
   const SucessResponse = {
     code: code,
     statusCode: status,
-    status : true,
+    success : true,
     message: message,
     data: data,
   };
@@ -26,6 +26,7 @@ exports.failure = function (code, status, message, data) {
     statusCode: status,
     message: message,
     data: data,
+    success : false,
   };
   logger.error("API Failure Response", {
     meta: {
@@ -42,6 +43,7 @@ exports.error = function (code = httpStatusCodes.INTERNAL_SERVER_ERROR, status, 
     statusCode: status,
     message: message,
     data: data,
+    success : false,
   };
   logger.error("API Error Response", {
     meta: {
