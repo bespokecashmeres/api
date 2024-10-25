@@ -35,9 +35,8 @@ const userSchema = new Schema(
     },
     country_id: {
       type: Schema.Types.ObjectId,
-      required: [true, "country is required"],
       ref: "country",
-      default: "",
+      default: null,
     },
     height: {
       type: Schema.Types.String,
@@ -64,7 +63,7 @@ const userSchema = new Schema(
     },
     profile_picture: {
       type: String,
-      default: null,
+      default: "",
     },
     is_profile_verified: {
       type: Boolean,
@@ -77,7 +76,7 @@ const userSchema = new Schema(
     },
     token: {
       type: String,
-      default: null,
+      default: "",
     },
     isMeasurementAdded: {
       type: Boolean,

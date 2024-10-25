@@ -8,6 +8,7 @@ const authModule = require("./src/Modules/Admin/Authentication/routes");
 const countryModule = require("./src/Modules/Admin/Country/routes");
 const adminUserModule = require("./src/Modules/Admin/Users/routes");
 const wholeSalerAuthModule = require("./src/Modules/WholeSaler/Authentication/routes");
+const measurementTypeModule = require("./src/Modules/Admin/MeasurementType/routes");
 
 const { logger } = require("./utils/logger");
 const connectToDatabase = require("./database/db");
@@ -67,6 +68,7 @@ authModule(app);
 adminUserModule(app);
 wholeSalerAuthModule(app);
 countryModule(app);
+measurementTypeModule(app);
 
 app.use(express.static(path.join(__dirname, 'public')));
 

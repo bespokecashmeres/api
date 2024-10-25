@@ -3,7 +3,6 @@ const joi = require("joi");
 
 
 exports.googleLoginUser = joi.object({
-  email: joi.string().email().required(),
   token: joi.string().required(),
   userType: joi.string().valid("user", "admin", "ws").required().messages({
     "string.base": "userType should be a type of text",

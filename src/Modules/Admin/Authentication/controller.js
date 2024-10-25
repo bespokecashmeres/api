@@ -1,4 +1,4 @@
-const { success, failure, error } = require("../../../../utils/response");
+const { success, failure } = require("../../../../utils/response");
 const { serverResponseMessage } = require("../../../../config/message");
 const { httpStatusCodes } = require("../../../../utils/http-status-codes");
 const {
@@ -13,10 +13,11 @@ const {
   sendEmailVerificationEmail,
 } = require("../../../../services/tokenSender");
 const { config } = require("../../../../config/config");
-const { getTokenTimeDifference } = require("../../../../utils/common");
 // const { findOneRecord: getSetting } = require("../../Admin/Settings/dbQuery");
 const { ObjectId } = require("mongoose").Types;
 const User = require("../Users/schema");
+const { OAuth2Client } = require("google-auth-library");
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const handleEmailNotVerified = async ({ isUserPresent, email, res }) => {
   let token = await generateTemporaryToken({
@@ -45,15 +46,17 @@ const handleEmailNotVerified = async ({ isUserPresent, email, res }) => {
 };
 
 exports.googleLogin = async (req, res) => {
-  const { email, token, userType } = req.body;
-  console.log("data: ", email, token, userType);
+  const { token, userType } = req.body;
   const ticket = await client.verifyIdToken({
     idToken: token,
     audience: process.env.GOOGLE_CLIENT_ID,
   });
   const payload = ticket.getPayload();
   const googleEmail = payload.email;
-  const user = await userFind({ email: googleEmail });
+  const first_name = payload.given_name;
+  const last_name = payload.family_name;
+  const profile_picture = payload.picture;
+  let user = await userFind({ email: googleEmail });
 
   if (user) {
     let token = await generateToken(user);
@@ -70,7 +73,14 @@ exports.googleLogin = async (req, res) => {
       )
     );
   } else {
-    user = new User({ email: googleEmail, user_type: userType });
+    user = new User({
+      email: googleEmail,
+      user_type: userType,
+      first_name,
+      last_name,
+      profile_picture,
+      is_profile_verified: true
+    });
     await user.save();
     let token = await generateToken(user);
     const updateUser = await UpdateData(user, {
