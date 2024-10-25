@@ -47,7 +47,7 @@ module.exports = (app) => {
     middleware(listValidator),
     asyncHandler(listController)
   );
-  app.get("/measurement-type/all", asyncHandler(getActiveController));
+  app.get("/measurement-type/active", asyncHandler(getActiveController));
   app.get(
     "/measurement-type/:_id",
     verifyToken,
