@@ -19,9 +19,9 @@
 	"FORGOT_PASSWORD_SET_NEW_SUCCESS": "Du har med succes indstillet en ny adgangskode",
 	"USER_CREATED_SUCCESSFULLY": "Bruger oprettet",
 	"USER_UPDATED_SUCCESSFULLY": "Bruger opdateret",
-
 	"COUNTRY_NAME_EXISTS": "Country name is already exists",
-	"COUNTRY_CODE_EXISTS": "Country code is already exists","USER_DOES_NOT_EXIST": "User does not exists",
+	"COUNTRY_CODE_EXISTS": "Country code is already exists",
+	"USER_DOES_NOT_EXIST": "User does not exists",
 	"UNABLE_TO_CREATE_USER": "Unable to create user",
 	"UNABLE_TO_UPDATE_USER": "Unable to update user",
 	"EMAIL_NOT_VERIFIED": "Email is not verified",
@@ -32,5 +32,6 @@
 	"EMAIL_VERIFICATION_MAIL": "Your email address is not verified yet. Please check your inbox and follow the link we sent to complete your registration",
 	"EMAIL_VERIFICATION_SUCCESS": "Your email has been successfully verified! You can now log in and start using your account",
 	"EMAIL_VERIFICATION_FAILED": "The verification link has expired. Please log in again to receive a new verification email",
-	"EMAIL_ALREADY_VERIFIED": "Your email address has already been verified! You can log in to your account"
+	"EMAIL_ALREADY_VERIFIED": "Your email address has already been verified! You can log in to your account",
+	"Hello": "Hello"
 }

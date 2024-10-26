@@ -28,8 +28,8 @@ exports.verifyToken = function (req, res, next) {
         message: res.__(serverResponseMessage.SESSION_EXPIRE),
       });
     }
+    const user = await getUserById(decoded.userId);
     if (!decoded?.emailVerificationToken && decoded.userType === "ws") {
-      const user = await getUserById(decoded.userId);
       if (!user.is_profile_verified) {
         return res.status(httpStatusCodes.SUCCESS).send({
           status: false,
@@ -38,6 +38,14 @@ exports.verifyToken = function (req, res, next) {
           message: res.__(serverResponseMessage.EMAIL_NOT_VERIFIED),
         });
       }
+    }
+    if (!user.status) {
+      return res.status(httpStatusCodes.SUCCESS).send({
+        status: false,
+        code: httpStatusCodes.UNAUTHORIZED,
+        statusCode: httpResponses.ACCOUNT_SUSPENDED,
+        message: res.__(serverResponseMessage.ACCOUNT_SUSPENDED),
+      });
     }
     req.userId = decoded.userId;
     req.decodedToken = decoded;

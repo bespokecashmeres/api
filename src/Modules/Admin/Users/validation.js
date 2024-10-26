@@ -75,6 +75,7 @@ exports.updateUser = joi.object({
   }),
   height: joi.string().allow("").optional(),
   weight: joi.string().allow("").optional(),
+  profile_picture: joi.any().optional(),
 });
 
 exports.getUsers = joi.object({

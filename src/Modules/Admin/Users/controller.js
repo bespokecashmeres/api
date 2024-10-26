@@ -17,6 +17,7 @@ const {
 const { isUserPresent } = require("../../../../services/userServices");
 const { updateMeasurement } = require("../Measurement/validation");
 const { getUserData } = require("../Authentication/dbQuery");
+const { uploadToS3, deleteFromS3 } = require("../../../../utils/fileUploads");
 
 exports.createUserController = async (req, res) => {
   const userCreateResponse = await userCreate(req.body);
@@ -37,10 +38,7 @@ exports.createUserController = async (req, res) => {
 };
 
 exports.createUserAndMeasurementController = async (req, res) => {
-  const {
-    measurements,
-    ...restBody
-  } = req.body;
+  const { measurements, ...restBody } = req.body;
 
   const userCreateResponse = await userCreate(restBody);
   if (!userCreateResponse) {
@@ -131,7 +129,6 @@ exports.updateUserAndMeasurementController = async (req, res) => {
   );
 };
 
-
 exports.updateWholeSalerController = async (req, res, next) => {
   const user = await getUserById(req.body._id);
   if (!user) {
@@ -173,6 +170,20 @@ exports.updateUserController = async (req, res, next) => {
       message: res.__(serverResponseMessage.USER_DOES_NOT_EXIST),
     };
   }
+
+  const profilePicture = req.files?.["profile_picture"]
+    ? req.files["profile_picture"][0]
+    : null;
+
+  if (profilePicture) {
+    try {
+      req.body.profile_picture = await uploadToS3(profilePicture, "profile");
+      if (user?.profile_picture) {
+        await deleteFromS3(user.profile_picture);
+      }
+    } catch (error) {}
+  }
+
   const { mobile_number, email, ...updatableData } = req.body;
   const updatedUser = await userUpdate(userId, {
     ...updatableData,
@@ -309,7 +320,6 @@ exports.getActiveUsersController = async (req, res, next) => {
     )
   );
 };
-
 
 exports.getActiveWholeSalerController = async (req, res, next) => {
   const users = await getActiveUsers("ws");
