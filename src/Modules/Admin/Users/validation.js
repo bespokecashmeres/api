@@ -1,5 +1,6 @@
 "use strict";
 const joi = require("joi");
+const { MOBILE_NUMBER_REGEX } = require("../../../../utils/regex");
 
 exports.createUser = joi.object({
   first_name: joi.string().required(),
@@ -8,7 +9,7 @@ exports.createUser = joi.object({
   password: joi.string().min(8).required(),
   mobile_number: joi
     .string()
-    .regex(/^\d{3,14}$/)
+    .regex(MOBILE_NUMBER_REGEX)
     .min(3)
     .required(),
   email: joi.string().email().required(),
@@ -59,7 +60,7 @@ exports.updateUser = joi.object({
   password: joi.string().min(8).optional(),
   mobile_number: joi
     .string()
-    .regex(/^\d{3,14}$/)
+    .regex(MOBILE_NUMBER_REGEX)
     .min(3)
     .optional(),
   email: joi.string().email().optional(),
@@ -94,7 +95,7 @@ exports.createUserAndMeasurement = joi.object({
   password: joi.string().min(8).required(),
   mobile_number: joi
     .string()
-    .regex(/^\d{3,14}$/)
+    .regex(MOBILE_NUMBER_REGEX)
     .min(3)
     .required(),
   email: joi.string().email().required(),
@@ -138,7 +139,7 @@ exports.createWholeSaler = joi.object({
   password: joi.string().min(8).required(),
   mobile_number: joi
     .string()
-    .regex(/^\d{3,14}$/)
+    .regex(MOBILE_NUMBER_REGEX)
     .min(3)
     .required(),
   email: joi.string().email().required(),
@@ -173,7 +174,7 @@ exports.updateUserAndMesurement = joi.object({
     .optional(),
   mobile_number: joi
     .string()
-    .regex(/^\d{3,14}$/)
+    .regex(MOBILE_NUMBER_REGEX)
     .min(3)
     .optional(),
   email: joi
@@ -218,7 +219,7 @@ exports.updateWholeSaler = joi.object({
     .optional(),
   mobile_number: joi
     .string()
-    .regex(/^\d{3,14}$/)
+    .regex(MOBILE_NUMBER_REGEX)
     .min(3)
     .optional(),
   email: joi
