@@ -1,0 +1,1 @@
+module.exports.MOBILE_NUMBER_REGEX=/^\d{7,15}$/;
