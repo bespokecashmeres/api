@@ -17,8 +17,8 @@ exports.createController = async (req, res) => {
   const image = req.files?.["image"] ? req.files["image"][0] : null;
   const pdf = req.files?.["pdf"] ? req.files["pdf"][0] : null;
 
-  console.log("image: ", image)
-  console.log("pdf: ", pdf)
+  console.log("image: ", image);
+  console.log("pdf: ", pdf);
 
   if (image) {
     try {
@@ -179,12 +179,7 @@ exports.statusController = async (req, res, next) => {
       message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
     };
   }
-  await Update(
-    { _id: user._id },
-    {
-      status: !!req.body.status,
-    }
-  );
+  await Update({ _id: `${user.id}`, status: !!req.body.status });
   return res.json(
     success(
       httpStatusCodes.SUCCESS,
@@ -196,7 +191,7 @@ exports.statusController = async (req, res, next) => {
 };
 
 exports.getCampainDetailController = async (req, res, next) => {
-  const acceptLanguage = req.headers['accept-language'];
+  const acceptLanguage = req.headers["accept-language"];
   const isExsist = await findAll(acceptLanguage);
   return res
     .status(httpStatusCodes.SUCCESS)
