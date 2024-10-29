@@ -33,5 +33,6 @@
 	"EMAIL_VERIFICATION_MAIL": "Your email address is not verified yet. Please check your inbox and follow the link we sent to complete your registration",
 	"EMAIL_VERIFICATION_SUCCESS": "Your email has been successfully verified! You can now log in and start using your account",
 	"EMAIL_VERIFICATION_FAILED": "The verification link has expired. Please log in again to receive a new verification email",
-	"EMAIL_ALREADY_VERIFIED": "Your email address has already been verified! You can log in to your account"
+	"EMAIL_ALREADY_VERIFIED": "Your email address has already been verified! You can log in to your account",
+	"INVALID_MULTILINGUAL_DATA": "The multilingual data provided is invalid or incorrectly formatted. Please ensure each language entry includes valid fields and try again"
 }

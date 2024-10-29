@@ -165,6 +165,8 @@ module.exports.getAllUsersByAdmin = async (qData, user_type = "user") => {
       { first_name: { $regex: new RegExp(search, "i") } },
       { last_name: { $regex: new RegExp(search, "i") } },
       { middle_name: { $regex: new RegExp(search, "i") } },
+      { email: { $regex: new RegExp(search, "i") } },
+      { mobile_number: { $regex: new RegExp(search, "i") } },
     ];
   }
 
