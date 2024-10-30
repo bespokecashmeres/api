@@ -17,9 +17,6 @@ exports.createController = async (req, res) => {
   const image = req.files?.["image"] ? req.files["image"][0] : null;
   const pdf = req.files?.["pdf"] ? req.files["pdf"][0] : null;
 
-  console.log("image: ", image);
-  console.log("pdf: ", pdf);
-
   if (image) {
     try {
       const imagePath = await uploadToS3(image, "lookbook");

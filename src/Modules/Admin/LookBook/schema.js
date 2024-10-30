@@ -2,25 +2,14 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const translationSchema = new Schema({
-  language: {
-    type: String,
-    required: true,
-  },
-  text: {
-    type: String,
-    required: true,
-  }
-}, { _id: false });
-
 const lookBookSchema = new Schema({
   title: {
-    type: [translationSchema],
-    required: true
+    type: Object,
+    required: true,
   },
   description: {
-    type: [translationSchema],
-    required: true
+    type: Object,
+    required: true,
   },
   image: {
     type: Schema.Types.String,
@@ -35,10 +24,10 @@ const lookBookSchema = new Schema({
   },
   rowOrder: {
     type: Schema.Types.Number,
-    default: 0
-  }
+    default: 0,
+  },
 }, {
-  timestamps: true
+  timestamps: true,
 });
 
 const LookBook = mongoose.model('lookbook', lookBookSchema);
