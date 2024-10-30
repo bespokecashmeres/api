@@ -57,82 +57,41 @@ module.exports.getPaginationData = async (qData) => {
   } = qData;
 
   const matchStage = {
-    $match: { ...filter },
+    $match: { ...filter, ...(search && { [`title.${language}`]: { $regex: search, $options: "i" } }) },
   };
 
-  if (search) {
-    matchStage.$match["title"] = {
-      $elemMatch: {
-        language,
-        text: { $regex: new RegExp(RegExp.escape(search), "i") },
-      },
-    };
-  }
-
-  const lookupStage = {
-    $project: {
-      _id: 1,
-      title: {
-        $ifNull: [
-          {
-            $arrayElemAt: [
-              {
-                $filter: {
-                  input: "$title",
-                  as: "t",
-                  cond: { $eq: ["$$t.language", language] },
-                },
-              },
-              0,
-            ],
-          },
-          "",
-        ],
-      },
-      image: 1,
-      pdf: 1,
-      rowOrder: 1,
-      createdAt: 1,
-      updatedAt: 1,
-      status: 1,
-    },
+  const projectFields = {
+    _id: 1,
+    title: { $ifNull: [`$title.${language}`, ""] },
+    description: { $ifNull: [`$description.${language}`, ""] },
+    image: 1,
+    pdf: 1,
+    rowOrder: 1,
+    createdAt: 1,
+    updatedAt: 1,
+    status: 1,
   };
 
   const sortStage = {
     $sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
   };
 
-  const skipStage = {
-    $skip: (page - 1) * perPage,
-  };
+  const skipLimitStage = [
+    { $skip: (page - 1) * perPage },
+    { $limit: perPage },
+  ];
 
-  const limitStage = {
-    $limit: perPage,
-  };
-
-  const finalStage = {
-    $project: {
-      _id: 1,
-      title: { $ifNull: ["$title.text", ""] },
-      image: 1,
-      pdf: 1,
-      rowOrder: 1,
-      createdAt: 1,
-      updatedAt: 1,
-      status: 1
-    },
-  };
-
-  const data = await database.aggregate([
+  const pipeline = [
     matchStage,
-    lookupStage,
+    { $project: projectFields },
     sortStage,
-    skipStage,
-    limitStage,
-    finalStage,
-  ]);
+    ...skipLimitStage,
+  ];
 
-  const count = await database.countDocuments(matchStage.$match);
+  const [data, count] = await Promise.all([
+    database.aggregate(pipeline),
+    database.countDocuments(matchStage.$match),
+  ]);
 
   return {
     currentPage: page,
@@ -150,40 +109,25 @@ module.exports.getByQuery = async (obj) => {
 };
 
 module.exports.findAll = async (language = DEFAULT_LOCALE) => {
-  const data = await database.aggregate([
-    {
-      $match: { status: true },
-    },
-    {
-      $project: {
-        _id: 1,
-        title: {
-          $filter: {
-            input: "$title",
-            as: "t",
-            cond: { $eq: ["$$t.language", language] },
-          },
-        },
-        description: {
-          $filter: {
-            input: "$description",
-            as: "d",
-            cond: { $eq: ["$$d.language", language] },
-          },
-        },
-        image: 1,
-        pdf: 1,
-        rowOrder: 1,
-        createdAt: 1,
-        updatedAt: 1,
-      },
-    },
-    {
-      $sort: { rowOrder: 1 },
-    },
-  ]);
+  const projectFields = {
+    _id: 1,
+    title: `$title.${language}`,
+    description: `$description.${language}`,
+    image: 1,
+    pdf: 1,
+    rowOrder: 1,
+    createdAt: 1,
+    updatedAt: 1,
+    status: 1,
+  };
 
-  return data;
+  const pipeline = [
+    { $match: { status: true } },
+    { $project: projectFields },
+    { $sort: { rowOrder: 1 } },
+  ];
+
+  return await database.aggregate(pipeline);
 };
 
 module.exports.Update = async (data) => {
