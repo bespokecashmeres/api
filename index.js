@@ -6,6 +6,11 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const authModule = require("./src/Modules/Admin/Authentication/routes");
 const countryModule = require("./src/Modules/Admin/Country/routes");
+const genderModule = require("./src/Modules/Admin/Gender/routes");
+const mainCategoryModule = require("./src/Modules/Admin/MainCategory/routes");
+const subCategoryModule = require("./src/Modules/Admin/SubCategory/routes");
+const childCategoryModule = require("./src/Modules/Admin/ChildCategory/routes");
+const subChildCategoryModule = require("./src/Modules/Admin/SubChildCategory/routes");
 const adminUserModule = require("./src/Modules/Admin/Users/routes");
 const wholeSalerAuthModule = require("./src/Modules/WholeSaler/Authentication/routes");
 const measurementTypeModule = require("./src/Modules/Admin/MeasurementType/routes");
@@ -71,6 +76,11 @@ wholeSalerAuthModule(app);
 countryModule(app);
 measurementTypeModule(app);
 lookbookModule(app);
+genderModule(app);
+mainCategoryModule(app);
+subCategoryModule(app);
+childCategoryModule(app);
+subChildCategoryModule(app);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
