@@ -12,7 +12,7 @@ exports.isUserPresent = async (req, res) => {
       failure(
         httpStatusCodes.UNAUTHORIZED,
         httpResponses.UNAUTHORIZED,
-        serverResponseMessage.USER_DOES_NOT_EXIST
+        res.__(serverResponseMessage.USER_DOES_NOT_EXIST)
       )
     );
   }

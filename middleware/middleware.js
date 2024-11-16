@@ -27,7 +27,7 @@ const validation = (schema) => {
         response.failure(
           httpStatusCodes.BAD_REQUEST,
           httpResponses.BAD_REQUEST,
-          serverResponseMessage.UNABLE_TO_VERIFY_REQUEST_DATA,
+          res.__(serverResponseMessage.UNABLE_TO_VERIFY_REQUEST_DATA),
           data
         )
       );

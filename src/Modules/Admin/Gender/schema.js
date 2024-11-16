@@ -5,24 +5,12 @@ const { httpStatusCodes } = require("../../../../utils/http-status-codes");
 const { httpResponses } = require("../../../../utils/http-responses");
 const Schema = mongoose.Schema;
 
-const countrySchema = new Schema(
+const genderSchema = new Schema(
   {
     name: {
       type: Schema.Types.String,
       require: true,
       unique: true,
-    },
-    code: {
-      type: Schema.Types.String,
-      require: true,
-      unique: true,
-    },
-    phoneCode: {
-      type: Schema.Types.String,
-      require: true,
-    },
-    flag: {
-      type: Schema.Types.String,
     },
     status: {
       type: Schema.Types.Boolean,
@@ -35,17 +23,14 @@ const countrySchema = new Schema(
   }
 );
 
-countrySchema.pre("save", async function (next) {
-  const Country = this.model("country");
+genderSchema.pre("save", async function (next) {
+  const Gender = this.model("gender");
   try {
-    const country = await Country.findOne({
-      $or: [{ name: this.name }, { code: this.code }],
+    const gender = await Gender.findOne({
+      $or: [{ name: this.name }],
     });
-    if (country) {
-      const errorField =
-        country.name === this.name
-          ? serverResponseMessage.COUNTRY_NAME_EXISTS
-          : serverResponseMessage.COUNTRY_CODE_EXISTS;
+    if (gender) {
+      const errorField = serverResponseMessage.GENDER_ALREADY_EXISTS;
       const error = new Error(errorField);
       error.code = httpResponses.DUPLICATE_FIELD_VALUE_ERROR;
       error.status = httpStatusCodes.BAD_REQUEST;
@@ -57,5 +42,5 @@ countrySchema.pre("save", async function (next) {
   }
 });
 
-const Country = mongoose.model("country", countrySchema);
-module.exports = Country;
+const Gender = mongoose.model("gender", genderSchema);
+module.exports = Gender;

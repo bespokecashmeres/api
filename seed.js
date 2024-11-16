@@ -5,11 +5,16 @@ const {
 const {
     bulkCreate: measurementBulkCreate,
 } = require("./src/Modules/Admin/MeasurementType/dbQuery");
+const {
+    bulkCreate: genderBulkCreate,
+} = require("./src/Modules/Admin/Gender/dbQuery");
 
 const countryJSON = "seederJSON/country.json";
 const measurementTypeJSON = "seederJSON/measurement-type.json";
+const genderJSON = "seederJSON/gender.json";
 const countryData = JSON.parse(fs.readFileSync(countryJSON, "utf-8"));
 const measurementTypeData = JSON.parse(fs.readFileSync(measurementTypeJSON, "utf-8"));
+const genderData = JSON.parse(fs.readFileSync(genderJSON, "utf-8"));
 const connectToDatabase = require("./database/db");
 const { logger } = require("./utils/logger");
 const seedData = async () => {
@@ -17,6 +22,7 @@ const seedData = async () => {
         await connectToDatabase();
         await bulkCreate(countryData, "code");
         await measurementBulkCreate(measurementTypeData, "name")
+        await genderBulkCreate(genderData, "name")
         console.log("============= ALL Data has been Seeded =================");
         logger.info("ALL Seeder has been Done Fine ", {});
     } catch (err) {
