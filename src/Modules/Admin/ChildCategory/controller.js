@@ -13,7 +13,7 @@ const {
   getChildCategoriesForDropdown,
 } = require("./dbQuery");
 const { deleteFromS3, uploadToS3 } = require("../../../../utils/fileUploads");
-const { UpdateMany } = require("../SubChildCategory/dbQuery");
+const { getActive } = require("../SubChildCategory/dbQuery");
 
 exports.createController = async (req, res) => {
   const image = req.files?.["image"] ? req.files["image"][0] : null;
@@ -158,13 +158,18 @@ exports.statusController = async (req, res, next) => {
     };
   }
 
-  await Promise.all([
-    Update({ _id: `${category.id}`, status: !!req.body.status }),
-    UpdateMany({
-      filter: { childCategoryId: category.id },
-      updateFields: { status: !!req.body.status },
-    }),
-  ]);
+  const response = await getActive({ childCategoryId: category.id });
+
+  if (response.length > 0 && !req.body.status) {
+    throw {
+      code: httpStatusCodes.BAD_REQUEST,
+      message: res.__(
+        serverResponseMessage.PLEASE_DISABLE_SUB_CHILD_CATEGORY_TO_DISABLE_CHILD_CATEGORY
+      ),
+    };
+  }
+
+  await Update({ _id: `${category.id}`, status: !!req.body.status });
 
   return res.json(
     success(
@@ -218,12 +223,14 @@ exports.deleteController = async (req, res) => {
 
 exports.dropdownOptionsController = async (req, res, next) => {
   const acceptLanguage = req.headers["accept-language"];
-  return res.status(httpStatusCodes.SUCCESS).json(
+  return res
+    .status(httpStatusCodes.SUCCESS)
+    .json(
       success(
-          httpStatusCodes.SUCCESS,
-          httpResponses.SUCCESS,
-          res.__(serverResponseMessage.RECORD_FETCHED),
-          await getChildCategoriesForDropdown(req.body, acceptLanguage)
+        httpStatusCodes.SUCCESS,
+        httpResponses.SUCCESS,
+        res.__(serverResponseMessage.RECORD_FETCHED),
+        await getChildCategoriesForDropdown(req.body, acceptLanguage)
       )
-  );
+    );
 };

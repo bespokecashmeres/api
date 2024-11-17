@@ -1,7 +1,7 @@
 const { serverResponseMessage } = require("../../../../config/message");
 const { httpResponses } = require("../../../../utils/http-responses");
 const { httpStatusCodes } = require("../../../../utils/http-status-codes");
-const { success } = require("../../../../utils/response");
+const { success, failure } = require("../../../../utils/response");
 const {
   create,
   Update,
@@ -13,9 +13,7 @@ const {
   getMainCategoriesForDropdown,
 } = require("./dbQuery");
 const { deleteFromS3, uploadToS3 } = require("../../../../utils/fileUploads");
-const { UpdateMany } = require("../SubCategory/dbQuery");
-const { UpdateMany: ChildCategoryUpdateMany } = require("../ChildCategory/dbQuery");
-const { UpdateMany: SubChildCategoryUpdateMany } = require("../SubChildCategory/dbQuery");
+const { getActive } = require("../SubCategory/dbQuery");
 
 exports.createController = async (req, res) => {
   const image = req.files?.["image"] ? req.files["image"][0] : null;
@@ -160,21 +158,18 @@ exports.statusController = async (req, res, next) => {
     };
   }
 
-  await Promise.all([
-    Update({ _id: `${category.id}`, status: !!req.body.status }),
-    UpdateMany({
-      filter: { mainCategoryId: category.id },
-      updateFields: { status: !!req.body.status },
-    }),
-    ChildCategoryUpdateMany({
-      filter: { mainCategoryId: category.id },
-      updateFields: { status: !!req.body.status },
-    }),
-    SubChildCategoryUpdateMany({
-      filter: { mainCategoryId: category.id },
-      updateFields: { status: !!req.body.status },
-    })
-  ]);
+  const response = await getActive({ mainCategoryId: category.id });
+
+  if (response.length > 0 && !req.body.status) {
+    throw {
+      code: httpStatusCodes.BAD_REQUEST,
+      message: res.__(
+        serverResponseMessage.PLEASE_DISABLE_SUB_CATEGORY_TO_DISABLE_MAIN_CATEGORY
+      ),
+    };
+  }
+
+  await Update({ _id: `${category.id}`, status: !!req.body.status });
 
   return res.json(
     success(

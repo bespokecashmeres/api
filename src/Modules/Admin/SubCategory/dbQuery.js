@@ -188,10 +188,11 @@ module.exports.Update = async (data) => {
     .lean();
 };
 
-module.exports.getActive = async () => {
+module.exports.getActive = async (conditions = {}) => {
   return await database
     .find({
       status: true,
+      ...conditions,
     })
     .sort({ rowOrder: 1 });
 };
