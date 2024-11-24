@@ -232,7 +232,5 @@ module.exports.getSubCategoriesForDropdown = async (
     },
   ];
 
-  console.log(JSON.stringify(pipeline))
-
   return await database.aggregate(pipeline);
 };

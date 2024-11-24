@@ -15,6 +15,11 @@ const adminUserModule = require("./src/Modules/Admin/Users/routes");
 const wholeSalerAuthModule = require("./src/Modules/WholeSaler/Authentication/routes");
 const measurementTypeModule = require("./src/Modules/Admin/MeasurementType/routes");
 const lookbookModule = require("./src/Modules/Admin/LookBook/routes");
+const fabricModule = require("./src/Modules/Admin/Fabrics/routes");
+const productTypeModule = require("./src/Modules/Admin/ProductType/routes");
+const sizeModule = require("./src/Modules/Admin/Size/routes");
+const colorModule = require("./src/Modules/Admin/Color/routes");
+const productModule = require("./src/Modules/Admin/Product/routes");
 
 const { logger } = require("./utils/logger");
 const connectToDatabase = require("./database/db");
@@ -81,6 +86,11 @@ mainCategoryModule(app);
 subCategoryModule(app);
 childCategoryModule(app);
 subChildCategoryModule(app);
+fabricModule(app);
+productTypeModule(app);
+sizeModule(app);
+colorModule(app);
+productModule(app);
 
 app.use(express.static(path.join(__dirname, 'public')));
 

@@ -1,30 +1,25 @@
 "use strict";
 const Joi = require("joi");
-const {
-  DEFAULT_LOCALE,
-  ALLOWED_LOCALE,
-} = require("../../../../utils/constants");
-const { SLUG_REGEX } = require("../../../../utils/regex");
+const { slugJoiValidation, slugJoiOptionalValidation, genderJoiValidation, genderJoiOptionalValidation, statusJoiValidation } = require("../../../../utils/validation");
 
 exports.createValidator = Joi.object({
   name: Joi.string().required(),
   description: Joi.string().required(),
-  slug: Joi.string().pattern(new RegExp(SLUG_REGEX)).required(),
+  slug: slugJoiValidation,
   image: Joi.any().optional(),
-  genderId:  Joi.string().hex().length(24).required(),
-  status: Joi.boolean().optional().valid(true, false).default(true),
+  genderId: genderJoiValidation,
+  status: statusJoiValidation,
 });
 
 exports.updateValidator = Joi.object({
   _id: Joi.string().hex().length(24).required(),
   name: Joi.string().optional(),
   description: Joi.string().optional(),
-  slug: Joi.string().pattern(new RegExp(SLUG_REGEX)).optional(),
+  slug: slugJoiOptionalValidation,
   image: Joi.any().optional(),
-  genderId: Joi.string().hex().length(24).optional(),
-  status: Joi.boolean().valid(true, false).optional(),
+  genderId: genderJoiOptionalValidation,
 });
 
 exports.dropdownValidator = Joi.object({
   genderId: Joi.string().hex().length(24).required(),
-})
+});
