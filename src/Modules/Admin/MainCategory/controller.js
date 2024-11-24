@@ -1,7 +1,7 @@
 const { serverResponseMessage } = require("../../../../config/message");
 const { httpResponses } = require("../../../../utils/http-responses");
 const { httpStatusCodes } = require("../../../../utils/http-status-codes");
-const { success, failure } = require("../../../../utils/response");
+const { success } = require("../../../../utils/response");
 const {
   create,
   Update,
@@ -14,6 +14,7 @@ const {
 } = require("./dbQuery");
 const { deleteFromS3, uploadToS3 } = require("../../../../utils/fileUploads");
 const { getActive } = require("../SubCategory/dbQuery");
+const { getActive: getProductActive } = require("../Product/dbQuery");
 
 exports.createController = async (req, res) => {
   const image = req.files?.["image"] ? req.files["image"][0] : null;
@@ -99,6 +100,7 @@ exports.updateController = async (req, res, next) => {
 };
 
 exports.listController = async (req, res, next) => {
+  const acceptLanguage = req.headers["accept-language"];
   return res
     .status(httpStatusCodes.SUCCESS)
     .json(
@@ -106,7 +108,7 @@ exports.listController = async (req, res, next) => {
         httpStatusCodes.SUCCESS,
         httpResponses.SUCCESS,
         res.__(serverResponseMessage.RECORD_FETCHED),
-        await getPaginationData(req.body, {})
+        await getPaginationData({ language: acceptLanguage, ...req.body }, {})
       )
     );
 };
@@ -158,13 +160,25 @@ exports.statusController = async (req, res, next) => {
     };
   }
 
-  const response = await getActive({ mainCategoryId: category.id });
+  const [subCategories, products] = await Promise([
+    getActive({ mainCategoryId: category.id }),
+    getProductActive({ mainCategoryId: category.id }),
+  ]);
 
-  if (response.length > 0 && !req.body.status) {
+  const isSubCategoryExists = subCategories.length > 0;
+  const isProductsExists = products.length > 0;
+
+  if ((isSubCategoryExists || isProductsExists) && !req.body.status) {
     throw {
       code: httpStatusCodes.BAD_REQUEST,
       message: res.__(
-        serverResponseMessage.PLEASE_DISABLE_SUB_CATEGORY_TO_DISABLE_MAIN_CATEGORY
+        serverResponseMessage[
+          isSubCategoryExists && isProductsExists
+            ? "PLEASE_DISABLE_PRODUCTS_AND_SUB_CATEGORY_TO_DISABLE_MAIN_CATEGORY"
+            : isSubCategoryExists
+            ? "PLEASE_DISABLE_SUB_CATEGORY_TO_DISABLE_MAIN_CATEGORY"
+            : "PLEASE_DISABLE_PRODUCTS_TO_DISABLE_MAIN_CATEGORY"
+        ]
       ),
     };
   }

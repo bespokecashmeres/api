@@ -7,3 +7,5 @@ module.exports.USER_ROLE = {
 module.exports.DEFAULT_LOCALE = "en";
 
 module.exports.ALLOWED_LOCALE = ["en", "da"];
+
+module.exports.JOI_ERROR = "JOI_ERROR";

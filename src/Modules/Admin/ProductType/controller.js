@@ -4,29 +4,22 @@ const { httpStatusCodes } = require("../../../../utils/http-status-codes");
 const { success } = require("../../../../utils/response");
 const {
   create,
+  findOneRecord,
   Update,
   getById,
   getPaginationData,
   DeleteById,
-  findAll,
-  rowsReorderData,
-  getSubCategoriesForDropdown,
+  getProductTypesForDropdown,
 } = require("./dbQuery");
-const { deleteFromS3, uploadToS3 } = require("../../../../utils/fileUploads");
-const { getActive } = require("../ChildCategory/dbQuery");
-const { getActive: getProductActive } = require("../Product/dbQuery");
 
-exports.createController = async (req, res) => {
-  const image = req.files?.["image"] ? req.files["image"][0] : null;
+exports.createController = async (req, res, next) => {
+  const isExsist = await findOneRecord({ fabricId: req?.body?.fabricId });
 
-  if (image) {
-    try {
-      const imagePath = await uploadToS3(image, "sub-category");
-      req.body.image = imagePath;
-    } catch (error) {
-      console.error("Image upload failed:", error);
-    }
-  }
+  if (isExsist)
+    throw {
+      code: httpStatusCodes.UNPROCESSABLE_ENTITY,
+      message: res.__(serverResponseMessage.RECORD_ALREADY_EXISTS),
+    };
 
   try {
     req.body.name = req.body.name ? JSON.parse(req.body.name) : [];
@@ -41,7 +34,6 @@ exports.createController = async (req, res) => {
   }
 
   const createRecord = await create(req.body);
-
   return res
     .status(httpStatusCodes.SUCCESS)
     .json(
@@ -62,18 +54,6 @@ exports.updateController = async (req, res, next) => {
       code: httpStatusCodes.UNPROCESSABLE_ENTITY,
       message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
     };
-
-  try {
-    const image = req.files?.["image"] ? req.files["image"][0] : null;
-    if (image) {
-      try {
-        const path = await uploadToS3(image, "sub-category");
-        req.body.image = path;
-        await deleteFromS3(isExsist?.image);
-      } catch (error) {}
-    }
-  } catch (error) {}
-
   try {
     req.body.name = req.body.name ? JSON.parse(req.body.name) : [];
     req.body.description = req.body.description
@@ -108,25 +88,7 @@ exports.listController = async (req, res, next) => {
         httpStatusCodes.SUCCESS,
         httpResponses.SUCCESS,
         res.__(serverResponseMessage.RECORD_FETCHED),
-        await getPaginationData({ language: acceptLanguage, ...req.body }, {})
-      )
-    );
-};
-
-exports.rowsReorderController = async (req, res, next) => {
-  const { rows } = req.body;
-  if (rows) {
-    req.body.rows = JSON.parse(rows);
-  }
-
-  return res
-    .status(httpStatusCodes.SUCCESS)
-    .json(
-      success(
-        httpStatusCodes.SUCCESS,
-        httpResponses.SUCCESS,
-        res.__(serverResponseMessage.RECORD_FETCHED),
-        await rowsReorderData(req.body.rows)
+        await getPaginationData({ language: acceptLanguage, ...req.body })
       )
     );
 };
@@ -139,6 +101,7 @@ exports.getDetailController = async (req, res, next) => {
       code: httpStatusCodes.UNPROCESSABLE_ENTITY,
       message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
     };
+
   return res
     .status(httpStatusCodes.SUCCESS)
     .json(
@@ -151,65 +114,7 @@ exports.getDetailController = async (req, res, next) => {
     );
 };
 
-exports.statusController = async (req, res, next) => {
-  const category = await getById(req.body._id);
-  if (!category) {
-    throw {
-      code: httpStatusCodes.UNPROCESSABLE_ENTITY,
-      message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
-    };
-  }
-
-  const [childCategories, products] = await Promise([
-    getActive({ subCategoryId: category.id }),
-    getProductActive({ subCategoryId: category.id }),
-  ]);
-  const isChildCategoryExists = childCategories.length > 0;
-  const isProductsExists = products.length > 0;
-
-  if ((isChildCategoryExists || isProductsExists) && !req.body.status) {
-    throw {
-      code: httpStatusCodes.BAD_REQUEST,
-      message: res.__(
-        serverResponseMessage[
-          isChildCategoryExists && isProductsExists
-            ? "PLEASE_DISABLE_PRODUCTS_AND_CHILD_CATEGORY_TO_DISABLE_SUB_CATEGORY"
-            : isChildCategoryExists
-            ? "PLEASE_DISABLE_CHILD_CATEGORY_TO_DISABLE_SUB_CATEGORY"
-            : "PLEASE_DISABLE_PRODUCTS_TO_DISABLE_SUB_CATEGORY"
-        ]
-      ),
-    };
-  }
-
-  await Update({ _id: `${category.id}`, status: !!req.body.status });
-
-  return res.json(
-    success(
-      httpStatusCodes.SUCCESS,
-      httpResponses.SUCCESS,
-      res.__(serverResponseMessage.RECORD_UPDATED),
-      undefined
-    )
-  );
-};
-
-exports.getActiveController = async (req, res, next) => {
-  const acceptLanguage = req.headers["accept-language"];
-  const isExsist = await findAll(acceptLanguage);
-  return res
-    .status(httpStatusCodes.SUCCESS)
-    .json(
-      success(
-        httpStatusCodes.SUCCESS,
-        httpResponses.SUCCESS,
-        res.__(serverResponseMessage.RECORD_FETCHED),
-        isExsist
-      )
-    );
-};
-
-exports.deleteController = async (req, res) => {
+exports.deleteController = async (req, res, next) => {
   const { _id } = req.params;
   const isExsist = await getById(_id);
   if (!isExsist)
@@ -217,10 +122,6 @@ exports.deleteController = async (req, res) => {
       code: httpStatusCodes.UNPROCESSABLE_ENTITY,
       message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
     };
-  try {
-    await deleteFromS3(isExsist?.image);
-    await deleteFromS3(isExsist?.pdf);
-  } catch (error) {}
   const deleteIndex = await DeleteById(_id);
   return res
     .status(httpStatusCodes.SUCCESS)
@@ -234,6 +135,25 @@ exports.deleteController = async (req, res) => {
     );
 };
 
+exports.statusController = async (req, res, next) => {
+  const productType = await getById(req.body._id);
+  if (!productType) {
+    throw {
+      code: httpStatusCodes.UNPROCESSABLE_ENTITY,
+      message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
+    };
+  }
+  await Update({ _id: `${productType.id}`, status: !!req.body.status });
+  return res.json(
+    success(
+      httpStatusCodes.SUCCESS,
+      httpResponses.SUCCESS,
+      res.__(serverResponseMessage.RECORD_UPDATED),
+      undefined
+    )
+  );
+};
+
 exports.dropdownOptionsController = async (req, res, next) => {
   const acceptLanguage = req.headers["accept-language"];
   return res
@@ -243,7 +163,7 @@ exports.dropdownOptionsController = async (req, res, next) => {
         httpStatusCodes.SUCCESS,
         httpResponses.SUCCESS,
         res.__(serverResponseMessage.RECORD_FETCHED),
-        await getSubCategoriesForDropdown(req.body, acceptLanguage)
+        await getProductTypesForDropdown(acceptLanguage)
       )
     );
 };

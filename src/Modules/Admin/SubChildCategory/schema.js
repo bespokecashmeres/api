@@ -1,5 +1,8 @@
 "use strict";
 const mongoose = require("mongoose");
+const { serverResponseMessage } = require("../../../../config/message");
+const { httpResponses } = require("../../../../utils/http-responses");
+const { httpStatusCodes } = require("../../../../utils/http-status-codes");
 const Types = mongoose.Schema.Types;
 
 const subChildCategorySchema = new mongoose.Schema({
@@ -15,7 +18,7 @@ const subChildCategorySchema = new mongoose.Schema({
   slug: {
     type: Types.String,
     required: true,
-    trim: true,
+    unique: true,
   },
   image: {
     type: Types.String,
@@ -48,9 +51,52 @@ const subChildCategorySchema = new mongoose.Schema({
     type: Types.ObjectId,
     ref: "childcategories",
     required: true,
+  },
+});
+
+subChildCategorySchema.pre("findOneAndUpdate", async function (next) {
+  const SchemaModel = mongoose.model(
+    "subchildcategories",
+    subChildCategorySchema
+  );
+  const filter = this.getFilter();
+  const slug = this.get("slug");
+  const result = await SchemaModel.findOne({
+    $or: [{ slug }],
+    _id: { $ne: filter._id },
+  });
+  if (result) {
+    const errorField = serverResponseMessage.SLUG_EXISTS;
+    const error = new Error(errorField);
+    error.code = httpResponses.DUPLICATE_FIELD_VALUE_ERROR;
+    error.status = httpStatusCodes.BAD_REQUEST;
+    return next(error);
+  }
+  next();
+});
+
+subChildCategorySchema.pre("save", async function (next) {
+  const SchemaModel = this.model("subchildcategories");
+  try {
+    const result = await SchemaModel.findOne({
+      $or: [{ slug: this.slug }],
+    });
+    if (result) {
+      const errorField = serverResponseMessage.SLUG_EXISTS;
+      const error = new Error(errorField);
+      error.code = httpResponses.DUPLICATE_FIELD_VALUE_ERROR;
+      error.status = httpStatusCodes.BAD_REQUEST;
+      return next(error);
+    }
+    next();
+  } catch (err) {
+    next(err);
   }
 });
 
-const SubChildCategory = mongoose.model("subchildcategories", subChildCategorySchema);
+const SubChildCategory = mongoose.model(
+  "subchildcategories",
+  subChildCategorySchema
+);
 
 module.exports = SubChildCategory;
