@@ -19,43 +19,43 @@ const { IdValidator, listValidator, statusValidator } = require("../../../../uti
 
 module.exports = (app) => {
   app.post(
-    "/fabrics/add",
+    "/yarn/add",
     verifyToken,
     hasRole(["admin"]),
     middleware(createValidator),
     asyncHandler(createController)
   );
   app.put(
-    "/fabrics/update",
+    "/yarn/update",
     verifyToken,
     hasRole(["admin"]),
     middleware(updateValidator),
     asyncHandler(updateController)
   );
   app.get(
-    "/fabrics/:_id",
+    "/yarn/:_id",
     verifyToken,
     hasRole(["admin"]),
     middleware(IdValidator),
     asyncHandler(getDetailController)
   );
   app.post(
-    "/fabrics/list",
+    "/yarn/list",
     verifyToken,
     hasRole(["admin"]),
     middleware(listValidator),
     asyncHandler(listController)
   );
-  app.post("/fabrics/options", asyncHandler(dropdownOptionsController));
+  app.post("/yarn/options", asyncHandler(dropdownOptionsController));
   app.delete(
-    "/fabrics/:_id",
+    "/yarn/:_id",
     verifyToken,
     hasRole(["admin"]),
     middleware(IdValidator),
     asyncHandler(deleteController)
   );
   app.patch(
-    "/fabrics/status",
+    "/yarn/status",
     verifyToken,
     hasRole(["admin"]),
     middleware(statusValidator),

@@ -1,6 +1,5 @@
 const { DEFAULT_LOCALE } = require("../../../../utils/constants");
-const fabrics = require("./schema");
-const database = fabrics;
+const database = require("./schema");
 const { ObjectId } = require("mongoose").Types;
 
 RegExp.escape = function (s) {

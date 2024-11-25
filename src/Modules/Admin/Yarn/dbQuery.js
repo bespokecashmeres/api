@@ -1,6 +1,5 @@
 const { DEFAULT_LOCALE } = require("../../../../utils/constants");
-const fabrics = require("./schema");
-const database = fabrics;
+const database = require("./schema");
 const { ObjectId } = require("mongoose").Types;
 
 RegExp.escape = function (s) {
@@ -22,7 +21,7 @@ module.exports.getDataForDropdown = async (language = DEFAULT_LOCALE) => {
       $project: {
         value: "$_id",
         label: {
-          $concat: ["$fabricId", " ", `$name.${language}`],
+          $concat: ["$yarnId", " ", `$name.${language}`],
         },
         _id: 0,
       },
@@ -58,18 +57,7 @@ module.exports.getPaginationData = async (qData) => {
     $project: {
       _id: 1,
       name: { $ifNull: [`$name.${language}`, ""] },
-      fabricId: 1,
-      // fabrics: {
-      //   $map: {
-      //     input: "$fabrics",
-      //     as: "fabric",
-      //     in: {
-      //       name: { $ifNull: [`$$fabric.name.${language}`, ""] },
-      //       value: { $ifNull: [`$$fabric.value.${language}`, ""] },
-      //       description: { $ifNull: [`$$fabric.description.${language}`, ""] },
-      //     },
-      //   },
-      // },
+      yarnId: 1,
       createdAt: 1,
       updatedAt: 1,
       status: 1,

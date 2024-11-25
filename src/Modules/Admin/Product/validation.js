@@ -44,7 +44,7 @@ exports.createValidator = Joi.object({
     Joi.object({
       colorId: Joi.string().required(),
       description: Joi.string().required(),
-      fabricId: Joi.string().required(),
+      yarnId: Joi.string().required(),
       image: Joi.any().optional(),
       images: Joi.array().items(Joi.any()).optional(),
     })
@@ -79,7 +79,7 @@ exports.updateValidator = Joi.object({
     Joi.object({
       colorId: Joi.string().optional(),
       description: Joi.string().optional(),
-      fabricId: Joi.string().optional(),
+      yarnId: Joi.string().optional(),
       image: Joi.any().optional(),
       images: Joi.array().items(Joi.any()).optional(),
     })

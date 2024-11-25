@@ -2,17 +2,17 @@
 const mongoose = require("mongoose");
 const Types = mongoose.Schema.Types;
 
-const fabricsSchema = new mongoose.Schema(
+const yarnSchema = new mongoose.Schema(
   {
     name: {
       type: Types.Object,
       require: true,
     },
-    fabricId: {
+    yarnId: {
       type: Types.String,
       require: true,
     },
-    fabrics: [
+    yarns: [
       {
         name: Types.Object,
         value: Types.Object,
@@ -30,5 +30,5 @@ const fabricsSchema = new mongoose.Schema(
   }
 );
 
-const Fabrics = mongoose.model("fabrics", fabricsSchema);
-module.exports = Fabrics;
+const Yarn = mongoose.model("yarn", yarnSchema);
+module.exports = Yarn;

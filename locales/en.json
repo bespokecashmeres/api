@@ -22,6 +22,8 @@
   "COUNTRY_NAME_EXISTS": "Country name is already exists",
   "COUNTRY_CODE_EXISTS": "Country code is already exists",
   "SLUG_EXISTS": "Slug is already exists",
+  "COLOR_CODE_EXISTS": "Color code is already exists",
+  "PRODUCT_TYPE_EXISTS": "Product type is already exists",
   "GENDER_ALREADY_EXISTS": "Gender is already exists",
   "USER_DOES_NOT_EXIST": "User does not exists",
   "UNABLE_TO_CREATE_USER": "Unable to create user",
