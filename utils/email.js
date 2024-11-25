@@ -3430,9 +3430,9 @@ ${emailData?.products?.map((product) => {
 <td class="t49" style="border-top:1px solid #CCCCCC;width:357.63px;padding:15px 0 0 10px;">
 <!--<![endif]-->
 <h1 class="t47" style="margin:0;Margin:0;font-family:Albert Sans,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:16px;font-weight:500;font-style:normal;font-size:12px;text-decoration:none;text-transform:uppercase;direction:ltr;color:#1A1A1A;text-align:left;mso-line-height-rule:exactly;mso-text-raise:1px;">    <strong>STOF</strong> <br/>
-        Stof-id: ${product?.fabricId}<br/>
-        Stoffets navn: ${product?.fabricName}<br/>
-        ${product?.fabrics?.map((fabric) => `${fabric}<br/>`)?.join("")}
+        Stof-id: ${product?.yarnId}<br/>
+        Stoffets navn: ${product?.yarnName}<br/>
+        ${product?.yarns?.map((yarn) => `${yarn}<br/>`)?.join("")}
           <br />
     <strong>DESIGN</strong><br/>
     ${product?.design?.map((design) => `${design}<br/>`)?.join("")}</h1></td>

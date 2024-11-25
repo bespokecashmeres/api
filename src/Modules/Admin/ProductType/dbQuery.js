@@ -1,6 +1,5 @@
 const { DEFAULT_LOCALE } = require("../../../../utils/constants");
-const fabrics = require("./schema");
-const database = fabrics;
+const database = require("./schema");
 const { ObjectId } = require("mongoose").Types;
 
 RegExp.escape = function (s) {
@@ -58,7 +57,7 @@ module.exports.getPaginationData = async (qData) => {
     $project: {
       _id: 1,
       name: { $ifNull: [`$name.${language}`, ""] },
-      fabricId: 1,
+      yarnId: 1,
       createdAt: 1,
       updatedAt: 1,
       status: 1,

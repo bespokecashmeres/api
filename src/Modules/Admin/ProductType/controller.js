@@ -13,14 +13,6 @@ const {
 } = require("./dbQuery");
 
 exports.createController = async (req, res, next) => {
-  const isExsist = await findOneRecord({ fabricId: req?.body?.fabricId });
-
-  if (isExsist)
-    throw {
-      code: httpStatusCodes.UNPROCESSABLE_ENTITY,
-      message: res.__(serverResponseMessage.RECORD_ALREADY_EXISTS),
-    };
-
   try {
     req.body.name = req.body.name ? JSON.parse(req.body.name) : [];
     req.body.description = req.body.description

@@ -70,6 +70,15 @@ module.exports.getPaginationData = async (qData) => {
       $match: searchQuery,
     },
     {
+      $lookup: {
+        from: "genders",
+        localField: "genderId",
+        foreignField: "_id",
+        as: "genderInfo",
+      },
+    },
+    { $unwind: { path: "$genderInfo", preserveNullAndEmptyArrays: true } },
+    {
       $sort: {
         ...sortOptions,
         ...(sortBy !== "createdAt" ? { createdAt: -1 } : {}),
@@ -84,6 +93,9 @@ module.exports.getPaginationData = async (qData) => {
         noOfQuantity: 1,
         quantityDiscount: 1,
         status: 1,
+        gender: {
+          $ifNull: ["$genderInfo.name", ""],
+        },
         mainImage: {
           $arrayElemAt: [
             {

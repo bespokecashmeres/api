@@ -13,7 +13,7 @@ const {
 } = require("./dbQuery");
 
 exports.createController = async (req, res, next) => {
-  const isExsist = await findOneRecord({ fabricId: req?.body?.fabricId });
+  const isExsist = await findOneRecord({ productTypeId: req?.body?.productTypeId });
 
   if (isExsist)
     throw {
@@ -145,14 +145,14 @@ exports.deleteController = async (req, res, next) => {
 };
 
 exports.statusController = async (req, res, next) => {
-  const fabric = await getById(req.body._id);
-  if (!fabric) {
+  const yarn = await getById(req.body._id);
+  if (!yarn) {
     throw {
       code: httpStatusCodes.UNPROCESSABLE_ENTITY,
       message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
     };
   }
-  await Update({ _id: `${fabric.id}`, status: !!req.body.status });
+  await Update({ _id: `${yarn.id}`, status: !!req.body.status });
   return res.json(
     success(
       httpStatusCodes.SUCCESS,

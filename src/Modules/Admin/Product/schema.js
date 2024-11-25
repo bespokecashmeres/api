@@ -91,9 +91,9 @@ const productSchema = new mongoose.Schema(
           type: Types.Object,
           default: {},
         },
-        fabricId: {
+        yarnId: {
           type: Types.ObjectId,
-          ref: "fabrics",
+          ref: "yarns",
           required: true,
         },
       },

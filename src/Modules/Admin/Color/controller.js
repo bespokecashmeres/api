@@ -13,7 +13,7 @@ const {
 } = require("./dbQuery");
 
 exports.createController = async (req, res, next) => {
-  const isExsist = await findOneRecord({ fabricId: req?.body?.fabricId });
+  const isExsist = await findOneRecord({ code: req?.body?.code });
 
   if (isExsist)
     throw {
