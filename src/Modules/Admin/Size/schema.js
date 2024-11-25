@@ -4,6 +4,7 @@ const { serverResponseMessage } = require("../../../../config/message");
 const { httpResponses } = require("../../../../utils/http-responses");
 const { httpStatusCodes } = require("../../../../utils/http-status-codes");
 const Types = mongoose.Schema.Types;
+const { ObjectId } = require("mongoose").Types;
 
 const sizeSchema = new mongoose.Schema(
   {
@@ -11,7 +12,7 @@ const sizeSchema = new mongoose.Schema(
       type: Types.ObjectId,
       ref: "producttypes",
       require: true,
-      unique: true
+      unique: true,
     },
     sizes: [
       {
@@ -49,13 +50,12 @@ const sizeSchema = new mongoose.Schema(
   }
 );
 
-
 sizeSchema.pre("findOneAndUpdate", async function (next) {
   const SchemaModel = mongoose.model("sizes", sizeSchema);
   const filter = this.getFilter();
   const productTypeId = this.get("productTypeId");
   const result = await SchemaModel.findOne({
-    $or: [{ productTypeId: new Types.ObjectId(productTypeId) }],
+    $or: [{ productTypeId: new ObjectId(productTypeId) }],
     _id: { $ne: filter._id },
   });
   if (result) {
@@ -72,7 +72,7 @@ sizeSchema.pre("save", async function (next) {
   const SchemaModel = this.model("sizes");
   try {
     const result = await SchemaModel.findOne({
-      $or: [{ productTypeId: new Types.ObjectId(this.productTypeId) }],
+      $or: [{ productTypeId: new ObjectId(this.productTypeId) }],
     });
     if (result) {
       const errorField = serverResponseMessage.PRODUCT_TYPE_EXISTS;

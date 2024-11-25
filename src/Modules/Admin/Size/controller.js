@@ -11,9 +11,12 @@ const {
   DeleteById,
   getOptionsForDropdown,
 } = require("./dbQuery");
+const ObjectId = require("mongoose").Schema.ObjectId;
 
 exports.createController = async (req, res, next) => {
-  const isExsist = await findOneRecord({ productTypeId: req?.body?.productTypeId });
+  const isExsist = await findOneRecord({
+    productTypeId: req?.body?.productTypeId,
+  });
 
   if (isExsist)
     throw {
@@ -59,7 +62,6 @@ exports.updateController = async (req, res, next) => {
       message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
     };
   }
-
   const updateRecord = await Update(req.body);
   return res
     .status(httpStatusCodes.SUCCESS)
