@@ -91,6 +91,18 @@ module.exports.findAll = async (language = DEFAULT_LOCALE) => {
   return await database.aggregate(pipeline);
 };
 
+module.exports.UpdateByType = async (data) => {
+  return await database
+    .findOneAndUpdate(
+      { type: data.type },
+      { $set: { ...data } },
+      {
+        new: true,
+      }
+    )
+    .lean();
+};
+
 module.exports.Update = async (data) => {
   return await database
     .findOneAndUpdate(
@@ -114,4 +126,3 @@ module.exports.getActive = async () => {
 module.exports.DeleteById = async (id) => {
   await database.findByIdAndDelete(id);
 };
-

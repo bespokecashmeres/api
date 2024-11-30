@@ -16,4 +16,7 @@ module.exports.MODULE_INFO_TYPES = [
   "seasonality",
   "perceivedWeight",
   "occassion",
+  "fitting",
+  "material",
+  "priceRange"
 ];

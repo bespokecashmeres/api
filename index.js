@@ -26,6 +26,10 @@ const patternModule = require("./src/Modules/Admin/YarnModules/Pattern/routes");
 const occassionModule = require("./src/Modules/Admin/YarnModules/Occassion/routes");
 const perceivedWeightsModule = require("./src/Modules/Admin/YarnModules/PerceivedWeight/routes");
 const seasonalityModule = require("./src/Modules/Admin/YarnModules/Seasonality/routes");
+const fittingModule = require("./src/Modules/Admin/YarnModules/Fitting/routes");
+const materialModule = require("./src/Modules/Admin/YarnModules/Material/routes");
+const priceRangesModule = require("./src/Modules/Admin/YarnModules/PriceRanges/routes");
+const preRegistrationModule = require("./src/Modules/User/PreRegistration/routes");
 
 const { logger } = require("./utils/logger");
 const connectToDatabase = require("./database/db");
@@ -103,6 +107,10 @@ patternModule(app);
 occassionModule(app);
 perceivedWeightsModule(app);
 seasonalityModule(app);
+fittingModule(app);
+materialModule(app);
+priceRangesModule(app);
+preRegistrationModule(app);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
