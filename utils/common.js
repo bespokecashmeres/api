@@ -1,5 +1,6 @@
 const fs = require("fs");
 const { config } = require("../config/config");
+const { ObjectId } = require("mongoose").Types;
 
 module.exports.getTokenTimeDifference = (decodedTime) => {
   // Convert the timestamp to a Date object
@@ -50,4 +51,44 @@ module.exports.generateRandomString = (length = 5) => {
     result += characters.charAt(randomIndex);
   }
   return result;
+};
+/**
+ * Generates a dynamic MongoDB query with regex conditions for a given property.
+ *
+ * @param {Object} dataObject - The object containing the fields to match (e.g., `req.body.name`).
+ * @param {String} prop - The parent field name (e.g., `name`, `title`).
+ * @param {String} excludeId - The MongoDB ObjectId to exclude from the query.
+ * @returns {Object} - The MongoDB query object.
+ */
+module.exports.generateDynamicQuery = (dataObject, prop, excludeId) => {
+  if (!dataObject || Object.keys(dataObject).length === 0) {
+    throw new Error("Invalid data object. Cannot generate query.");
+  }
+
+  const conditions = [];
+
+  // Loop through each property in the dataObject
+  for (const key in dataObject) {
+    if (Object.hasOwnProperty.call(dataObject, key)) {
+      conditions.push({
+        [`${prop}.${key}`]: { $regex: `^${dataObject[key]}$`, $options: "i" },
+      });
+    }
+  }
+
+  if (conditions.length === 0) {
+    throw new Error("No valid conditions generated for the query.");
+  }
+
+  const query = { $or: conditions };
+
+  // Add the condition to exclude the specified _id if provided
+  if (excludeId) {
+    if (!ObjectId.isValid(excludeId)) {
+      throw new Error("Invalid ObjectId provided for exclusion.");
+    }
+    query.$and = [{ _id: { $ne: new ObjectId(excludeId) } }];
+  }
+
+  return query;
 };

@@ -20,6 +20,12 @@ const productTypeModule = require("./src/Modules/Admin/ProductType/routes");
 const sizeModule = require("./src/Modules/Admin/Size/routes");
 const colorModule = require("./src/Modules/Admin/Color/routes");
 const productModule = require("./src/Modules/Admin/Product/routes");
+const moduleInfoModule = require("./src/Modules/Admin/YarnModules/ModuleInfo/routes");
+const colourModule = require("./src/Modules/Admin/YarnModules/Colour/routes");
+const patternModule = require("./src/Modules/Admin/YarnModules/Pattern/routes");
+const occassionModule = require("./src/Modules/Admin/YarnModules/Occassion/routes");
+const perceivedWeightsModule = require("./src/Modules/Admin/YarnModules/PerceivedWeight/routes");
+const seasonalityModule = require("./src/Modules/Admin/YarnModules/Seasonality/routes");
 
 const { logger } = require("./utils/logger");
 const connectToDatabase = require("./database/db");
@@ -91,6 +97,12 @@ productTypeModule(app);
 sizeModule(app);
 colorModule(app);
 productModule(app);
+moduleInfoModule(app);
+colourModule(app);
+patternModule(app);
+occassionModule(app);
+perceivedWeightsModule(app);
+seasonalityModule(app);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
