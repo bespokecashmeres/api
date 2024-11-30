@@ -10,6 +10,7 @@ const {
   DeleteById,
   findAll,
   getByQuery,
+  UpdateByType,
 } = require("./dbQuery");
 const {
   deleteFromS3,
@@ -22,10 +23,9 @@ exports.upsertInfoController = async (req, res) => {
     ...(isExists?.info ?? {}),
     ...(req.body.info ? JSON.parse(req.body.info) : {}),
   };
-
   let record = null;
   if (isExists) {
-    record = await Update(req.body);
+    record = await UpdateByType({ info: req.body.info, type: req.body.type });
   } else {
     record = await create(req.body);
   }
@@ -34,7 +34,7 @@ exports.upsertInfoController = async (req, res) => {
     .status(httpStatusCodes.SUCCESS)
     .json(
       success(
-        httpStatusCodes.CREATED,
+        httpStatusCodes.SUCCESS,
         httpResponses.SUCCESS,
         res.__(
           serverResponseMessage[isExists ? "RECORD_UPDATED" : "RECORD_CREATED"]
@@ -52,7 +52,6 @@ exports.upsertImageController = async (req, res) => {
   if (image) {
     try {
       const imagePath = await uploadToS3(image, "module-info");
-      console.log("imagePath: ", imagePath);
       req.body.image = imagePath;
       if (isExists?.image?.length) {
         await deleteFromS3(isExists?.image);
@@ -61,10 +60,13 @@ exports.upsertImageController = async (req, res) => {
       console.error("Image upload failed:", error);
     }
   }
-  
+
   let record = null;
   if (isExists) {
-    record = await Update(req.body);
+    record = await UpdateByType({
+      ...(image ? { image: req.body.image } : {}),
+      type: req.body.type,
+    });
   } else {
     record = await create(req.body);
   }
@@ -73,7 +75,7 @@ exports.upsertImageController = async (req, res) => {
     .status(httpStatusCodes.SUCCESS)
     .json(
       success(
-        httpStatusCodes.CREATED,
+        httpStatusCodes.SUCCESS,
         httpResponses.SUCCESS,
         res.__(
           serverResponseMessage[isExists ? "RECORD_UPDATED" : "RECORD_CREATED"]

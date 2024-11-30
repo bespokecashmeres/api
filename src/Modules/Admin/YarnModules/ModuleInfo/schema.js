@@ -6,7 +6,6 @@ const Types = mongoose.Schema.Types;
 const moduleInfoSchema = new mongoose.Schema({
   info: {
     type: Types.Object,
-    required: true,
     default: {},
   },
   image: {
