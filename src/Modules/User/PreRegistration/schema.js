@@ -48,7 +48,7 @@ const preUserRegistrationSchema = new Schema(
 
 // Encypting passwords before saving
 preUserRegistrationSchema.pre("save", async function (next) {
-  const User = this.model("users");
+  const User = this.model("preuserregistrations");
   try {
     const user = await User.findOne({
       $or: [{ email: this.email }],
