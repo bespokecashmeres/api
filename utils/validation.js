@@ -146,7 +146,7 @@ exports.productTypeCategoryIdJoiOptionalValidation = Joi.string()
     "string.length": `${JOI_ERROR}_INVALID_PRODUCT_TYPE_CATEGORY`,
     "string.hex": `${JOI_ERROR}_INVALID_PRODUCT_TYPE_CATEGORY`,
   });
-exports.statusJoiValidation = Joi.boolean()
+const statusJoiValidation = Joi.boolean()
   .optional()
   .valid(true, false)
   .default(true)
@@ -154,6 +154,7 @@ exports.statusJoiValidation = Joi.boolean()
     "any.only": `${JOI_ERROR}_ANY_ONLY_STATUS`,
     "boolean.base": `${JOI_ERROR}_TYPE_STATUS`,
   });
+exports.statusJoiValidation = statusJoiValidation;
 
 exports.listValidator = Joi.object({
   page: Joi.number().required(),
@@ -186,4 +187,14 @@ exports.statusValidator = Joi.object({
       "boolean.base": `${JOI_ERROR}_TYPE_STATUS`,
     }),
   _id: Joi.string().hex().length(24).required(),
+});
+
+exports.createNameValidator = Joi.object({
+  name: Joi.string().required(),
+  status: statusJoiValidation,
+});
+
+exports.updateNameValidator = Joi.object({
+  _id: Joi.string().hex().length(24).required(),
+  name: Joi.string().optional(),
 });

@@ -1,7 +1,6 @@
 const middleware = require("../../../../../middleware/middleware");
 const { verifyToken } = require("../../../../../services/auth");
 const hasRole = require("../../../../../middleware/hasRole");
-const { createValidator, updateValidator } = require("./validation");
 const {
   createController,
   updateController,
@@ -16,6 +15,8 @@ const {
   IdValidator,
   listValidator,
   statusValidator,
+  createNameValidator,
+  updateNameValidator,
 } = require("../../../../../utils/validation");
 
 module.exports = (app) => {
@@ -23,14 +24,14 @@ module.exports = (app) => {
     "/yarn-module/perceived-weight/add",
     verifyToken,
     hasRole(["admin"]),
-    middleware(createValidator),
+    middleware(createNameValidator),
     asyncHandler(createController)
   );
   app.put(
     "/yarn-module/perceived-weight/update",
     verifyToken,
     hasRole(["admin"]),
-    middleware(updateValidator),
+    middleware(updateNameValidator),
     asyncHandler(updateController)
   );
   app.get(
