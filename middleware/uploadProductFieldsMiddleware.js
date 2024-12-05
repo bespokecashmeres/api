@@ -26,4 +26,13 @@ const uploadProductFields = (colorsCount) => {
   return upload.fields(fields);
 };
 
-module.exports = uploadProductFields;
+const uploadYarnFields = (count) => {
+  const fields = [];
+  for (let i = 0; i < count; i++) {
+    fields.push({ name: `yarns[${i}][image]`, maxCount: 1 });
+  }
+  return upload.fields(fields);
+};
+
+exports.uploadYarnFields = uploadYarnFields;
+exports.uploadProductFields = uploadProductFields;

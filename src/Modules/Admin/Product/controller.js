@@ -8,7 +8,6 @@ const {
   getById,
   getPaginationData,
   DeleteById,
-  getProductListPaginationData,
   rowsReorderData,
   getRelatedOptionsForDropdown,
 } = require("./dbQuery");
