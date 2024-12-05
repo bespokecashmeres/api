@@ -1,4 +1,5 @@
 const { serverResponseMessage } = require("../../../../config/message");
+const { uploadToS3, deleteManyFromS3 } = require("../../../../utils/fileUploads");
 const { httpResponses } = require("../../../../utils/http-responses");
 const { httpStatusCodes } = require("../../../../utils/http-status-codes");
 const { success } = require("../../../../utils/response");
@@ -22,13 +23,37 @@ exports.createController = async (req, res, next) => {
     };
 
   try {
-    req.body.name = req.body.name ? JSON.parse(req.body.name) : [];
-    req.body.yarns = req.body.yarns ? JSON.parse(req.body.yarns) : [];
+    req.body.name = req.body.name ? JSON.parse(req.body.name) : {};
   } catch (error) {
     throw {
       code: httpStatusCodes.BAD_REQUEST,
       message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
     };
+  }
+
+  if (req.files) {
+    for (const [index, yarn] of req.body.yarns.entries()) {
+      if (req.files[`yarns[${index}][image]`]) {
+        const singleImageFile = req.files[`yarns[${index}][image]`][0];
+        try {
+          yarn.image = await uploadToS3(singleImageFile, "yarns");
+        } catch (err) {}
+      }
+    }
+  }
+  
+  if (req.body?.yarns?.length) {
+    for (const [index, yarn] of req.body.yarns.entries()) {
+      if (yarn.name) {
+        yarn.name = JSON.parse(yarn.name);
+      }
+      if (yarn.value) {
+        yarn.value = JSON.parse(yarn.value);
+      }
+      if (yarn.info) {
+        yarn.info = JSON.parse(yarn.info);
+      }
+    }
   }
 
   const createRecord = await create(req.body);
@@ -53,13 +78,43 @@ exports.updateController = async (req, res, next) => {
       message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
     };
   try {
-    req.body.name = req.body.name ? JSON.parse(req.body.name) : [];
-    req.body.yarns = req.body.yarns ? JSON.parse(req.body.yarns) : [];
+    req.body.name = req.body.name ? JSON.parse(req.body.name) : {};
   } catch (error) {
     throw {
       code: httpStatusCodes.BAD_REQUEST,
       message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
     };
+  }
+
+  if (req.files) {
+    for (const [index, yarn] of req.body.yarns.entries()) {
+      if (req.files[`yarns[${index}][image]`]) {
+        const oldImageUrl = isExsist.yarns[index].image;
+        if (oldImageUrl) {
+          try {
+            await deleteFromS3(oldImageUrl);
+          } catch (err) {}
+        }
+        const singleImageFile = req.files[`yarns[${index}][image]`][0];
+        try {
+          yarn.image = await uploadToS3(singleImageFile, "yarns");
+        } catch (err) {}
+      }
+    }
+  }
+  
+  if (req.body?.yarns?.length) {
+    for (const [index, yarn] of req.body.yarns.entries()) {
+      if (yarn.name) {
+        yarn.name = JSON.parse(yarn.name);
+      }
+      if (yarn.value) {
+        yarn.value = JSON.parse(yarn.value);
+      }
+      if (yarn.info) {
+        yarn.info = JSON.parse(yarn.info);
+      }
+    }
   }
 
   const updateRecord = await Update(req.body);
@@ -133,6 +188,10 @@ exports.deleteController = async (req, res, next) => {
       message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
     };
   // await deleteProductCascade(_id, req.userId);
+  try {
+    const images = isExsist.yarns.map((yarn) => yarn.image).filter(Boolean);
+    await deleteManyFromS3(images);
+  } catch(error) {}
   const deleteIndex = await DeleteById(_id);
   return res
     .status(httpStatusCodes.SUCCESS)

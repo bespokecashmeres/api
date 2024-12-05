@@ -16,12 +16,18 @@ const {
 } = require("./controller");
 const { asyncHandler } = require("../../../../utils/asyncHandler");
 const { IdValidator, listValidator, statusValidator } = require("../../../../utils/validation");
+const { uploadYarnFields } = require("../../../../middleware/uploadProductFieldsMiddleware");
 
 module.exports = (app) => {
   app.post(
     "/yarn/add",
     verifyToken,
     hasRole(["admin"]),
+    (req, res, next) => {
+      const count = parseInt(req.headers["count"] || "0", 10);
+      const uploadMiddleware = uploadYarnFields(count);
+      uploadMiddleware(req, res, next);
+    },
     middleware(createValidator),
     asyncHandler(createController)
   );
@@ -29,6 +35,11 @@ module.exports = (app) => {
     "/yarn/update",
     verifyToken,
     hasRole(["admin"]),
+    (req, res, next) => {
+      const count = parseInt(req.headers["count"] || "0", 10);
+      const uploadMiddleware = uploadYarnFields(count);
+      uploadMiddleware(req, res, next);
+    },
     middleware(updateValidator),
     asyncHandler(updateController)
   );

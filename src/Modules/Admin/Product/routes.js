@@ -1,7 +1,11 @@
 const middleware = require("../../../../middleware/middleware");
 const { verifyToken } = require("../../../../services/auth");
 const hasRole = require("../../../../middleware/hasRole");
-const { createValidator, updateValidator, relatedProductsValidator } = require("./validation");
+const {
+  createValidator,
+  updateValidator,
+  relatedProductsValidator,
+} = require("./validation");
 const {
   createController,
   updateController,
@@ -13,14 +17,15 @@ const {
   statusController,
 } = require("./controller");
 const { asyncHandler } = require("../../../../utils/asyncHandler");
-const uploadMultiple = require("../../../../middleware/uploadMultipleMiddleware");
 const {
   IdValidator,
   listValidator,
   reorderValidator,
   statusValidator,
 } = require("../../../../utils/validation");
-const uploadProductFields = require("../../../../middleware/uploadProductFieldsMiddleware");
+const {
+  uploadProductFields,
+} = require("../../../../middleware/uploadProductFieldsMiddleware");
 
 module.exports = (app) => {
   app.post(
