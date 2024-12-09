@@ -28,6 +28,7 @@ const uploadProductFields = (colorsCount) => {
 
 const uploadYarnFields = (count) => {
   const fields = [];
+  fields.push({ name: "image", maxCount: 1 });
   for (let i = 0; i < count; i++) {
     fields.push({ name: `yarns[${i}][image]`, maxCount: 1 });
   }

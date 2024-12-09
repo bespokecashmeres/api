@@ -1,11 +1,15 @@
 const { serverResponseMessage } = require("../../../../config/message");
-const { uploadToS3, deleteManyFromS3 } = require("../../../../utils/fileUploads");
+const { generateYarnId } = require("../../../../utils/common");
+const {
+  uploadToS3,
+  deleteManyFromS3,
+  deleteFromS3,
+} = require("../../../../utils/fileUploads");
 const { httpResponses } = require("../../../../utils/http-responses");
 const { httpStatusCodes } = require("../../../../utils/http-status-codes");
 const { success } = require("../../../../utils/response");
 const {
   create,
-  findOneRecord,
   Update,
   getById,
   getPaginationData,
@@ -14,13 +18,7 @@ const {
 } = require("./dbQuery");
 
 exports.createController = async (req, res, next) => {
-  const isExsist = await findOneRecord({ yarnId: req?.body?.yarnId });
-
-  if (isExsist)
-    throw {
-      code: httpStatusCodes.UNPROCESSABLE_ENTITY,
-      message: res.__(serverResponseMessage.RECORD_ALREADY_EXISTS),
-    };
+  req.body.yarnId = await generateYarnId();
 
   try {
     req.body.name = req.body.name ? JSON.parse(req.body.name) : {};
@@ -32,16 +30,26 @@ exports.createController = async (req, res, next) => {
   }
 
   if (req.files) {
+    const image = req.files?.["image"] ? req.files["image"][0] : null;
+    if (image) {
+      try {
+        req.body.image = await uploadToS3(image, "yarns");
+      } catch (error) {
+        console.error("Yarn Image upload failed:", error);
+      }
+    }
     for (const [index, yarn] of req.body.yarns.entries()) {
       if (req.files[`yarns[${index}][image]`]) {
         const singleImageFile = req.files[`yarns[${index}][image]`][0];
         try {
           yarn.image = await uploadToS3(singleImageFile, "yarns");
-        } catch (err) {}
+        } catch (err) {
+          console.error("Yarn Images upload failed:", err);
+        }
       }
     }
   }
-  
+
   if (req.body?.yarns?.length) {
     for (const [index, yarn] of req.body.yarns.entries()) {
       if (yarn.name) {
@@ -87,22 +95,40 @@ exports.updateController = async (req, res, next) => {
   }
 
   if (req.files) {
+    const image = req.files?.["image"] ? req.files["image"][0] : null;
+    if (image) {
+      try {
+        req.body.image = await uploadToS3(image, "yarns");
+        if (isExsist?.image) {
+          await deleteFromS3(isExsist?.image);
+        }
+      } catch (error) {
+        console.error("Yarn Image upload failed:", error);
+      }
+    }
     for (const [index, yarn] of req.body.yarns.entries()) {
-      if (req.files[`yarns[${index}][image]`]) {
+      const newImage = req.files[`yarns[${index}][image]`];
+      if (newImage) {
         const oldImageUrl = isExsist.yarns[index].image;
         if (oldImageUrl) {
           try {
             await deleteFromS3(oldImageUrl);
-          } catch (err) {}
+          } catch (err) {
+            console.error("Yarn existing image delete failed:", err);
+          }
         }
-        const singleImageFile = req.files[`yarns[${index}][image]`][0];
+        const singleImageFile = newImage[0];
         try {
           yarn.image = await uploadToS3(singleImageFile, "yarns");
-        } catch (err) {}
+        } catch (err) {
+          console.error("Yarn images upload failed:", err);
+        }
+      } else {
+        yarn.image = isExsist.yarns[index].image;
       }
     }
   }
-  
+
   if (req.body?.yarns?.length) {
     for (const [index, yarn] of req.body.yarns.entries()) {
       if (yarn.name) {
@@ -191,7 +217,7 @@ exports.deleteController = async (req, res, next) => {
   try {
     const images = isExsist.yarns.map((yarn) => yarn.image).filter(Boolean);
     await deleteManyFromS3(images);
-  } catch(error) {}
+  } catch (error) {}
   const deleteIndex = await DeleteById(_id);
   return res
     .status(httpStatusCodes.SUCCESS)

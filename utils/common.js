@@ -1,5 +1,6 @@
 const fs = require("fs");
 const { config } = require("../config/config");
+const { findOneRecord } = require("../src/Modules/Admin/Yarn/dbQuery");
 const { ObjectId } = require("mongoose").Types;
 
 module.exports.getTokenTimeDifference = (decodedTime) => {
@@ -69,7 +70,7 @@ module.exports.generateDynamicQuery = (dataObject, prop, excludeId) => {
 
   // Loop through each property in the dataObject
   for (const key in dataObject) {
-    if (Object.hasOwnProperty.call(dataObject, key)) {
+    if (Object.hasOwnProperty.call(dataObject, key) && dataObject?.[key]?.length) {
       conditions.push({
         [`${prop}.${key}`]: { $regex: `^${dataObject[key]}$`, $options: "i" },
       });
@@ -91,4 +92,19 @@ module.exports.generateDynamicQuery = (dataObject, prop, excludeId) => {
   }
 
   return query;
+};
+
+module.exports.generateYarnId = async () => {
+  let yarnId;
+  let isExsist;
+
+  do {
+    // Generate a new yarnId
+    yarnId = Math.floor(10000000 + Math.random() * 90000000);
+
+    // Check if it exists in the database
+    isExsist = await findOneRecord({ yarnId });
+  } while (isExsist); // Repeat if the ID exists
+
+  return yarnId; // Return the unique ID
 };

@@ -41,13 +41,17 @@ module.exports.getPaginationData = async (qData) => {
     filter = {},
     language = DEFAULT_LOCALE,
   } = qData;
+  const trimedSearch = search?.trim() ?? "";
 
   // Match Stage for Filtering and Searching
   const matchStage = {
     $match: {
       ...filter,
-      ...(search && {
-        [`name.${language}`]: { $regex: search, $options: "i" },
+      ...(trimedSearch && {
+        $or: [
+          { [`name.${language}`]: { $regex: trimedSearch, $options: "i" } },
+          { yarnId: { $regex: trimedSearch, $options: "i" } },
+        ],
       }),
     },
   };
@@ -57,6 +61,11 @@ module.exports.getPaginationData = async (qData) => {
     $project: {
       _id: 1,
       name: { $ifNull: [`$name.${language}`, ""] },
+      gender: {
+        $ifNull: [`$genderInfo.name.${language}`, ""],
+      },
+      image: 1,
+      price: 1,
       yarnId: 1,
       createdAt: 1,
       updatedAt: 1,
@@ -71,6 +80,15 @@ module.exports.getPaginationData = async (qData) => {
   // Aggregation Query
   const aggregationPipeline = [
     matchStage,
+    {
+      $lookup: {
+        from: "genders",
+        localField: "genderId",
+        foreignField: "_id",
+        as: "genderInfo",
+      },
+    },
+    { $unwind: { path: "$genderInfo", preserveNullAndEmptyArrays: true } },
     projectStage,
     { $sort: sortOptions },
     { $skip: (page - 1) * perPage },
