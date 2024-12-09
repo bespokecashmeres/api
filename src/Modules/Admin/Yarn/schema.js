@@ -8,72 +8,81 @@ const yarnSchema = new mongoose.Schema(
       type: Types.Object,
       require: true,
     },
+    image: {
+      type: Types.String,
+      default: "",
+    },
+    price: {
+      type: Types.Number,
+      default: 0,
+    },
+    genderId: {
+      type: Types.ObjectId,
+      ref: "genders",
+      default: null,
+    },
     // yarn origin
     countryId: {
       type: Types.ObjectId,
       ref: "countries",
-      default: ""
+      default: null,
     },
     yarnId: {
       type: Types.String,
       require: true,
+      index: true,
     },
     colourId: {
       type: Types.ObjectId,
       ref: "colours",
-      default: ""
+      default: null,
     },
     patternId: {
       type: Types.ObjectId,
       ref: "patterns",
-      default: ""
+      default: null,
     },
     occassionId: {
       type: Types.ObjectId,
       ref: "occassions",
-      default: ""
+      default: null,
     },
     seasonalityId: {
       type: Types.ObjectId,
       ref: "seasonalities",
-      default: ""
+      default: null,
     },
     perceivedWeightId: {
       type: Types.ObjectId,
       ref: "perceivedweights",
-      default: ""
+      default: null,
     },
     fittingId: {
       type: Types.ObjectId,
       ref: "fittings",
-      default: ""
+      default: null,
     },
     materialId: {
       type: Types.ObjectId,
       ref: "materials",
-      default: ""
-    },
-    priceRangeId: {
-      type: Types.ObjectId,
-      ref: "priceranges",
-      default: ""
+      default: null,
     },
     yarns: [
       {
         image: Types.String,
         name: {
           type: Types.Object,
-          default: {}
+          default: {},
         },
         value: {
           type: Types.Object,
-          default: {}
+          default: {},
         },
         info: {
           type: Types.Object,
-          default: {}
-        }
-      }
+          default: {},
+        },
+      },
     ],
     status: {
       type: Types.Boolean,
