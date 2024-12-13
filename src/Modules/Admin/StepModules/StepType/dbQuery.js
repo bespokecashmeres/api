@@ -1,5 +1,6 @@
-const { DEFAULT_LOCALE } = require("../../../../utils/constants");
+const { DEFAULT_LOCALE } = require("../../../../../utils/constants");
 const database = require("./schema");
+const productTypeDatabase = require("../../ProductType/schema");
 const { ObjectId } = require("mongoose").Types;
 
 RegExp.escape = function (s) {
@@ -7,7 +8,10 @@ RegExp.escape = function (s) {
 };
 
 module.exports.create = async (req) => {
-  const highestOrder = await database.findOne().sort("-rowOrder").exec();
+  const highestOrder = await database
+    .findOne({ productTypeId: new ObjectId(req.productTypeId) })
+    .sort("-rowOrder")
+    .exec();
   const nextOrder = highestOrder ? highestOrder.rowOrder + 1 : 1;
   return await database.create({ ...req, rowOrder: nextOrder });
 };
@@ -16,18 +20,6 @@ module.exports.findOneRecord = async (req) => {
 };
 module.exports.findRecord = async (req) => {
   return await database.find(req);
-};
-
-module.exports.totalCount = async (data) => {
-  const { search } = data;
-  const { couponCode } = search;
-  let searchObj = {};
-  if (couponCode) {
-    searchObj["couponCode"] = {
-      $regex: new RegExp(RegExp.escape(couponCode), "i"),
-    };
-  }
-  return await database.countDocuments(searchObj);
 };
 
 module.exports.rowsReorderData = async (data) => {
@@ -45,62 +37,33 @@ module.exports.rowsReorderData = async (data) => {
   }
 };
 
-module.exports.getPaginationData = async (qData) => {
-  const {
-    perPage,
-    page,
-    sortBy = "createdAt",
-    sortOrder = "desc",
-    search = "",
-    filter = {},
-    language = DEFAULT_LOCALE,
-  } = qData;
+module.exports.getTabsData = async (qData) => {
+  const { productTypeId, language = DEFAULT_LOCALE } = qData;
 
-  const matchStage = {
-    $match: {
-      ...filter,
-      ...(search && {
-        [`title.${language}`]: { $regex: search, $options: "i" },
-      }),
-    },
-  };
+  let prodTypeId = productTypeId;
+
+  if (!productTypeId) {
+    prodTypeId = await productTypeDatabase.findOne({ status: true });
+  }
 
   const projectFields = {
-    _id: 1,
-    title: { $ifNull: [`$title.${language}`, ""] },
-    description: { $ifNull: [`$description.${language}`, ""] },
-    image: 1,
-    pdf: 1,
-    rowOrder: 1,
-    createdAt: 1,
-    updatedAt: 1,
+    _id: 0,
+    label: { $ifNull: [`$name.${language}`, ""] },
+    value: "$_id",
     status: 1,
   };
 
-  const sortStage = {
-    $sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
-  };
-
-  const skipLimitStage = [{ $skip: (page - 1) * perPage }, { $limit: perPage }];
-
   const pipeline = [
-    matchStage,
+    {
+      $match: {
+        productTypeId: new ObjectId(prodTypeId),
+      },
+    },
     { $project: projectFields },
-    sortStage,
-    ...skipLimitStage,
+    { $sort: { rowOrder: 1 } },
   ];
 
-  const [data, count] = await Promise.all([
-    database.aggregate(pipeline),
-    database.countDocuments(matchStage.$match),
-  ]);
-
-  return {
-    currentPage: page,
-    totalCount: count,
-    totalPage: Math.ceil(count / perPage),
-    data,
-  };
+  return await database.aggregate(pipeline);
 };
 
 module.exports.getById = async (id) => {
@@ -110,21 +73,23 @@ module.exports.getByQuery = async (obj) => {
   return await database.findOne(obj);
 };
 
-module.exports.findAll = async (language = DEFAULT_LOCALE) => {
+module.exports.findAll = async ({
+  productTypeId,
+  language = DEFAULT_LOCALE,
+}) => {
   const projectFields = {
     _id: 1,
-    title: `$title.${language}`,
-    description: `$description.${language}`,
-    image: 1,
-    pdf: 1,
+    name: `$name.${language}`,
+    info: `$info.${language}`,
     rowOrder: 1,
     createdAt: 1,
     updatedAt: 1,
     status: 1,
+    productTypeId: 1,
   };
 
   const pipeline = [
-    { $match: { status: true } },
+    { $match: { status: true, productTypeId: new ObjectId(productTypeId) } },
     { $project: projectFields },
     { $sort: { rowOrder: 1 } },
   ];
@@ -153,8 +118,10 @@ module.exports.getActive = async () => {
 };
 
 module.exports.DeleteById = async (id) => {
-  await database.findByIdAndDelete(id);
-  const remainingRows = await database.find().sort({ rowOrder: 1 });
+  const deletedDoc = await database.findByIdAndDelete(id);
+  const remainingRows = await database
+    .find({ productTypeId: deletedDoc.productTypeId })
+    .sort({ rowOrder: 1 });
   const bulkOperations = remainingRows.map((row, index) => ({
     updateOne: {
       filter: { _id: row._id },
@@ -162,8 +129,4 @@ module.exports.DeleteById = async (id) => {
     },
   }));
   await database.bulkWrite(bulkOperations);
-};
-
-module.exports.getByCouponCode = async (couponCode) => {
-  return await database.findOne({ couponCode });
 };
