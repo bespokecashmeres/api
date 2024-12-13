@@ -1,4 +1,4 @@
-const { DEFAULT_LOCALE } = require("../../../../utils/constants");
+const { DEFAULT_LOCALE } = require("../../../../../utils/constants");
 const database = require("./schema");
 const { ObjectId } = require("mongoose").Types;
 
@@ -7,7 +7,10 @@ RegExp.escape = function (s) {
 };
 
 module.exports.create = async (req) => {
-  const highestOrder = await database.findOne().sort("-rowOrder").exec();
+  const highestOrder = await database
+    .findOne({ stepTypeId: new ObjectId(req.stepTypeId) })
+    .sort("-rowOrder")
+    .exec();
   const nextOrder = highestOrder ? highestOrder.rowOrder + 1 : 1;
   return await database.create({ ...req, rowOrder: nextOrder });
 };
@@ -49,11 +52,12 @@ module.exports.getPaginationData = async (qData) => {
   const {
     perPage,
     page,
-    sortBy = "createdAt",
+    sortBy = "rowOrder",
     sortOrder = "desc",
     search = "",
     filter = {},
     language = DEFAULT_LOCALE,
+    stepTypeId,
   } = qData;
 
   const matchStage = {
@@ -62,6 +66,7 @@ module.exports.getPaginationData = async (qData) => {
       ...(search && {
         [`title.${language}`]: { $regex: search, $options: "i" },
       }),
+      stepTypeId: new ObjectId(stepTypeId),
     },
   };
 
@@ -69,8 +74,8 @@ module.exports.getPaginationData = async (qData) => {
     _id: 1,
     title: { $ifNull: [`$title.${language}`, ""] },
     description: { $ifNull: [`$description.${language}`, ""] },
-    image: 1,
-    pdf: 1,
+    graphImage: 1,
+    realImage: 1,
     rowOrder: 1,
     createdAt: 1,
     updatedAt: 1,
@@ -110,13 +115,13 @@ module.exports.getByQuery = async (obj) => {
   return await database.findOne(obj);
 };
 
-module.exports.findAll = async (language = DEFAULT_LOCALE) => {
+module.exports.findAll = async (language = DEFAULT_LOCALE, stepTypeId) => {
   const projectFields = {
     _id: 1,
     title: `$title.${language}`,
     description: `$description.${language}`,
-    image: 1,
-    pdf: 1,
+    graphImage: 1,
+    realImage: 1,
     rowOrder: 1,
     createdAt: 1,
     updatedAt: 1,
@@ -124,7 +129,7 @@ module.exports.findAll = async (language = DEFAULT_LOCALE) => {
   };
 
   const pipeline = [
-    { $match: { status: true } },
+    { $match: { status: true, stepTypeId: new ObjectId(stepTypeId) } },
     { $project: projectFields },
     { $sort: { rowOrder: 1 } },
   ];
@@ -144,17 +149,11 @@ module.exports.Update = async (data) => {
     .lean();
 };
 
-module.exports.getActive = async () => {
-  return await database
-    .find({
-      status: true,
-    })
-    .sort({ rowOrder: 1 });
-};
-
 module.exports.DeleteById = async (id) => {
-  await database.findByIdAndDelete(id);
-  const remainingRows = await database.find().sort({ rowOrder: 1 });
+  const deletedDoc = await database.findByIdAndDelete(id);
+  const remainingRows = await database
+    .find({ stepTypeId: deletedDoc.stepTypeId })
+    .sort({ rowOrder: 1 });
   const bulkOperations = remainingRows.map((row, index) => ({
     updateOne: {
       filter: { _id: row._id },
@@ -162,8 +161,4 @@ module.exports.DeleteById = async (id) => {
     },
   }));
   await database.bulkWrite(bulkOperations);
-};
-
-module.exports.getByCouponCode = async (couponCode) => {
-  return await database.findOne({ couponCode });
 };

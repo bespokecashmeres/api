@@ -30,6 +30,8 @@ const fittingModule = require("./src/Modules/Admin/YarnModules/Fitting/routes");
 const materialModule = require("./src/Modules/Admin/YarnModules/Material/routes");
 const priceRangesModule = require("./src/Modules/Admin/YarnModules/PriceRanges/routes");
 const preRegistrationModule = require("./src/Modules/User/PreRegistration/routes");
+const stepTypeModule = require("./src/Modules/Admin/StepModules/StepType/routes");
+const stepCardModule = require("./src/Modules/Admin/StepModules/StepCard/routes");
 
 const { logger } = require("./utils/logger");
 const connectToDatabase = require("./database/db");
@@ -111,6 +113,8 @@ fittingModule(app);
 materialModule(app);
 priceRangesModule(app);
 preRegistrationModule(app);
+stepTypeModule(app);
+stepCardModule(app);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
