@@ -3,7 +3,7 @@ const { serverResponseMessage } = require("../../../../config/message");
 const { httpResponses } = require("../../../../utils/http-responses");
 const { httpStatusCodes } = require("../../../../utils/http-status-codes");
 
-const { userCreate } = require("./dbQuery");
+const { userCreate, getPaginationData } = require("./dbQuery");
 
 exports.createUserController = async (req, res) => {
   const userCreateResponse = await userCreate(req.body);
@@ -21,4 +21,17 @@ exports.createUserController = async (req, res) => {
       undefined
     )
   );
+};
+
+exports.listController = async (req, res, next) => {
+  return res
+    .status(httpStatusCodes.SUCCESS)
+    .json(
+      success(
+        httpStatusCodes.SUCCESS,
+        httpResponses.SUCCESS,
+        res.__(serverResponseMessage.RECORD_FETCHED),
+        await getPaginationData(req.body)
+      )
+    );
 };
