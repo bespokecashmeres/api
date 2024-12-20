@@ -51,6 +51,7 @@ module.exports.getTabsData = async (qData) => {
     label: { $ifNull: [`$name.${language}`, ""] },
     value: "$_id",
     status: 1,
+    rowOrder: 1
   };
 
   const pipeline = [

@@ -32,6 +32,7 @@ const priceRangesModule = require("./src/Modules/Admin/YarnModules/PriceRanges/r
 const preRegistrationModule = require("./src/Modules/User/PreRegistration/routes");
 const stepTypeModule = require("./src/Modules/Admin/StepModules/StepType/routes");
 const stepCardModule = require("./src/Modules/Admin/StepModules/StepCard/routes");
+const fittingSizesModule = require("./src/Modules/Admin/FittingSizes/routes");
 
 const { logger } = require("./utils/logger");
 const connectToDatabase = require("./database/db");
@@ -115,6 +116,7 @@ priceRangesModule(app);
 preRegistrationModule(app);
 stepTypeModule(app);
 stepCardModule(app);
+fittingSizesModule(app);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
