@@ -34,7 +34,7 @@ const mainCategorySchema = new mongoose.Schema({
   },
   genderId: {
     type: Types.ObjectId,
-    ref: "Gender",
+    ref: "genders",
     required: true,
   },
 });

@@ -1,5 +1,5 @@
 const { serverResponseMessage } = require("../../../../config/message");
-const { generateYarnId } = require("../../../../utils/common");
+// const { generateYarnId } = require("../../../../utils/common");
 const {
   uploadToS3,
   deleteManyFromS3,
@@ -15,10 +15,18 @@ const {
   getPaginationData,
   DeleteById,
   getDataForDropdown,
+  findOneRecord,
 } = require("./dbQuery");
+const { ObjectId } = require("mongoose").Types;
 
 exports.createController = async (req, res, next) => {
-  req.body.yarnId = await generateYarnId();
+  // req.body.yarnId = await generateYarnId();
+  const isExsist = await findOneRecord({ yarnId: req.body.yarnId });
+  if (isExsist)
+    throw {
+      code: httpStatusCodes.BAD_REQUEST,
+      message: res.__(serverResponseMessage.YARN_ID_ALREADY_EXISTS),
+    };
 
   try {
     req.body.name = req.body.name ? JSON.parse(req.body.name) : {};
@@ -38,14 +46,30 @@ exports.createController = async (req, res, next) => {
         console.error("Yarn Image upload failed:", error);
       }
     }
-    for (const [index, yarn] of req.body.yarns.entries()) {
-      if (req.files[`yarns[${index}][image]`]) {
-        const singleImageFile = req.files[`yarns[${index}][image]`][0];
-        try {
-          yarn.image = await uploadToS3(singleImageFile, "yarns");
-        } catch (err) {
-          console.error("Yarn Images upload failed:", err);
+    const imageUploadPromise = [];
+    if (req.body?.yarns?.length) {
+      for (const [index, yarn] of req.body?.yarns?.entries()) {
+        if (req.files[`yarns[${index}][image]`]) {
+          const singleImageFile = req.files[`yarns[${index}][image]`][0];
+          try {
+            if (singleImageFile) {
+              imageUploadPromise.push(
+                uploadToS3(singleImageFile, "yarns").then((imageUrl) => {
+                  yarn.image = imageUrl;
+                })
+              );
+            }
+          } catch (err) {
+            console.error("Yarn Images upload failed:", err);
+          }
         }
+      }
+    }
+    if (imageUploadPromise.length) {
+      try {
+        await Promise.allSettled(imageUploadPromise).then();
+      } catch (err) {
+        console.log("imageUploadPromise error", err);
       }
     }
   }
@@ -79,12 +103,17 @@ exports.createController = async (req, res, next) => {
 
 exports.updateController = async (req, res, next) => {
   const { _id } = req.body;
+
+  // Fetch the existing record
   const isExsist = await getById(_id);
-  if (!isExsist)
+  if (!isExsist) {
     throw {
       code: httpStatusCodes.UNPROCESSABLE_ENTITY,
       message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
     };
+  }
+
+  // Parse the multilingual data for the main record
   try {
     req.body.name = req.body.name ? JSON.parse(req.body.name) : {};
   } catch (error) {
@@ -94,37 +123,45 @@ exports.updateController = async (req, res, next) => {
     };
   }
 
-  if (req.files) {
-    const image = req.files?.["image"] ? req.files["image"][0] : null;
-    if (image) {
-      try {
-        req.body.image = await uploadToS3(image, "yarns");
-        if (isExsist?.image) {
-          await deleteFromS3(isExsist?.image);
-        }
-      } catch (error) {
-        console.error("Yarn Image upload failed:", error);
+  // Initialize lists for tracking image uploads and deletions
+  const deletedImages = []; // Store URLs of images to delete
+
+  // Process the main image
+  if (req.files?.image) {
+    const image = req.files["image"][0];
+    try {
+      req.body.image = await uploadToS3(image, "yarns");
+      if (isExsist?.image) {
+        deletedImages.push(isExsist.image); // Add old image for deletion
       }
+    } catch (error) {
+      console.error("Main image upload failed:", error);
     }
-    for (const [index, yarn] of req.body.yarns.entries()) {
-      const newImage = req.files[`yarns[${index}][image]`];
+  } else {
+    // If no new image is uploaded, retain the existing image
+    req.body.image = isExsist?.image || "";
+  }
+
+  const imageUploadPromise = [];
+  if (req.body?.yarns?.length) {
+    for (const [index, yarn] of req.body?.yarns?.entries()) {
+      const newImage = req.files?.[`yarns[${index}][image]`]?.[0];
       if (newImage) {
-        const oldImageUrl = isExsist.yarns[index].image;
-        if (oldImageUrl) {
-          try {
-            await deleteFromS3(oldImageUrl);
-          } catch (err) {
-            console.error("Yarn existing image delete failed:", err);
-          }
-        }
-        const singleImageFile = newImage[0];
         try {
-          yarn.image = await uploadToS3(singleImageFile, "yarns");
+          imageUploadPromise.push(
+            uploadToS3(newImage, "yarns").then((imageUrl) => {
+              yarn.image = imageUrl;
+            })
+          );
+          const oldImageUrl = isExsist?.yarns?.[index]?.image;
+          if (oldImageUrl) {
+            deletedImages.push(oldImageUrl);
+          }
         } catch (err) {
-          console.error("Yarn images upload failed:", err);
+          console.error("Yarn Images upload failed:", err);
         }
       } else {
-        yarn.image = isExsist.yarns[index].image;
+        yarn.image = isExsist?.yarns?.[index]?.image ?? "";
       }
     }
   }
@@ -143,7 +180,41 @@ exports.updateController = async (req, res, next) => {
     }
   }
 
-  const updateRecord = await Update(req.body);
+  if (imageUploadPromise.length) {
+    try {
+      await Promise.allSettled(imageUploadPromise);
+    } catch (err) {
+      console.log("imageUploadPromise error", err);
+    }
+  }
+
+  // Identify and delete removed yarns' images
+  const yarnIdsInRequest = new Set(
+    req.body?.yarns?.map((yarn) => yarn.uuid) ?? []
+  );
+  const removedYarns =
+    isExsist?.yarns?.filter((yarn) => !yarnIdsInRequest.has(yarn.uuid)) ?? [];
+  removedYarns.forEach((yarn) => {
+    if (yarn.image) {
+      deletedImages.push(yarn.image); // Queue the old image for deletion
+    }
+  });
+
+  // Perform bulk image deletions
+  if (deletedImages.length) {
+    try {
+      await Promise.allSettled(
+        deletedImages.map((image) => deleteFromS3(image))
+      );
+    } catch (err) {
+      console.error("Image deletion failed:", err);
+    }
+  }
+
+  // Update the record with the new data (including yarns)
+  const updatedRecord = await Update(req.body);
+
+  // Return success response
   return res
     .status(httpStatusCodes.SUCCESS)
     .json(
@@ -151,7 +222,7 @@ exports.updateController = async (req, res, next) => {
         httpStatusCodes.SUCCESS,
         httpResponses.SUCCESS,
         res.__(serverResponseMessage.RECORD_UPDATED),
-        updateRecord
+        updatedRecord
       )
     );
 };
