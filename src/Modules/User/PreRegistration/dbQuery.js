@@ -8,6 +8,10 @@ module.exports.userCreate = async (req) => {
   return await database.create(req);
 };
 
+module.exports.findOneRecord = async (req) => {
+  return await database.findOne(req);
+};
+
 module.exports.getPaginationData = async (qData) => {
   const {
     perPage,
@@ -98,4 +102,12 @@ module.exports.getPaginationData = async (qData) => {
     totalPage: Math.ceil(count / perPage),
     data,
   };
+};
+
+module.exports.getById = async (id) => {
+  return await database.findById(id);
+};
+
+module.exports.DeleteById = async (id) => {
+  return await database.findByIdAndDelete(id);
 };

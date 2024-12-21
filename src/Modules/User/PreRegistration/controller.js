@@ -3,7 +3,12 @@ const { serverResponseMessage } = require("../../../../config/message");
 const { httpResponses } = require("../../../../utils/http-responses");
 const { httpStatusCodes } = require("../../../../utils/http-status-codes");
 
-const { userCreate, getPaginationData } = require("./dbQuery");
+const {
+  userCreate,
+  getPaginationData,
+  getById,
+  DeleteById,
+} = require("./dbQuery");
 
 exports.createUserController = async (req, res) => {
   const userCreateResponse = await userCreate(req.body);
@@ -32,6 +37,27 @@ exports.listController = async (req, res, next) => {
         httpResponses.SUCCESS,
         res.__(serverResponseMessage.RECORD_FETCHED),
         await getPaginationData(req.body)
+      )
+    );
+};
+
+exports.deleteController = async (req, res) => {
+  const { _id } = req.params;
+  const isExsist = await getById(_id);
+  if (!isExsist)
+    throw {
+      code: httpStatusCodes.UNPROCESSABLE_ENTITY,
+      message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
+    };
+  const deleteIndex = await DeleteById(_id);
+  return res
+    .status(httpStatusCodes.SUCCESS)
+    .json(
+      success(
+        httpStatusCodes.SUCCESS,
+        httpResponses.SUCCESS,
+        res.__(serverResponseMessage.RECORD_DELETED),
+        deleteIndex
       )
     );
 };

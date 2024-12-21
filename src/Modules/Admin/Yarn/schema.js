@@ -57,11 +57,6 @@ const yarnSchema = new mongoose.Schema(
       ref: "perceivedweights",
       default: null,
     },
-    fittingId: {
-      type: Types.ObjectId,
-      ref: "fittings",
-      default: null,
-    },
     materialId: {
       type: Types.ObjectId,
       ref: "materials",
@@ -82,6 +77,10 @@ const yarnSchema = new mongoose.Schema(
           type: Types.Object,
           default: {},
         },
+        uuid: {
+          type: Types.String,
+          default: "",
+        }
       },
     ],
     status: {

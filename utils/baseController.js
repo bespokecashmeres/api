@@ -4,6 +4,19 @@ const { httpResponses } = require("./http-responses");
 const { httpStatusCodes } = require("./http-status-codes");
 const { success } = require("./response");
 
+const checkRecordDoesNotExists = async (_id, res, modelOperations) => {
+  const existingRecord = await modelOperations.getById(_id);
+
+  if (!existingRecord) {
+    throw {
+      code: httpStatusCodes.UNPROCESSABLE_ENTITY,
+      message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
+    };
+  }
+};
+
+exports.checkRecordDoesNotExists = checkRecordDoesNotExists;
+
 exports.createNameRecordHandler = async (
   req,
   res,
@@ -54,14 +67,7 @@ exports.updateNameRecordHandler = async (
 ) => {
   const { parseField = "name", uniqueField = "name" } = options;
   const { _id } = req.body;
-
-  const existingRecord = await modelOperations.getById(_id);
-  if (!existingRecord) {
-    throw {
-      code: httpStatusCodes.UNPROCESSABLE_ENTITY,
-      message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
-    };
-  }
+  await checkRecordDoesNotExists(_id, res, modelOperations);
 
   try {
     req.body[parseField] = req.body[parseField]
@@ -103,14 +109,7 @@ exports.updateNameRecordHandler = async (
 
 exports.fetchRecordDetailsHandler = async (req, res, modelOperations) => {
   const { _id } = req.params;
-  const record = await modelOperations.getById(_id);
-
-  if (!record) {
-    throw {
-      code: httpStatusCodes.UNPROCESSABLE_ENTITY,
-      message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
-    };
-  }
+  await checkRecordDoesNotExists(_id, res, modelOperations);
 
   return res
     .status(httpStatusCodes.SUCCESS)
@@ -124,15 +123,15 @@ exports.fetchRecordDetailsHandler = async (req, res, modelOperations) => {
     );
 };
 
-exports.deleteRecordHandler = async (req, res, modelOperations) => {
+exports.deleteRecordHandler = async (
+  req,
+  res,
+  modelOperations,
+  ignoreNotExistsCheck = false
+) => {
   const { _id } = req.params;
-  const existingRecord = await modelOperations.getById(_id);
-
-  if (!existingRecord) {
-    throw {
-      code: httpStatusCodes.UNPROCESSABLE_ENTITY,
-      message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
-    };
+  if (!ignoreNotExistsCheck) {
+    await checkRecordDoesNotExists(_id, res, modelOperations);
   }
 
   await modelOperations.DeleteById(_id);
@@ -147,15 +146,15 @@ exports.deleteRecordHandler = async (req, res, modelOperations) => {
     );
 };
 
-exports.updateRecordStatusHandler = async (req, res, modelOperations) => {
+exports.updateRecordStatusHandler = async (
+  req,
+  res,
+  modelOperations,
+  ignoreNotExistsCheck = false
+) => {
   const { _id, status } = req.body;
-  const record = await modelOperations.getById(_id);
-
-  if (!record) {
-    throw {
-      code: httpStatusCodes.UNPROCESSABLE_ENTITY,
-      message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
-    };
+  if (!ignoreNotExistsCheck) {
+    await checkRecordDoesNotExists(_id, res, modelOperations);
   }
 
   await modelOperations.Update({ _id, status: !!status });
