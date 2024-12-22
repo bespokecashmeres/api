@@ -9,8 +9,9 @@ exports.createUser = joi.object({
     .string()
     .regex(MOBILE_NUMBER_REGEX)
     .min(3)
-    .required(),
+    .optional()
+    .allow(""),
   email: joi.string().email().required(),
-  country_id: joi.string().hex().length(24).required(),
+  country_id: joi.string().hex().length(24).optional().allow(null),
   gender_id: joi.string().hex().length(24).required(),
 });
