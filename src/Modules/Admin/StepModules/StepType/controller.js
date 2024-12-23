@@ -2,6 +2,7 @@ const { serverResponseMessage } = require("../../../../../config/message");
 const { httpResponses } = require("../../../../../utils/http-responses");
 const { httpStatusCodes } = require("../../../../../utils/http-status-codes");
 const { success } = require("../../../../../utils/response");
+const { findOneRecord: stepCardFindOneRecord } = require("../StepCard/dbQuery");
 const {
   create,
   Update,
@@ -11,6 +12,7 @@ const {
   rowsReorderData,
   getTabsData,
 } = require("./dbQuery");
+const { ObjectId } = require("mongoose").Types;
 
 exports.createController = async (req, res) => {
   try {
@@ -130,6 +132,7 @@ exports.statusController = async (req, res, next) => {
       message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
     };
   }
+  // Todo: prevent deletetion of this if used in product or cart, or order
 
   await Update({ _id: `${category.id}`, status: !!req.body.status });
 
@@ -167,6 +170,19 @@ exports.deleteController = async (req, res) => {
       code: httpStatusCodes.UNPROCESSABLE_ENTITY,
       message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
     };
+  const isStepCard = await stepCardFindOneRecord({
+    stepTypeId: new ObjectId(_id),
+  });
+
+  if (isStepCard) {
+    throw {
+      code: httpStatusCodes.BAD_REQUEST,
+      message: res.__(
+        serverResponseMessage.PLEASE_DELETE_STEP_CARD_TO_DELETE_STEP_TYPE
+      ),
+    };
+  }
+
   const deleteIndex = await DeleteById(_id);
   return res
     .status(httpStatusCodes.SUCCESS)

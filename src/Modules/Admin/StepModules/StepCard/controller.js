@@ -190,6 +190,7 @@ exports.statusController = async (req, res, next) => {
       message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
     };
   }
+  // Todo: prevent it if it's used in product or cart or order.
   await Update({ _id: `${user.id}`, status: !!req.body.status });
   return res.json(
     success(
@@ -224,6 +225,16 @@ exports.deleteController = async (req, res) => {
       code: httpStatusCodes.UNPROCESSABLE_ENTITY,
       message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
     };
+
+  if (isExsist.status) {
+    throw {
+      code: httpStatusCodes.BAD_REQUEST,
+      message: res.__(
+        serverResponseMessage.PLEASE_DISABLE_STEP_CARD_TO_DELETE_IT
+      ),
+    };
+  }
+
   try {
     await deleteFromS3(isExsist?.graphImage);
     await deleteFromS3(isExsist?.realImage);

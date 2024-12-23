@@ -207,5 +207,7 @@
   "PLEASE_DELETE_YARN_TO_DELETE_PERCEIVED_WEIGHT": "Please first delete the perceived weight references from the Yarn module before proceeding to delete perceived weight.",
   "PLEASE_DISABLE_YARN_TO_DISABLE_PERCEIVED_WEIGHT": "Please first disable the perceived weight references from the Yarn module before proceeding to disable perceived weight.",
   "PLEASE_DELETE_YARN_TO_DELETE_SEASONALITY": "Please first delete the seasonality references from the Yarn module before proceeding to delete seasonality.",
-  "PLEASE_DISABLE_YARN_TO_DISABLE_SEASONALITY": "Please first disable the seasonality references from the Yarn module before proceeding to disable seasonality."
+  "PLEASE_DISABLE_YARN_TO_DISABLE_SEASONALITY": "Please first disable the seasonality references from the Yarn module before proceeding to disable seasonality.",
+  "PLEASE_DISABLE_STEP_CARD_TO_DELETE_IT": "Please first disable the step card entry to delete it",
+  "PLEASE_DELETE_STEP_CARD_TO_DELETE_STEP_TYPE": "Please first delete the step type references from the step card module before proceeding to delete step type."
 }
