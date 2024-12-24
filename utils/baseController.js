@@ -13,6 +13,7 @@ const checkRecordDoesNotExists = async (_id, res, modelOperations) => {
       message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
     };
   }
+  return existingRecord;
 };
 
 exports.checkRecordDoesNotExists = checkRecordDoesNotExists;
@@ -109,7 +110,7 @@ exports.updateNameRecordHandler = async (
 
 exports.fetchRecordDetailsHandler = async (req, res, modelOperations) => {
   const { _id } = req.params;
-  await checkRecordDoesNotExists(_id, res, modelOperations);
+  const record = await checkRecordDoesNotExists(_id, res, modelOperations);
 
   return res
     .status(httpStatusCodes.SUCCESS)

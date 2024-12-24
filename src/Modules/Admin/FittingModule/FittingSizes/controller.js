@@ -6,7 +6,7 @@ const {
   deleteRecordHandler,
   updateRecordStatusHandler,
   fetchDropdownOptionsHandler,
-} = require("../../../../utils/baseController");
+} = require("../../../../../utils/baseController");
 const modelOperations = require("./dbQuery");
 
 exports.createController = async (req, res, next) => {

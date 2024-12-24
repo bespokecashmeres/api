@@ -1,6 +1,5 @@
 const { DEFAULT_LOCALE } = require("../../../../../utils/constants");
 const database = require("./schema");
-const productTypeDatabase = require("../../ProductType/schema");
 const { ObjectId } = require("mongoose").Types;
 
 RegExp.escape = function (s) {
@@ -15,9 +14,11 @@ module.exports.create = async (req) => {
   const nextOrder = highestOrder ? highestOrder.rowOrder + 1 : 1;
   return await database.create({ ...req, rowOrder: nextOrder });
 };
+
 module.exports.findOneRecord = async (req) => {
   return await database.findOne(req);
 };
+
 module.exports.findRecord = async (req) => {
   return await database.find(req);
 };
@@ -37,62 +38,132 @@ module.exports.rowsReorderData = async (data) => {
   }
 };
 
-module.exports.getTabsData = async (qData) => {
-  const { productTypeId, language = DEFAULT_LOCALE } = qData;
+module.exports.getListData = async (qData) => {
+  const {
+    perPage,
+    page,
+    sortBy = "createdAt",
+    sortOrder = "desc",
+    search = "",
+    filter = {},
+    language = DEFAULT_LOCALE,
+  } = qData;
 
-  let prodTypeId = productTypeId;
-
-  if (!productTypeId) {
-    prodTypeId = await productTypeDatabase.findOne({ status: true });
-  }
-
-  const projectFields = {
-    _id: 0,
-    label: { $ifNull: [`$name.${language}`, ""] },
-    value: "$_id",
-    status: 1,
-    showFittingOption: 1,
-    rowOrder: 1
+  // Match Stage for Filtering and Searching
+  const matchStage = {
+    $match: {
+      ...filter,
+      ...(search && {
+        [`name.${language}`]: { $regex: search, $options: "i" },
+      }),
+    },
   };
 
-  const pipeline = [
+  const lookupStage = [
     {
-      $match: {
-        productTypeId: new ObjectId(prodTypeId),
+      $lookup: {
+        from: "producttypes",
+        localField: "productTypeId",
+        foreignField: "_id",
+        as: "productTypeData",
       },
     },
-    { $project: projectFields },
-    { $sort: { rowOrder: 1 } },
+    {
+      $unwind: {
+        path: "$productTypeData",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "fittingsizes",
+        localField: "fittingSizeId",
+        foreignField: "_id",
+        as: "fittingSizeData",
+      },
+    },
+    {
+      $unwind: {
+        path: "$fittingSizeData",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
   ];
 
-  return await database.aggregate(pipeline);
+  // Project Stage for Translating Fields
+  const projectStage = {
+    $project: {
+      _id: 1,
+      name: { $ifNull: [`$name.${language}`, ""] },
+      productType: { $ifNull: [`$productTypeData.name.${language}`, ""] },
+      fittingSize: { $ifNull: [`$fittingSizeData.name.${language}`, ""] },
+      createdAt: 1,
+      updatedAt: 1,
+      status: 1,
+    },
+  };
+
+  // Sort Options
+  const sortOptions = {};
+  sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
+
+  // Aggregation Query
+  const aggregationPipeline = [
+    matchStage,
+    ...lookupStage,
+    projectStage,
+    { $sort: sortOptions },
+    { $skip: (page - 1) * perPage },
+    { $limit: perPage },
+  ];
+
+  // Execute the Aggregation
+  const [data, totalCount] = await Promise.all([
+    database.aggregate(aggregationPipeline).exec(),
+    database.countDocuments(matchStage.$match),
+  ]);
+
+  // Return Paginated Data
+  return {
+    currentPage: page,
+    totalCount,
+    totalPage: Math.ceil(totalCount / perPage),
+    data,
+  };
 };
 
 module.exports.getById = async (id) => {
   return await database.findById(id);
 };
+
 module.exports.getByQuery = async (obj) => {
   return await database.findOne(obj);
 };
 
 module.exports.findAll = async ({
   productTypeId,
+  fittingSizeId,
   language = DEFAULT_LOCALE,
 }) => {
   const projectFields = {
     _id: 1,
     name: `$name.${language}`,
-    info: `$info.${language}`,
     rowOrder: 1,
     createdAt: 1,
     updatedAt: 1,
     status: 1,
-    showFittingOption: 1,
     productTypeId: 1,
+    fittingSizeId: 1,
   };
 
   const pipeline = [
-    { $match: { status: true, productTypeId: new ObjectId(productTypeId) } },
+    {
+      $match: {
+        status: true,
+        productTypeId: new ObjectId(productTypeId),
+        fittingSizeId: new ObjectId(fittingSizeId),
+      },
+    },
     { $project: projectFields },
     { $sort: { rowOrder: 1 } },
   ];
