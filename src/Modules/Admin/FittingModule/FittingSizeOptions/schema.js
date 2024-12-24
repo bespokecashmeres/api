@@ -2,14 +2,10 @@
 const mongoose = require("mongoose");
 const Types = mongoose.Schema.Types;
 
-const stepTypeSchema = new mongoose.Schema({
+const fittingSizeOptionsSchema = new mongoose.Schema({
   name: {
     type: Types.Object,
     required: true,
-    default: {},
-  },
-  info: {
-    type: Types.Object,
     default: {},
   },
   rowOrder: {
@@ -20,17 +16,21 @@ const stepTypeSchema = new mongoose.Schema({
     type: Types.Boolean,
     default: true,
   },
-  showFittingOption: {
-    type: Types.Boolean,
-    default: false,
-  },
   productTypeId: {
     type: Types.ObjectId,
     ref: "producttypes",
     required: true,
   },
+  fittingSizeId: {
+    type: Types.ObjectId,
+    ref: "fittingsizes",
+    required: true,
+  },
 });
 
-const StepType = mongoose.model("steptypes", stepTypeSchema);
+const FittingSizeOptions = mongoose.model(
+  "fittingsizeoptions",
+  fittingSizeOptionsSchema
+);
 
-module.exports = StepType;
+module.exports = FittingSizeOptions;

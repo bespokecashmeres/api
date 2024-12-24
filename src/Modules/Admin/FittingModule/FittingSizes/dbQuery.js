@@ -1,5 +1,5 @@
-const baseQueryService = require("../../../../utils/baseQueryService");
-const { DEFAULT_LOCALE } = require("../../../../utils/constants");
+const baseQueryService = require("../../../../../utils/baseQueryService");
+const { DEFAULT_LOCALE } = require("../../../../../utils/constants");
 const database = require("./schema");
 
 module.exports.create = async (data) => {
