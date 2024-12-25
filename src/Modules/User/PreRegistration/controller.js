@@ -9,6 +9,9 @@ const {
   getById,
   DeleteById,
 } = require("./dbQuery");
+const sendEmail = require("../../../../utils/sendMail");
+const { config } = require("../../../../config/config");
+const { generateEmailHtmlPreRegistration } = require("../../../../utils/email");
 
 exports.createUserController = async (req, res) => {
   const userCreateResponse = await userCreate(req.body);
@@ -18,6 +21,20 @@ exports.createUserController = async (req, res) => {
       message: res.__(serverResponseMessage.UNABLE_TO_CREATE_USER),
     };
   }
+
+  try {
+    const htmlContent = generateEmailHtmlPreRegistration({
+      firstName: userCreateResponse.first_name,
+      lastName: userCreateResponse.last_name,
+    });
+    await sendEmail(
+      userCreateResponse.email,
+      config.PRE_REGISTRATION,
+      "",
+      htmlContent
+    );
+  } catch (err) {}
+
   return res.json(
     success(
       httpStatusCodes.SUCCESS,
