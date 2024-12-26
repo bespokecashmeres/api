@@ -16,6 +16,7 @@ const {
   statusController,
   tabsController,
   listController,
+  dropdownOptionsController,
 } = require("./controller");
 const { asyncHandler } = require("../../../../../utils/asyncHandler");
 const {
@@ -53,6 +54,11 @@ module.exports = (app) => {
     hasRole(["admin"]),
     middleware(listValidator),
     asyncHandler(listController)
+  );
+  app.post(
+    "/fitting-size-options/options",
+    middleware(activeValidator),
+    asyncHandler(dropdownOptionsController)
   );
   app.post(
     "/fitting-size-options/active",

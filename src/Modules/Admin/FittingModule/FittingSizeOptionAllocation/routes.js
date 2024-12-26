@@ -4,85 +4,60 @@ const hasRole = require("../../../../../middleware/hasRole");
 const {
   createValidator,
   updateValidator,
-  listValidator,
-  IdValidator,
-  reorderValidator,
-  statusValidator,
-  optionValidator,
 } = require("./validation");
 const {
   createController,
   updateController,
-  listController,
   deleteController,
   getDetailController,
-  rowsReorderController,
   statusController,
-  getActiveController,
-  dropdownOptionsController,
+  listController,
 } = require("./controller");
 const { asyncHandler } = require("../../../../../utils/asyncHandler");
-const uploadKeyBase = require("../../../../../middleware/uploadKeyBaseMiddleware");
+const {
+  IdValidator,
+  statusValidator,
+  listValidator,
+} = require("../../../../../utils/validation");
 
 module.exports = (app) => {
   app.post(
-    "/step-card/add",
+    "/fitting-size-option-allocation/add",
     verifyToken,
     hasRole(["admin"]),
-    uploadKeyBase.fields([
-      { name: "graphImage", maxCount: 1 },
-      { name: "realImage", maxCount: 1 },
-    ]),
     middleware(createValidator),
     asyncHandler(createController)
   );
   app.put(
-    "/step-card/update",
+    "/fitting-size-option-allocation/update",
     verifyToken,
     hasRole(["admin"]),
-    uploadKeyBase.fields([
-      { name: "graphImage", maxCount: 1 },
-      { name: "realImage", maxCount: 1 },
-    ]),
     middleware(updateValidator),
     asyncHandler(updateController)
   );
-  app.get("/step-card/active", asyncHandler(getActiveController));
   app.post(
-    "/step-card/list/:stepTypeId",
+    "/fitting-size-option-allocation/list",
     verifyToken,
     hasRole(["admin"]),
     middleware(listValidator),
     asyncHandler(listController)
   );
-  app.post(
-    "/step-card/options/:stepTypeId",
-    middleware(optionValidator),
-    asyncHandler(dropdownOptionsController)
-  );
-  app.post(
-    "/step-card/row/reorder",
-    verifyToken,
-    hasRole(["admin"]),
-    middleware(reorderValidator),
-    asyncHandler(rowsReorderController)
-  );
-  app.delete(
-    "/step-card/:_id",
-    verifyToken,
-    hasRole(["admin"]),
-    middleware(IdValidator),
-    asyncHandler(deleteController)
-  );
   app.get(
-    "/step-card/:_id",
+    "/fitting-size-option-allocation/:_id",
     verifyToken,
     hasRole(["admin"]),
     middleware(IdValidator),
     asyncHandler(getDetailController)
   );
+  app.delete(
+    "/fitting-size-option-allocation/:_id",
+    verifyToken,
+    hasRole(["admin"]),
+    middleware(IdValidator),
+    asyncHandler(deleteController)
+  );
   app.patch(
-    "/step-card/status",
+    "/fitting-size-option-allocation/status",
     verifyToken,
     hasRole(["admin"]),
     middleware(statusValidator),

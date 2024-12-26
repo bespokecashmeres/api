@@ -10,6 +10,7 @@ const {
   DeleteById,
   findAll,
   rowsReorderData,
+  getDataForDropdown,
 } = require("./dbQuery");
 const {
   deleteFromS3,
@@ -140,6 +141,21 @@ exports.listController = async (req, res, next) => {
           { language: acceptLanguage, stepTypeId, ...req.body },
           {}
         )
+      )
+    );
+};
+
+exports.dropdownOptionsController = async (req, res, next) => {
+  const acceptLanguage = req.headers["accept-language"];
+  const { stepTypeId } = req.params;
+  return res
+    .status(httpStatusCodes.SUCCESS)
+    .json(
+      success(
+        httpStatusCodes.SUCCESS,
+        httpResponses.SUCCESS,
+        res.__(serverResponseMessage.RECORD_FETCHED),
+        await getDataForDropdown(acceptLanguage, stepTypeId)
       )
     );
 };
