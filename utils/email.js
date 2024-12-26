@@ -3194,7 +3194,9 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_heading_1 .
     <tr>
       <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:60px 10px 20px;font-family:'Open Sans',sans-serif;" align="center">
         <a href="https://www.bespokecashmeres.com/">
-          <img style="margin: 0 auto 30px; width: 120px; max-width: 120px;" src="${getAWSImageUrl("maunual/images/logo.png")}" />
+          <img style="margin: 0 auto 30px; width: 120px; max-width: 120px;" src="${getAWSImageUrl(
+            "maunual/images/logo.png"
+          )}" />
         </a>
   <!--[if mso]><table width="100%"><tr><td><![endif]-->
     <h1 class="v-font-size" style="margin: 0px; line-height: 180%; text-align: center; word-wrap: break-word; font-family: Epilogue; font-size: 28px; font-weight: 400;">
@@ -3214,7 +3216,9 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_heading_1 .
   <tr>
     <td style="padding-right: 0px;padding-left: 0px;" align="center">
       
-      <img align="center" border="0" src="${getAWSImageUrl("maunual/images/pre-registration-background.png")}" alt="" title="" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 55%;max-width: 319px;" width="319" class="v-src-width v-src-max-width"/>
+      <img align="center" border="0" src="${getAWSImageUrl(
+        "maunual/images/pre-registration-background.png"
+      )}" alt="" title="" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 55%;max-width: 319px;" width="319" class="v-src-width v-src-max-width"/>
       
     </td>
   </tr>
@@ -3254,12 +3258,21 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_heading_1 .
       <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:60px 30px 10px;font-family:'Open Sans',sans-serif;" align="left">
         
   <div class="v-font-size" style="font-size: 14px; line-height: 140%; text-align: justify; word-wrap: break-word;">
-<p style="font-size: 14px; line-height: 140%; margin: 0px;"><strong>Hi ${variables.firstName} ${variables.lastName},</strong></p>
-<p style="font-size: 14px; line-height: 140%; margin: 0px;"></p>
-<p style="font-size: 14px; line-height: 140%; margin: 0px;">Thank you for signing up! We’re thrilled to have you join our community.
-  At Bespoke Cashmeres, we're all about providing the finest bespoke cashmere experiences.
-  From luxuriously soft sweaters to exclusive accessories,
-  our collection is designed to envelop you in elegance and comfort. Whether you're looking for timeless wardrobe staples, expert styling tips, or exclusive deals, you're in the right place!</p>
+<p style="font-size: 14px; line-height: 140%; margin: 0px;"><strong>Hi ${
+    variables.firstName
+  } ${variables.lastName},</strong></p>
+  <br />
+<p style="font-size: 14px; line-height: 140%; margin: 0px;">Thank you for signing up with BESPOKE CASHMERES! We are thrilled to welcome you to our community. You are now officially part of our exciting competition, where you have the chance to win prizes worth USD 5,000 in exclusive cashmere sweaters over the next two months.</p>
+<br />
+  <p style="font-size: 14px; line-height: 140%; margin: 0px;">As a token of our appreciation, we’re delighted to offer you 20% off your total first order. Simply follow us on our new Instagram page [Instagram link], and you’ll receive your discount!</p>
+  <br />
+  <p style="font-size: 14px; line-height: 140%; margin: 0px;">At BESPOKE CASHMERES, we are passionate about giving you the opportunity to design your own unique cashmere sweaters, tailored perfectly for both men and women. Our official launch is set for the end of January 2025, and we can’t wait to share our one-of-a-kind designs with you.</p>
+  <br />
+  <p style="font-size: 14px; line-height: 140%; margin: 0px;">Thank you again for joining us on this exciting journey. We look forward to seeing you soon, and wish you the best of luck in the competition!</p>
+  <br />
+<p style="font-size: 14px; line-height: 140%; margin: 0px;">Kind regards,</p>
+  <p style="font-size: 14px; line-height: 140%; margin: 0px;">Team BESPOKE CASHMERES</p>
+
   </div>
       </td>
     </tr>
@@ -3310,7 +3323,9 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_heading_1 .
     <!--[if (mso)|(IE)]><td width="32" style="width:32px; padding-right: 15px;" valign="top"><![endif]-->
     <table border="0" cellspacing="0" cellpadding="0" width="32" height="32" style="width: 32px !important;height: 32px !important;display: inline-block;border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;margin-right: 15px">
       <tbody><tr style="vertical-align: top"><td valign="middle" style="word-break: break-word;border-collapse: collapse !important;vertical-align: top">
-<a href="https://facebook.com/" title="Facebook" target="_blank" style="color: rgb(0, 0, 238); text-decoration: underline; line-height: inherit;"><img src="${getAWSImageUrl("maunual/images/facebook-1.png")}" alt="Facebook" title="Facebook" width="32" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block !important;border: none;height: auto;float: none;max-width: 32px !important">
+<a href="https://facebook.com/" title="Facebook" target="_blank" style="color: rgb(0, 0, 238); text-decoration: underline; line-height: inherit;"><img src="${getAWSImageUrl(
+    "maunual/images/facebook-1.png"
+  )}" alt="Facebook" title="Facebook" width="32" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block !important;border: none;height: auto;float: none;max-width: 32px !important">
         </a>
       </td></tr>
     </tbody></table>
@@ -3319,7 +3334,9 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_heading_1 .
     <!--[if (mso)|(IE)]><td width="32" style="width:32px; padding-right: 15px;" valign="top"><![endif]-->
     <table border="0" cellspacing="0" cellpadding="0" width="32" height="32" style="width: 32px !important;height: 32px !important;display: inline-block;border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;margin-right: 15px">
       <tbody><tr style="vertical-align: top"><td valign="middle" style="word-break: break-word;border-collapse: collapse !important;vertical-align: top">
-<a href="https://twitter.com/" title="Twitter" target="_blank" style="color: rgb(0, 0, 238); text-decoration: underline; line-height: inherit;"><img src="${getAWSImageUrl("maunual/images/twitter-1.png")}" alt="Twitter" title="Twitter" width="32" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block !important;border: none;height: auto;float: none;max-width: 32px !important">
+<a href="https://twitter.com/" title="Twitter" target="_blank" style="color: rgb(0, 0, 238); text-decoration: underline; line-height: inherit;"><img src="${getAWSImageUrl(
+    "maunual/images/twitter-1.png"
+  )}" alt="Twitter" title="Twitter" width="32" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block !important;border: none;height: auto;float: none;max-width: 32px !important">
         </a>
       </td></tr>
     </tbody></table>
@@ -3328,7 +3345,9 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_heading_1 .
     <!--[if (mso)|(IE)]><td width="32" style="width:32px; padding-right: 15px;" valign="top"><![endif]-->
     <table border="0" cellspacing="0" cellpadding="0" width="32" height="32" style="width: 32px !important;height: 32px !important;display: inline-block;border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;margin-right: 15px">
       <tbody><tr style="vertical-align: top"><td valign="middle" style="word-break: break-word;border-collapse: collapse !important;vertical-align: top">
-<a href="https://linkedin.com/" title="LinkedIn" target="_blank" style="color: rgb(0, 0, 238); text-decoration: underline; line-height: inherit;"><img src="${getAWSImageUrl("maunual/images/linkedin-1.png")}" alt="LinkedIn" title="LinkedIn" width="32" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block !important;border: none;height: auto;float: none;max-width: 32px !important">
+<a href="https://linkedin.com/" title="LinkedIn" target="_blank" style="color: rgb(0, 0, 238); text-decoration: underline; line-height: inherit;"><img src="${getAWSImageUrl(
+    "maunual/images/linkedin-1.png"
+  )}" alt="LinkedIn" title="LinkedIn" width="32" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block !important;border: none;height: auto;float: none;max-width: 32px !important">
         </a>
       </td></tr>
     </tbody></table>
@@ -3337,7 +3356,9 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_heading_1 .
     <!--[if (mso)|(IE)]><td width="32" style="width:32px; padding-right: 0px;" valign="top"><![endif]-->
     <table border="0" cellspacing="0" cellpadding="0" width="32" height="32" style="width: 32px !important;height: 32px !important;display: inline-block;border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;margin-right: 0px">
       <tbody><tr style="vertical-align: top"><td valign="middle" style="word-break: break-word;border-collapse: collapse !important;vertical-align: top">
-<a href="https://instagram.com/" title="Instagram" target="_blank" style="color: rgb(0, 0, 238); text-decoration: underline; line-height: inherit;"><img src="${getAWSImageUrl("maunual/images/instagram-1.png")}" alt="Instagram" title="Instagram" width="32" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block !important;border: none;height: auto;float: none;max-width: 32px !important">
+<a href="https://instagram.com/" title="Instagram" target="_blank" style="color: rgb(0, 0, 238); text-decoration: underline; line-height: inherit;"><img src="${getAWSImageUrl(
+    "maunual/images/instagram-1.png"
+  )}" alt="Instagram" title="Instagram" width="32" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block !important;border: none;height: auto;float: none;max-width: 32px !important">
         </a>
       </td></tr>
     </tbody></table>
@@ -3359,7 +3380,6 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_heading_1 .
       <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:10px 100px 60px;font-family:'Open Sans',sans-serif;" align="left">
         
   <div class="v-font-size" style="font-size: 14px; line-height: 160%; text-align: center; word-wrap: break-word;">
-<p style="font-size: 14px; line-height: 160%; margin: 0px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.</p>
 <p style="font-size: 14px; line-height: 160%; margin: 0px;"></p>
 <p style="font-size: 14px; line-height: 160%; margin: 0px;">UNSUBSCRIBE   |   PRIVACY POLICY   |   WEB</p>
   </div>
@@ -3392,4 +3412,4 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_heading_1 .
 </html>
 
   `;
-}
+};

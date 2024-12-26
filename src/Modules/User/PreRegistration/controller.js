@@ -29,7 +29,7 @@ exports.createUserController = async (req, res) => {
     });
     await sendEmail(
       userCreateResponse.email,
-      config.PRE_REGISTRATION,
+      "Thank You for Joining BESPOKE CASHMERES – Your Exclusive Rewards Await!",
       "",
       htmlContent
     );
