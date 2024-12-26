@@ -7,12 +7,7 @@ RegExp.escape = function (s) {
 };
 
 module.exports.create = async (req) => {
-  const highestOrder = await database
-    .findOne({ productTypeId: new ObjectId(req.productTypeId) })
-    .sort("-rowOrder")
-    .exec();
-  const nextOrder = highestOrder ? highestOrder.rowOrder + 1 : 1;
-  return await database.create({ ...req, rowOrder: nextOrder });
+  return await database.create(req);
 };
 
 module.exports.findOneRecord = async (req) => {
@@ -21,21 +16,6 @@ module.exports.findOneRecord = async (req) => {
 
 module.exports.findRecord = async (req) => {
   return await database.find(req);
-};
-
-module.exports.rowsReorderData = async (data) => {
-  const bulkOperations = data.map((row) => ({
-    updateOne: {
-      filter: { _id: new ObjectId(row._id) },
-      update: { $set: { rowOrder: row.order } },
-    },
-  }));
-  try {
-    return await database.bulkWrite(bulkOperations);
-  } catch (err) {
-    console.error(`Error in bulkCreate for:`, err);
-    return undefined;
-  }
 };
 
 module.exports.getListData = async (qData) => {
@@ -54,7 +34,7 @@ module.exports.getListData = async (qData) => {
     $match: {
       ...filter,
       ...(search && {
-        [`name.${language}`]: { $regex: search, $options: "i" },
+        value: { $regex: search, $options: "i" },
       }),
     },
   };
@@ -76,6 +56,34 @@ module.exports.getListData = async (qData) => {
     },
     {
       $lookup: {
+        from: "steptypes",
+        localField: "stepTypeId",
+        foreignField: "_id",
+        as: "stepTypeData",
+      },
+    },
+    {
+      $unwind: {
+        path: "$stepTypeData",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "stepcards",
+        localField: "stepCardId",
+        foreignField: "_id",
+        as: "stepCardData",
+      },
+    },
+    {
+      $unwind: {
+        path: "$stepCardData",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
         from: "fittingsizes",
         localField: "fittingSizeId",
         foreignField: "_id",
@@ -88,15 +96,34 @@ module.exports.getListData = async (qData) => {
         preserveNullAndEmptyArrays: true,
       },
     },
+    {
+      $lookup: {
+        from: "fittingsizeoptions",
+        localField: "fittingSizeOptionId",
+        foreignField: "_id",
+        as: "fittingSizeOptionData",
+      },
+    },
+    {
+      $unwind: {
+        path: "$fittingSizeOptionData",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
   ];
 
   // Project Stage for Translating Fields
   const projectStage = {
     $project: {
       _id: 1,
-      name: { $ifNull: [`$name.${language}`, ""] },
+      value: 1,
       productType: { $ifNull: [`$productTypeData.name.${language}`, ""] },
+      stepType: { $ifNull: [`$stepTypeData.name.${language}`, ""] },
+      stepCard: { $ifNull: [`$stepCardData.title.${language}`, ""] },
       fittingSize: { $ifNull: [`$fittingSizeData.name.${language}`, ""] },
+      fittingSizeOption: {
+        $ifNull: [`$fittingSizeOptionData.name.${language}`, ""],
+      },
       createdAt: 1,
       updatedAt: 1,
       status: 1,
@@ -132,68 +159,12 @@ module.exports.getListData = async (qData) => {
   };
 };
 
-module.exports.getDataForDropdown = async (
-  language = DEFAULT_LOCALE,
-  productTypeId,
-  fittingSizeId
-) => {
-  const pipeline = [
-    {
-      $match: {
-        status: true,
-        productTypeId: new ObjectId(productTypeId),
-        fittingSizeId: new ObjectId(fittingSizeId),
-      },
-    },
-    {
-      $project: {
-        value: "$_id",
-        label: { $ifNull: [`$name.${language}`, ""] },
-        _id: 0,
-      },
-    },
-  ];
-
-  return await database.aggregate(pipeline);
-};
-
 module.exports.getById = async (id) => {
   return await database.findById(id);
 };
 
 module.exports.getByQuery = async (obj) => {
   return await database.findOne(obj);
-};
-
-module.exports.findAll = async ({
-  productTypeId,
-  fittingSizeId,
-  language = DEFAULT_LOCALE,
-}) => {
-  const projectFields = {
-    _id: 1,
-    name: `$name.${language}`,
-    rowOrder: 1,
-    createdAt: 1,
-    updatedAt: 1,
-    status: 1,
-    productTypeId: 1,
-    fittingSizeId: 1,
-  };
-
-  const pipeline = [
-    {
-      $match: {
-        status: true,
-        productTypeId: new ObjectId(productTypeId),
-        fittingSizeId: new ObjectId(fittingSizeId),
-      },
-    },
-    { $project: projectFields },
-    { $sort: { rowOrder: 1 } },
-  ];
-
-  return await database.aggregate(pipeline);
 };
 
 module.exports.Update = async (data) => {
@@ -208,24 +179,6 @@ module.exports.Update = async (data) => {
     .lean();
 };
 
-module.exports.getActive = async () => {
-  return await database
-    .find({
-      status: true,
-    })
-    .sort({ rowOrder: 1 });
-};
-
 module.exports.DeleteById = async (id) => {
-  const deletedDoc = await database.findByIdAndDelete(id);
-  const remainingRows = await database
-    .find({ productTypeId: deletedDoc.productTypeId })
-    .sort({ rowOrder: 1 });
-  const bulkOperations = remainingRows.map((row, index) => ({
-    updateOne: {
-      filter: { _id: row._id },
-      update: { $set: { rowOrder: index + 1 } },
-    },
-  }));
-  await database.bulkWrite(bulkOperations);
+  return await database.findByIdAndDelete(id);
 };

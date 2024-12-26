@@ -52,7 +52,7 @@ module.exports.getTabsData = async (qData) => {
     value: "$_id",
     status: 1,
     showFittingOption: 1,
-    rowOrder: 1
+    rowOrder: 1,
   };
 
   const pipeline = [
@@ -95,6 +95,24 @@ module.exports.findAll = async ({
     { $match: { status: true, productTypeId: new ObjectId(productTypeId) } },
     { $project: projectFields },
     { $sort: { rowOrder: 1 } },
+  ];
+
+  return await database.aggregate(pipeline);
+};
+
+module.exports.getDataForDropdown = async (
+  language = DEFAULT_LOCALE,
+  productTypeId
+) => {
+  const pipeline = [
+    { $match: { status: true, productTypeId: new ObjectId(productTypeId) } },
+    {
+      $project: {
+        value: "$_id",
+        label: { $ifNull: [`$name.${language}`, ""] },
+        _id: 0,
+      },
+    },
   ];
 
   return await database.aggregate(pipeline);

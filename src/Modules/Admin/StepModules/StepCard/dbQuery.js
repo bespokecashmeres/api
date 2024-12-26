@@ -137,6 +137,24 @@ module.exports.findAll = async (language = DEFAULT_LOCALE, stepTypeId) => {
   return await database.aggregate(pipeline);
 };
 
+module.exports.getDataForDropdown = async (
+  language = DEFAULT_LOCALE,
+  stepTypeId
+) => {
+  const pipeline = [
+    { $match: { status: true, stepTypeId: new ObjectId(stepTypeId) } },
+    {
+      $project: {
+        value: "$_id",
+        label: { $ifNull: [`$title.${language}`, ""] },
+        _id: 0,
+      },
+    },
+  ];
+
+  return await database.aggregate(pipeline);
+};
+
 module.exports.Update = async (data) => {
   return await database
     .findOneAndUpdate(

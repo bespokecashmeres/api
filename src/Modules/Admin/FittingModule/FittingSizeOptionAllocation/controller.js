@@ -2,30 +2,15 @@ const { serverResponseMessage } = require("../../../../../config/message");
 const { httpResponses } = require("../../../../../utils/http-responses");
 const { httpStatusCodes } = require("../../../../../utils/http-status-codes");
 const { success } = require("../../../../../utils/response");
-const { findOneRecord: stepCardFindOneRecord } = require("../StepCard/dbQuery");
 const {
   create,
   Update,
   getById,
   DeleteById,
-  findAll,
-  rowsReorderData,
-  getTabsData,
-  getDataForDropdown,
+  getListData,
 } = require("./dbQuery");
-const { ObjectId } = require("mongoose").Types;
 
 exports.createController = async (req, res) => {
-  try {
-    req.body.name = req.body.name ? JSON.parse(req.body.name) : {};
-    req.body.info = req.body.info ? JSON.parse(req.body.info) : {};
-  } catch (error) {
-    throw {
-      code: httpStatusCodes.BAD_REQUEST,
-      message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
-    };
-  }
-
   const createRecord = await create(req.body);
 
   return res
@@ -49,16 +34,6 @@ exports.updateController = async (req, res, next) => {
       message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
     };
 
-  try {
-    req.body.name = req.body.name ? JSON.parse(req.body.name) : {};
-    req.body.info = req.body.info ? JSON.parse(req.body.info) : {};
-  } catch (error) {
-    throw {
-      code: httpStatusCodes.BAD_REQUEST,
-      message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
-    };
-  }
-
   const updateRecord = await Update(req.body);
   return res
     .status(httpStatusCodes.SUCCESS)
@@ -72,8 +47,7 @@ exports.updateController = async (req, res, next) => {
     );
 };
 
-exports.tabsController = async (req, res, next) => {
-  const { productTypeId } = req.params;
+exports.listController = async (req, res, next) => {
   const acceptLanguage = req.headers["accept-language"];
   return res
     .status(httpStatusCodes.SUCCESS)
@@ -82,25 +56,7 @@ exports.tabsController = async (req, res, next) => {
         httpStatusCodes.SUCCESS,
         httpResponses.SUCCESS,
         res.__(serverResponseMessage.RECORD_FETCHED),
-        await getTabsData({ language: acceptLanguage, productTypeId }, {})
-      )
-    );
-};
-
-exports.rowsReorderController = async (req, res, next) => {
-  const { rows } = req.body;
-  if (rows) {
-    req.body.rows = JSON.parse(rows);
-  }
-
-  return res
-    .status(httpStatusCodes.SUCCESS)
-    .json(
-      success(
-        httpStatusCodes.SUCCESS,
-        httpResponses.SUCCESS,
-        res.__(serverResponseMessage.RECORD_FETCHED),
-        await rowsReorderData(req.body.rows)
+        await getListData({...req.body, language: acceptLanguage})
       )
     );
 };
@@ -147,37 +103,6 @@ exports.statusController = async (req, res, next) => {
   );
 };
 
-exports.getActiveController = async (req, res, next) => {
-  const { productTypeId } = req.params;
-  const acceptLanguage = req.headers["accept-language"];
-  const isExsist = await findAll({ language: acceptLanguage, productTypeId });
-  return res
-    .status(httpStatusCodes.SUCCESS)
-    .json(
-      success(
-        httpStatusCodes.SUCCESS,
-        httpResponses.SUCCESS,
-        res.__(serverResponseMessage.RECORD_FETCHED),
-        isExsist
-      )
-    );
-};
-
-exports.dropdownOptionsController = async (req, res, next) => {
-  const acceptLanguage = req.headers["accept-language"];
-  const { productTypeId } = req.params;
-  return res
-    .status(httpStatusCodes.SUCCESS)
-    .json(
-      success(
-        httpStatusCodes.SUCCESS,
-        httpResponses.SUCCESS,
-        res.__(serverResponseMessage.RECORD_FETCHED),
-        await getDataForDropdown(acceptLanguage, productTypeId)
-      )
-    );
-};
-
 exports.deleteController = async (req, res) => {
   const { _id } = req.params;
   const isExsist = await getById(_id);
@@ -186,18 +111,7 @@ exports.deleteController = async (req, res) => {
       code: httpStatusCodes.UNPROCESSABLE_ENTITY,
       message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
     };
-  const isStepCard = await stepCardFindOneRecord({
-    stepTypeId: new ObjectId(_id),
-  });
-
-  if (isStepCard) {
-    throw {
-      code: httpStatusCodes.BAD_REQUEST,
-      message: res.__(
-        serverResponseMessage.PLEASE_DELETE_STEP_CARD_TO_DELETE_STEP_TYPE
-      ),
-    };
-  }
+  // Todo: prevent deletetion of this if used in product or cart, or order
 
   const deleteIndex = await DeleteById(_id);
   return res

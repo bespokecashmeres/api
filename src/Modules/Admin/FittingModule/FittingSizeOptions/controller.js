@@ -10,6 +10,7 @@ const {
   findAll,
   rowsReorderData,
   getListData,
+  getDataForDropdown,
 } = require("./dbQuery");
 
 exports.createController = async (req, res) => {
@@ -117,6 +118,21 @@ exports.getDetailController = async (req, res, next) => {
         httpResponses.SUCCESS,
         res.__(serverResponseMessage.RECORD_FETCHED),
         isExsist
+      )
+    );
+};
+
+exports.dropdownOptionsController = async (req, res, next) => {
+  const acceptLanguage = req.headers["accept-language"];
+  const { productTypeId, fittingSizeId } = req.body;
+  return res
+    .status(httpStatusCodes.SUCCESS)
+    .json(
+      success(
+        httpStatusCodes.SUCCESS,
+        httpResponses.SUCCESS,
+        res.__(serverResponseMessage.RECORD_FETCHED),
+        await getDataForDropdown(acceptLanguage, productTypeId, fittingSizeId)
       )
     );
 };

@@ -16,6 +16,7 @@ const {
   rowsReorderController,
   statusController,
   tabsController,
+  dropdownOptionsController,
 } = require("./controller");
 const { asyncHandler } = require("../../../../../utils/asyncHandler");
 const {
@@ -57,6 +58,11 @@ module.exports = (app) => {
     "/step-type/activeTabs/:productTypeId",
     middleware(activeTabsValidator),
     asyncHandler(getActiveController)
+  );
+  app.post(
+    "/step-type/options/:productTypeId",
+    middleware(activeTabsValidator),
+    asyncHandler(dropdownOptionsController)
   );
   app.get(
     "/step-type/:_id",
