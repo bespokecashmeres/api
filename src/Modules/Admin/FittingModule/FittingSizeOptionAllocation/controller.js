@@ -48,7 +48,6 @@ exports.updateController = async (req, res, next) => {
 };
 
 exports.listController = async (req, res, next) => {
-  const acceptLanguage = req.headers["accept-language"];
   return res
     .status(httpStatusCodes.SUCCESS)
     .json(
@@ -56,7 +55,7 @@ exports.listController = async (req, res, next) => {
         httpStatusCodes.SUCCESS,
         httpResponses.SUCCESS,
         res.__(serverResponseMessage.RECORD_FETCHED),
-        await getListData({...req.body, language: acceptLanguage})
+        await getListData(req.body)
       )
     );
 };
