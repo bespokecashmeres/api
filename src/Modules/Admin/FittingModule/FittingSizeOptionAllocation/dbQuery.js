@@ -28,11 +28,19 @@ module.exports.getListData = async (qData) => {
     filter = {},
     language = DEFAULT_LOCALE,
   } = qData;
+  const newFilterObj = Object.fromEntries(
+    Object.keys(filter).map((filterKey) => [
+      filterKey,
+      filterKey.endsWith("Id")
+        ? new ObjectId(filter[filterKey])
+        : filter[filterKey],
+    ])
+  );
 
   // Match Stage for Filtering and Searching
   const matchStage = {
     $match: {
-      ...filter,
+      ...newFilterObj,
       ...(search && {
         value: { $regex: search, $options: "i" },
       }),
