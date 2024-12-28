@@ -20,10 +20,6 @@ const stepTypeSchema = new mongoose.Schema({
     type: Types.Boolean,
     default: true,
   },
-  showFittingOption: {
-    type: Types.Boolean,
-    default: false,
-  },
   productTypeId: {
     type: Types.ObjectId,
     ref: "producttypes",

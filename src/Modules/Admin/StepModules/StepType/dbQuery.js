@@ -51,7 +51,6 @@ module.exports.getTabsData = async (qData) => {
     label: { $ifNull: [`$name.${language}`, ""] },
     value: "$_id",
     status: 1,
-    showFittingOption: 1,
     rowOrder: 1,
   };
 
@@ -87,7 +86,6 @@ module.exports.findAll = async ({
     createdAt: 1,
     updatedAt: 1,
     status: 1,
-    showFittingOption: 1,
     productTypeId: 1,
   };
 
