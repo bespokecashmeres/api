@@ -13,6 +13,8 @@ const {
   deleteController,
   statusController,
   dropdownOptionsController,
+  cardListController,
+  getYarnDetailController,
 } = require("./controller");
 const { asyncHandler } = require("../../../../utils/asyncHandler");
 const { IdValidator, listValidator, statusValidator } = require("../../../../utils/validation");
@@ -50,12 +52,20 @@ module.exports = (app) => {
     middleware(IdValidator),
     asyncHandler(getDetailController)
   );
+  app.get("/yarn/details/:_id", verifyToken, middleware(IdValidator), asyncHandler(getYarnDetailController))
   app.post(
     "/yarn/list",
     verifyToken,
     hasRole(["admin"]),
     middleware(listValidator),
     asyncHandler(listController)
+  );
+  app.post(
+    "/yarn/card-list",
+    verifyToken,
+    hasRole(["admin"]),
+    middleware(listValidator),
+    asyncHandler(cardListController)
   );
   app.post("/yarn/options", asyncHandler(dropdownOptionsController));
   app.delete(
