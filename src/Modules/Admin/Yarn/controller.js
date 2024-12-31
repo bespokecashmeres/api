@@ -16,6 +16,8 @@ const {
   DeleteById,
   getDataForDropdown,
   findOneRecord,
+  getCardListPaginationData,
+  getDetailsById,
 } = require("./dbQuery");
 const { ObjectId } = require("mongoose").Types;
 
@@ -241,6 +243,23 @@ exports.listController = async (req, res, next) => {
     );
 };
 
+exports.cardListController = async (req, res, next) => {
+  const acceptLanguage = req.headers["accept-language"];
+  return res
+    .status(httpStatusCodes.SUCCESS)
+    .json(
+      success(
+        httpStatusCodes.SUCCESS,
+        httpResponses.SUCCESS,
+        res.__(serverResponseMessage.RECORD_FETCHED),
+        await getCardListPaginationData({
+          language: acceptLanguage,
+          ...req.body,
+        })
+      )
+    );
+};
+
 exports.dropdownOptionsController = async (req, res, next) => {
   const acceptLanguage = req.headers["accept-language"];
   return res
@@ -258,6 +277,28 @@ exports.dropdownOptionsController = async (req, res, next) => {
 exports.getDetailController = async (req, res, next) => {
   const { _id } = req.params;
   const isExsist = await getById(_id);
+  if (!isExsist)
+    throw {
+      code: httpStatusCodes.UNPROCESSABLE_ENTITY,
+      message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
+    };
+
+  return res
+    .status(httpStatusCodes.SUCCESS)
+    .json(
+      success(
+        httpStatusCodes.SUCCESS,
+        httpResponses.SUCCESS,
+        res.__(serverResponseMessage.RECORD_FETCHED),
+        isExsist
+      )
+    );
+};
+
+exports.getYarnDetailController = async (req, res, next) => {
+  const acceptLanguage = req.headers["accept-language"];
+  const { _id } = req.params;
+  const isExsist = await getDetailsById(_id, acceptLanguage);
   if (!isExsist)
     throw {
       code: httpStatusCodes.UNPROCESSABLE_ENTITY,
