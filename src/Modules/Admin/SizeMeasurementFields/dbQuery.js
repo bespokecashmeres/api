@@ -1,4 +1,4 @@
-const { DEFAULT_LOCALE } = require("../../../../../utils/constants");
+const { DEFAULT_LOCALE } = require("../../../../utils/constants");
 const database = require("./schema");
 const { ObjectId } = require("mongoose").Types;
 
@@ -83,20 +83,6 @@ module.exports.getListData = async (qData) => {
         preserveNullAndEmptyArrays: true,
       },
     },
-    {
-      $lookup: {
-        from: "fittingsizes",
-        localField: "fittingSizeId",
-        foreignField: "_id",
-        as: "fittingSizeData",
-      },
-    },
-    {
-      $unwind: {
-        path: "$fittingSizeData",
-        preserveNullAndEmptyArrays: true,
-      },
-    },
   ];
 
   // Project Stage for Translating Fields
@@ -105,8 +91,9 @@ module.exports.getListData = async (qData) => {
       _id: 1,
       name: { $ifNull: [`$name.${language}`, ""] },
       productType: { $ifNull: [`$productTypeData.name.${language}`, ""] },
-      fittingSize: { $ifNull: [`$fittingSizeData.name.${language}`, ""] },
       createdAt: 1,
+      minRange: 1,
+      maxRange: 1,
       updatedAt: 1,
       status: 1,
     },
@@ -143,15 +130,13 @@ module.exports.getListData = async (qData) => {
 
 module.exports.getDataForDropdown = async (
   language = DEFAULT_LOCALE,
-  productTypeId,
-  fittingSizeId
+  productTypeId
 ) => {
   const pipeline = [
     {
       $match: {
         status: true,
         productTypeId: new ObjectId(productTypeId),
-        fittingSizeId: new ObjectId(fittingSizeId),
       },
     },
     {
@@ -176,7 +161,6 @@ module.exports.getByQuery = async (obj) => {
 
 module.exports.findAll = async ({
   productTypeId,
-  fittingSizeId,
   language = DEFAULT_LOCALE,
 }) => {
   const projectFields = {
@@ -187,7 +171,6 @@ module.exports.findAll = async ({
     updatedAt: 1,
     status: 1,
     productTypeId: 1,
-    fittingSizeId: 1,
   };
 
   const pipeline = [
@@ -195,7 +178,6 @@ module.exports.findAll = async ({
       $match: {
         status: true,
         productTypeId: new ObjectId(productTypeId),
-        fittingSizeId: new ObjectId(fittingSizeId),
       },
     },
     { $project: projectFields },

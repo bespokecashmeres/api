@@ -40,7 +40,7 @@ module.exports.getDropdownDataForNameField = async (database, language, match = 
   return await database.aggregate(pipeline);
 };
 
-module.exports.getPaginatedDataForNameField = async (database, queryData) => {
+module.exports.getPaginatedDataForNameField = async (database, queryData, fields = {}) => {
   const {
     perPage,
     page,
@@ -67,6 +67,7 @@ module.exports.getPaginatedDataForNameField = async (database, queryData) => {
       createdAt: 1,
       updatedAt: 1,
       status: 1,
+      ...fields,
     },
   };
 

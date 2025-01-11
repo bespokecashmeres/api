@@ -7,6 +7,10 @@ const stepCardSchema = new mongoose.Schema({
     type: Types.Object,
     required: true,
   },
+  slug: {
+    type: Types.String,
+    default: "",
+  },
   description: {
     type: Types.Object,
     required: true,

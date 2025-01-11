@@ -18,20 +18,21 @@ const {
   createNameValidator,
   updateNameValidator,
 } = require("../../../../../utils/validation");
+const { createNameSlugValidator, updateNameSlugValidator } = require("./validation");
 
 module.exports = (app) => {
   app.post(
     "/fitting-sizes/add",
     verifyToken,
     hasRole(["admin"]),
-    middleware(createNameValidator),
+    middleware(createNameSlugValidator),
     asyncHandler(createController)
   );
   app.put(
     "/fitting-sizes/update",
     verifyToken,
     hasRole(["admin"]),
-    middleware(updateNameValidator),
+    middleware(updateNameSlugValidator),
     asyncHandler(updateController)
   );
   app.get(

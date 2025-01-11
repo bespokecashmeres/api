@@ -22,42 +22,42 @@ const {
 
 module.exports = (app) => {
   app.post(
-    "/fitting-size-option-allocation/add",
+    "/size-measurement/add",
     verifyToken,
     hasRole(["admin"]),
     middleware(createValidator),
     asyncHandler(createController)
   );
   app.put(
-    "/fitting-size-option-allocation/update",
+    "/size-measurement/update",
     verifyToken,
     hasRole(["admin"]),
     middleware(updateValidator),
     asyncHandler(updateController)
   );
   app.post(
-    "/fitting-size-option-allocation/list",
+    "/size-measurement/list",
     verifyToken,
     hasRole(["admin"]),
     middleware(listValidator),
     asyncHandler(listController)
   );
   app.get(
-    "/fitting-size-option-allocation/:_id",
+    "/size-measurement/:_id",
     verifyToken,
     hasRole(["admin"]),
     middleware(IdValidator),
     asyncHandler(getDetailController)
   );
   app.delete(
-    "/fitting-size-option-allocation/:_id",
+    "/size-measurement/:_id",
     verifyToken,
     hasRole(["admin"]),
     middleware(IdValidator),
     asyncHandler(deleteController)
   );
   app.patch(
-    "/fitting-size-option-allocation/status",
+    "/size-measurement/status",
     verifyToken,
     hasRole(["admin"]),
     middleware(statusValidator),

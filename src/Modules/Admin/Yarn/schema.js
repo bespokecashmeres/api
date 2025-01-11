@@ -16,11 +16,6 @@ const yarnSchema = new mongoose.Schema(
       type: Types.Number,
       default: 0,
     },
-    genderId: {
-      type: Types.ObjectId,
-      ref: "genders",
-      default: null,
-    },
     // yarn origin
     countryId: {
       type: Types.ObjectId,
@@ -35,16 +30,6 @@ const yarnSchema = new mongoose.Schema(
     colourId: {
       type: Types.ObjectId,
       ref: "colours",
-      default: null,
-    },
-    patternId: {
-      type: Types.ObjectId,
-      ref: "patterns",
-      default: null,
-    },
-    occassionId: {
-      type: Types.ObjectId,
-      ref: "occassions",
       default: null,
     },
     seasonalityId: {

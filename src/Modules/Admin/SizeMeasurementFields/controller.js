@@ -1,7 +1,7 @@
-const { serverResponseMessage } = require("../../../../../config/message");
-const { httpResponses } = require("../../../../../utils/http-responses");
-const { httpStatusCodes } = require("../../../../../utils/http-status-codes");
-const { success } = require("../../../../../utils/response");
+const { serverResponseMessage } = require("../../../../config/message");
+const { httpResponses } = require("../../../../utils/http-responses");
+const { httpStatusCodes } = require("../../../../utils/http-status-codes");
+const { success } = require("../../../../utils/response");
 const {
   create,
   Update,
@@ -16,7 +16,6 @@ const {
 exports.createController = async (req, res) => {
   try {
     req.body.name = req.body.name ? JSON.parse(req.body.name) : {};
-    req.body.info = req.body.info ? JSON.parse(req.body.info) : {};
   } catch (error) {
     throw {
       code: httpStatusCodes.BAD_REQUEST,
@@ -49,7 +48,6 @@ exports.updateController = async (req, res, next) => {
 
   try {
     req.body.name = req.body.name ? JSON.parse(req.body.name) : {};
-    req.body.info = req.body.info ? JSON.parse(req.body.info) : {};
   } catch (error) {
     throw {
       code: httpStatusCodes.BAD_REQUEST,
@@ -124,7 +122,7 @@ exports.getDetailController = async (req, res, next) => {
 
 exports.dropdownOptionsController = async (req, res, next) => {
   const acceptLanguage = req.headers["accept-language"];
-  const { productTypeId, fittingSizeId } = req.body;
+  const { productTypeId } = req.body;
   return res
     .status(httpStatusCodes.SUCCESS)
     .json(
@@ -132,7 +130,7 @@ exports.dropdownOptionsController = async (req, res, next) => {
         httpStatusCodes.SUCCESS,
         httpResponses.SUCCESS,
         res.__(serverResponseMessage.RECORD_FETCHED),
-        await getDataForDropdown(acceptLanguage, productTypeId, fittingSizeId)
+        await getDataForDropdown(acceptLanguage, productTypeId)
       )
     );
 };
@@ -160,12 +158,11 @@ exports.statusController = async (req, res, next) => {
 };
 
 exports.getActiveController = async (req, res, next) => {
-  const { productTypeId, fittingSizeId } = req.body;
+  const { productTypeId } = req.body;
   const acceptLanguage = req.headers["accept-language"];
   const isExsist = await findAll({
     language: acceptLanguage,
     productTypeId,
-    fittingSizeId,
   });
   return res
     .status(httpStatusCodes.SUCCESS)
@@ -182,6 +179,7 @@ exports.getActiveController = async (req, res, next) => {
 exports.deleteController = async (req, res) => {
   const { _id } = req.params;
   const isExsist = await getById(_id);
+  console.log("isExists: ", isExsist);
   if (!isExsist)
     throw {
       code: httpStatusCodes.UNPROCESSABLE_ENTITY,
