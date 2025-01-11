@@ -15,23 +15,22 @@ const {
   IdValidator,
   listValidator,
   statusValidator,
-  createNameValidator,
-  updateNameValidator,
 } = require("../../../../../utils/validation");
+const { createNameSlugValidator, updateNameSlugValidator } = require("./validation");
 
 module.exports = (app) => {
   app.post(
     "/yarn-module/material/add",
     verifyToken,
     hasRole(["admin"]),
-    middleware(createNameValidator),
+    middleware(createNameSlugValidator),
     asyncHandler(createController)
   );
   app.put(
     "/yarn-module/material/update",
     verifyToken,
     hasRole(["admin"]),
-    middleware(updateNameValidator),
+    middleware(updateNameSlugValidator),
     asyncHandler(updateController)
   );
   app.get(

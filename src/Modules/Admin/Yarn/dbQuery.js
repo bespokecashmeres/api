@@ -61,9 +61,6 @@ module.exports.getPaginationData = async (qData) => {
     $project: {
       _id: 1,
       name: { $ifNull: [`$name.${language}`, ""] },
-      gender: {
-        $ifNull: [`$genderInfo.name.${language}`, ""],
-      },
       image: 1,
       price: 1,
       yarnId: 1,
@@ -80,15 +77,6 @@ module.exports.getPaginationData = async (qData) => {
   // Aggregation Query
   const aggregationPipeline = [
     matchStage,
-    {
-      $lookup: {
-        from: "genders",
-        localField: "genderId",
-        foreignField: "_id",
-        as: "genderInfo",
-      },
-    },
-    { $unwind: { path: "$genderInfo", preserveNullAndEmptyArrays: true } },
     projectStage,
     { $sort: sortOptions },
     { $skip: (page - 1) * perPage },
@@ -198,20 +186,11 @@ module.exports.getDetailsById = async (id, language) => {
     $project: {
       _id: 1,
       name: { $ifNull: [`$name.${language}`, ""] },
-      gender: {
-        $ifNull: [`$genderInfo.name.${language}`, ""],
-      },
-      pattern: {
-        $ifNull: [`$patternInfo.name.${language}`, ""],
-      },
       material: {
         $ifNull: [`$materialInfo.name.${language}`, ""],
       },
       seasonality: {
         $ifNull: [`$seasonalityInfo.name.${language}`, ""],
-      },
-      occassion: {
-        $ifNull: [`$occassionInfo.name.${language}`, ""],
       },
       colour: {
         $ifNull: [`$colourInfo.name.${language}`, ""],
@@ -249,24 +228,6 @@ module.exports.getDetailsById = async (id, language) => {
     matchStage,
     {
       $lookup: {
-        from: "genders",
-        localField: "genderId",
-        foreignField: "_id",
-        as: "genderInfo",
-      },
-    },
-    { $unwind: { path: "$genderInfo", preserveNullAndEmptyArrays: true } },
-    {
-      $lookup: {
-        from: "patterns",
-        localField: "patternId",
-        foreignField: "_id",
-        as: "patternInfo",
-      },
-    },
-    { $unwind: { path: "$patternInfo", preserveNullAndEmptyArrays: true } },
-    {
-      $lookup: {
         from: "colours",
         localField: "colourId",
         foreignField: "_id",
@@ -274,15 +235,6 @@ module.exports.getDetailsById = async (id, language) => {
       },
     },
     { $unwind: { path: "$colourInfo", preserveNullAndEmptyArrays: true } },
-    {
-      $lookup: {
-        from: "occassions",
-        localField: "occassionId",
-        foreignField: "_id",
-        as: "occassionInfo",
-      },
-    },
-    { $unwind: { path: "$occassionInfo", preserveNullAndEmptyArrays: true } },
     {
       $lookup: {
         from: "seasonalities",

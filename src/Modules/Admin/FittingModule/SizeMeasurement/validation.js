@@ -8,7 +8,7 @@ exports.createValidator = Joi.object({
   fittingSizeId: Joi.string().required(),
   stepTypeId: Joi.string().required(),
   stepCardId: Joi.string().required(),
-  fittingSizeOptionId: Joi.string().required(),
+  sizeMeasurementFieldId: Joi.string().required(),
   status: statusJoiValidation,
 });
 
@@ -18,6 +18,6 @@ exports.updateValidator = Joi.object({
   fittingSizeId: Joi.string().optional(),
   stepTypeId: Joi.string().optional(),
   stepCardId: Joi.string().optional(),
-  fittingSizeOptionId: Joi.string().optional(),
+  sizeMeasurementFieldId: Joi.string().optional(),
   value: Joi.string().optional(),
 });

@@ -106,15 +106,15 @@ module.exports.getListData = async (qData) => {
     },
     {
       $lookup: {
-        from: "fittingsizeoptions",
-        localField: "fittingSizeOptionId",
+        from: "sizemeasurementfields",
+        localField: "sizeMeasurementFieldId",
         foreignField: "_id",
-        as: "fittingSizeOptionData",
+        as: "sizeMeasurementFieldData",
       },
     },
     {
       $unwind: {
-        path: "$fittingSizeOptionData",
+        path: "$sizeMeasurementFieldData",
         preserveNullAndEmptyArrays: true,
       },
     },
@@ -129,8 +129,8 @@ module.exports.getListData = async (qData) => {
       stepType: { $ifNull: [`$stepTypeData.name.${language}`, ""] },
       stepCard: { $ifNull: [`$stepCardData.title.${language}`, ""] },
       fittingSize: { $ifNull: [`$fittingSizeData.name.${language}`, ""] },
-      fittingSizeOption: {
-        $ifNull: [`$fittingSizeOptionData.name.${language}`, ""],
+      sizeMeasurementField: {
+        $ifNull: [`$sizeMeasurementFieldData.name.${language}`, ""],
       },
       createdAt: 1,
       updatedAt: 1,

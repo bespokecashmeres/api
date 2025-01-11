@@ -2,7 +2,7 @@
 const mongoose = require("mongoose");
 const Types = mongoose.Schema.Types;
 
-const fittingSizeOptionAllocationSchema = new mongoose.Schema({
+const sizeMeasuremenSchema = new mongoose.Schema({
   value: {
     type: Types.Number,
     required: true,
@@ -31,16 +31,16 @@ const fittingSizeOptionAllocationSchema = new mongoose.Schema({
     ref: "fittingsizes",
     required: true,
   },
-  fittingSizeOptionId: {
+  sizeMeasurementFieldId: {
     type: Types.ObjectId,
-    ref: "fittingsizeoptions",
+    ref: "sizemeasurementfields",
     required: true,
   },
 });
 
-const FittingSizeOptionAllocation = mongoose.model(
-  "fittingsizeoptionallocation",
-  fittingSizeOptionAllocationSchema
+const sizeMeasurement = mongoose.model(
+  "sizemeasurements",
+  sizeMeasuremenSchema
 );
 
-module.exports = FittingSizeOptionAllocation;
+module.exports = sizeMeasurement;

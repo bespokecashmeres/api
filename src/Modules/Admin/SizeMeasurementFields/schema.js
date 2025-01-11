@@ -2,11 +2,19 @@
 const mongoose = require("mongoose");
 const Types = mongoose.Schema.Types;
 
-const fittingSizeOptionsSchema = new mongoose.Schema({
+const sizeMeasurementFieldSchema = new mongoose.Schema({
   name: {
     type: Types.Object,
     required: true,
     default: {},
+  },
+  minRange: {
+    type: Types.Number,
+    default: 0
+  },
+  maxRange: {
+    type: Types.Number,
+    default: 0
   },
   rowOrder: {
     type: Types.Number,
@@ -21,16 +29,11 @@ const fittingSizeOptionsSchema = new mongoose.Schema({
     ref: "producttypes",
     required: true,
   },
-  fittingSizeId: {
-    type: Types.ObjectId,
-    ref: "fittingsizes",
-    required: true,
-  },
 });
 
-const FittingSizeOptions = mongoose.model(
-  "fittingsizeoptions",
-  fittingSizeOptionsSchema
+const SizeMeasurementField = mongoose.model(
+  "sizemeasurementfields",
+  sizeMeasurementFieldSchema
 );
 
-module.exports = FittingSizeOptions;
+module.exports = SizeMeasurementField;

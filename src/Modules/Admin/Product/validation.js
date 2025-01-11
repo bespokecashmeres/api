@@ -12,6 +12,8 @@ const {
   genderJoiOptionalValidation,
   sizeJoiValidation,
   sizeJoiOptionalValidation,
+  slugJoiValidation,
+  slugJoiOptionalValidation,
 } = require("../../../../utils/validation");
 
 exports.createValidator = Joi.object({
@@ -25,7 +27,7 @@ exports.createValidator = Joi.object({
   name: Joi.string().required(),
   price: Joi.number().required(),
   discountedPrice: Joi.number().optional(),
-  slug: Joi.string().required(),
+  slug: slugJoiValidation,
   noOfQuantity: Joi.number().required(),
   quantityDiscount: Joi.number().required(),
   shippingAndReturnPolicy: Joi.string().required(),
@@ -60,7 +62,7 @@ exports.updateValidator = Joi.object({
   name: Joi.string().optional(),
   price: Joi.number().optional(),
   discountedPrice: Joi.number().optional(),
-  slug: Joi.string().optional(),
+  slug: slugJoiOptionalValidation,
   noOfQuantity: Joi.number().optional(),
   quantityDiscount: Joi.number().optional(),
   shippingAndReturnPolicy: Joi.string().optional(),

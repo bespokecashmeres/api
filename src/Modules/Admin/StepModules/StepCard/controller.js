@@ -11,13 +11,23 @@ const {
   findAll,
   rowsReorderData,
   getDataForDropdown,
+  getByQuery,
 } = require("./dbQuery");
 const {
   deleteFromS3,
   uploadToS3,
 } = require("../../../../../utils/fileUploads");
+const { ObjectId } = require("mongoose").Types;
 
 exports.createController = async (req, res) => {
+  const statusExists = await getByQuery({ slug: req.body.slug });
+  if (statusExists) {
+    throw {
+      code: httpStatusCodes.BAD_REQUEST,
+      message: res.__(serverResponseMessage.SLUG_EXISTS),
+    }
+  }
+
   const graphImage = req.files?.["graphImage"]
     ? req.files["graphImage"][0]
     : null;
@@ -76,6 +86,16 @@ exports.updateController = async (req, res, next) => {
       message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
     };
 
+  if (req.body.slug) {
+    const statusExists = await getByQuery({ slug: req.body.slug, _id: { $ne: new ObjectId(_id) } });
+    if (statusExists) {
+      throw {
+        code: httpStatusCodes.BAD_REQUEST,
+        message: res.__(serverResponseMessage.SLUG_EXISTS),
+      }
+    }
+  }
+
   try {
     const graphImage = req.files?.["graphImage"]
       ? req.files["graphImage"][0]
@@ -88,9 +108,8 @@ exports.updateController = async (req, res, next) => {
         const path = await uploadToS3(graphImage, "step-card");
         req.body.graphImage = path;
         await deleteFromS3(isExsist?.graphImage);
-      } catch (error) {}
+      } catch (error) { }
     }
-    console.log(realImage, "PDFFF");
     if (realImage) {
       try {
         const path = await uploadToS3(realImage, "step-card");
@@ -100,7 +119,7 @@ exports.updateController = async (req, res, next) => {
         console.log(error, "ERROR");
       }
     }
-  } catch (error) {}
+  } catch (error) { }
 
   try {
     req.body.title = req.body.title ? JSON.parse(req.body.title) : [];
@@ -254,7 +273,7 @@ exports.deleteController = async (req, res) => {
   try {
     await deleteFromS3(isExsist?.graphImage);
     await deleteFromS3(isExsist?.realImage);
-  } catch (error) {}
+  } catch (error) { }
   const deleteIndex = await DeleteById(_id);
   return res
     .status(httpStatusCodes.SUCCESS)

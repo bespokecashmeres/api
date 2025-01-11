@@ -15,7 +15,7 @@ module.exports.getDataForDropdown = async (language = DEFAULT_LOCALE) => {
 };
 
 module.exports.getPaginationData = async (queryData) => {
-  return await baseQueryService.getPaginatedDataForNameField(database, queryData);
+  return await baseQueryService.getPaginatedDataForNameField(database, queryData, { price: 1, slug: 1 });
 };
 
 module.exports.getById = async (id) => {

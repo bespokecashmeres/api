@@ -4,11 +4,13 @@ const {
   DEFAULT_LOCALE,
   ALLOWED_LOCALE,
 } = require("../../../../../utils/constants");
+const { slugJoiValidation, slugJoiOptionalValidation } = require("../../../../../utils/validation");
 
 exports.createValidator = Joi.object({
   stepTypeId: Joi.string().hex().length(24).required(),
   title: Joi.string().required(),
   description: Joi.string().required(),
+  slug: slugJoiValidation,
   status: Joi.boolean().optional().valid(true, false).default(true),
   graphImage: Joi.any().optional().messages({
     "any.base": "Image should be a file",
@@ -23,6 +25,7 @@ exports.updateValidator = Joi.object({
   _id: Joi.string().hex().length(24).required(),
   title: Joi.string().optional(),
   description: Joi.string().optional(),
+  slug: slugJoiOptionalValidation,
   graphImage: Joi.any().optional().messages({
     "any.base": "Image should be a file",
   }),

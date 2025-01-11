@@ -1,5 +1,4 @@
 const { serverResponseMessage } = require("../../../../config/message");
-// const { generateYarnId } = require("../../../../utils/common");
 const {
   uploadToS3,
   deleteManyFromS3,
@@ -19,7 +18,6 @@ const {
   getCardListPaginationData,
   getDetailsById,
 } = require("./dbQuery");
-const { ObjectId } = require("mongoose").Types;
 
 exports.createController = async (req, res, next) => {
   // req.body.yarnId = await generateYarnId();
