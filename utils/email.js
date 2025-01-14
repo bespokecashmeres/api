@@ -3258,7 +3258,7 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_heading_1 .
       <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:60px 30px 10px;font-family:'Open Sans',sans-serif;" align="left">
         
   <div class="v-font-size" style="font-size: 14px; line-height: 140%; text-align: justify; word-wrap: break-word;">
-<p style="font-size: 14px; line-height: 140%; margin: 0px;"><strong>Hi ${
+<p style="font-size: 14px; line-height: 140%; margin: 0px;"><strong>Dear ${
     variables.firstName
   } ${variables.lastName},</strong></p>
   <br />
