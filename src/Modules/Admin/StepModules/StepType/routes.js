@@ -6,6 +6,7 @@ const {
   updateValidator,
   tabsValidator,
   activeTabsValidator,
+  stepDetailsValidator,
 } = require("./validation");
 const {
   createController,
@@ -17,6 +18,7 @@ const {
   statusController,
   tabsController,
   dropdownOptionsController,
+  stepDetailsController,
 } = require("./controller");
 const { asyncHandler } = require("../../../../../utils/asyncHandler");
 const {
@@ -56,13 +58,21 @@ module.exports = (app) => {
   );
   app.get(
     "/step-type/activeTabs/:productTypeId",
+    verifyToken,
     middleware(activeTabsValidator),
     asyncHandler(getActiveController)
   );
   app.post(
     "/step-type/options/:productTypeId",
+    verifyToken,
     middleware(activeTabsValidator),
     asyncHandler(dropdownOptionsController)
+  );
+  app.post(
+    "/step-type/details",
+    verifyToken,
+    middleware(stepDetailsValidator),
+    asyncHandler(stepDetailsController)
   );
   app.get(
     "/step-type/:_id",

@@ -1,4 +1,5 @@
 const { DEFAULT_LOCALE } = require("../../../../../utils/constants");
+const { getStepBySlug, getDataForDropdown } = require("../StepType/dbQuery");
 const database = require("./schema");
 const { ObjectId } = require("mongoose").Types;
 
@@ -182,3 +183,58 @@ module.exports.DeleteById = async (id) => {
   }));
   await database.bulkWrite(bulkOperations);
 };
+
+module.exports.getStepCardData = async (id, language = DEFAULT_LOCALE) => {
+  const matchStage = {
+    $match: {
+    _id: new ObjectId(id),
+    }
+  }
+
+  const projectStage = {
+    $project: {
+      _id: 1,
+      name: `$title.${language}`,
+      slug: 1,
+      image: `$realImage`
+    }
+  }
+
+  const pipeline = [
+    matchStage,
+    projectStage
+  ]
+
+  const result = await database.aggregate(pipeline);
+  return result.length ? result[0] : null;
+}
+
+module.exports.getStepListByStepType = async (step, productTypeId, language = DEFAULT_LOCALE) => {
+  const steps = await getDataForDropdown(language, productTypeId);
+  const stepData = steps[step - 2];
+  const stepTypeData = await getStepBySlug(stepData?.slug);
+  const matchStage = {
+    $match: {
+    stepTypeId: new ObjectId(stepTypeData._id),
+    }
+  }
+
+  const projectStage = {
+    $project: {
+      _id: 1,
+      title: `$title.${language}`,
+      slug: 1,
+      description: `$description.${language}`,
+      graphImage: 1,
+      realImage: 1
+    }
+  }
+
+  const pipeline = [
+    matchStage,
+    projectStage,
+    { $sort: { rowOrder: 1 } }
+  ]
+
+  return await database.aggregate(pipeline);
+}

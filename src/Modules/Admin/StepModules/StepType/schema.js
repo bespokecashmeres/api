@@ -8,6 +8,10 @@ const stepTypeSchema = new mongoose.Schema({
     required: true,
     default: {},
   },
+  slug: {
+    type: Types.String,
+    default: "",
+  },
   info: {
     type: Types.Object,
     default: {},
