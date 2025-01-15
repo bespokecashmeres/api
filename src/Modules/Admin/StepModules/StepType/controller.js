@@ -2,7 +2,8 @@ const { serverResponseMessage } = require("../../../../../config/message");
 const { httpResponses } = require("../../../../../utils/http-responses");
 const { httpStatusCodes } = require("../../../../../utils/http-status-codes");
 const { success } = require("../../../../../utils/response");
-const { findOneRecord: stepCardFindOneRecord } = require("../StepCard/dbQuery");
+const { getYarnStepData } = require("../../Yarn/dbQuery");
+const { findOneRecord: stepCardFindOneRecord, getStepListByStepType, getStepCardData } = require("../StepCard/dbQuery");
 const {
   create,
   Update,
@@ -174,6 +175,53 @@ exports.dropdownOptionsController = async (req, res, next) => {
         httpResponses.SUCCESS,
         res.__(serverResponseMessage.RECORD_FETCHED),
         await getDataForDropdown(acceptLanguage, productTypeId)
+      )
+    );
+};
+
+exports.stepDetailsController = async (req, res, next) => {
+  const acceptLanguage = req.headers["accept-language"];
+  const { yarn, gauge, style, fitting, nextStepSlug, productTypeId } = req.body;
+  console.log("req.body: ", req.body);
+
+  // Fetch yarn and step list data in parallel
+  const [yarnData, stepList] = await Promise.all([
+    getYarnStepData(yarn, acceptLanguage),
+    getStepListByStepType(nextStepSlug, productTypeId, acceptLanguage),
+  ]);
+
+  // Prepare optional data fetching promises
+  const optionalDataPromises = [];
+  if (gauge) {
+    optionalDataPromises.push(getStepCardData(gauge, acceptLanguage));
+  } else {
+    optionalDataPromises.push(Promise.resolve(undefined));
+  }
+
+  if (style) {
+    optionalDataPromises.push(getStepCardData(style, acceptLanguage));
+  } else {
+    optionalDataPromises.push(Promise.resolve(undefined));
+  }
+
+  if (fitting) {
+    optionalDataPromises.push(getStepCardData(fitting, acceptLanguage));
+  } else {
+    optionalDataPromises.push(Promise.resolve(undefined));
+  }
+
+  // Fetch optional data in parallel
+  const [gaugeData, styleData, fittingData] = await Promise.all(optionalDataPromises);
+
+
+  return res
+    .status(httpStatusCodes.SUCCESS)
+    .json(
+      success(
+        httpStatusCodes.SUCCESS,
+        httpResponses.SUCCESS,
+        res.__(serverResponseMessage.RECORD_FETCHED),
+        { yarn: yarnData, list: stepList, gauge: gaugeData, style: styleData, fitting: fittingData }
       )
     );
 };

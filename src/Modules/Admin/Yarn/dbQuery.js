@@ -289,3 +289,41 @@ module.exports.Update = async (data) => {
 module.exports.DeleteById = async (id) => {
   return await database.findByIdAndDelete(id);
 };
+
+module.exports.getYarnStepData = async (id, 
+  language = DEFAULT_LOCALE) => {
+  const matchStage = {
+    $match: {
+      _id: new ObjectId(id),
+    },
+  };
+
+  const projectStage = {
+    $project: {
+      _id: 1,
+      name: { $ifNull: [`$name.${language}`, ""] },
+      colour: {
+        $ifNull: [`$colourInfo.name.${language}`, ""],
+      },
+      image: 1,
+      price: 1,
+    },
+  };
+
+  const aggregationPipeline = [
+    matchStage,
+    {
+      $lookup: {
+        from: "colours",
+        localField: "colourId",
+        foreignField: "_id",
+        as: "colourInfo",
+      },
+    },
+    { $unwind: { path: "$colourInfo", preserveNullAndEmptyArrays: true } },
+    projectStage,
+  ];
+
+  const result = await database.aggregate(aggregationPipeline).exec();
+  return result.length ? result[0] : null;
+}

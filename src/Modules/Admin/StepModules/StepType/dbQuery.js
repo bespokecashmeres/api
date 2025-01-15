@@ -108,9 +108,12 @@ module.exports.getDataForDropdown = async (
       $project: {
         value: "$_id",
         label: { $ifNull: [`$name.${language}`, ""] },
+        rowOrder: 1,
+        slug: 1,
         _id: 0,
       },
     },
+    { $sort: { rowOrder: 1 } },
   ];
 
   return await database.aggregate(pipeline);
@@ -149,3 +152,7 @@ module.exports.DeleteById = async (id) => {
   }));
   await database.bulkWrite(bulkOperations);
 };
+
+module.exports.getStepBySlug = async (slug) => {
+  return await database.findOne({ slug });
+}
