@@ -1,5 +1,6 @@
 const { DEFAULT_LOCALE } = require("../../../../../utils/constants");
 const database = require("./schema");
+const stepCardDatabase = require("../StepCard/schema");
 const productTypeDatabase = require("../../ProductType/schema");
 const { ObjectId } = require("mongoose").Types;
 
@@ -155,4 +156,34 @@ module.exports.DeleteById = async (id) => {
 
 module.exports.getStepBySlug = async (slug) => {
   return await database.findOne({ slug });
+}
+
+module.exports.getSteps = async (productTypeId, language = DEFAULT_LOCALE) => {
+  return await database.find({ productTypeId: new ObjectId(productTypeId) }).select({
+    _id: 1,
+    name: `$name.${language}`,
+    slug: 1,
+    rowOrder: 1
+  }).sort({ rowOrder: 1 })
+}
+
+module.exports.getStepDetailsBySlugAndId = async (slug, id, language = DEFAULT_LOCALE) => {
+  const [stepType, stepCard] = await Promise.all([
+    database.findOne({ slug }).select({
+      _id: 1,
+      name: `$name.${language}`,
+      info: `$info.${language}`
+    }),
+    stepCardDatabase.findById(id).select({
+      _id: 1,
+      title: `$title.${language}`,
+      realImage: 1,
+      slug: 1
+    }),
+  ]);
+
+  return {
+    stepType,
+    stepCard
+  }
 }
