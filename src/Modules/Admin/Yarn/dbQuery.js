@@ -62,7 +62,6 @@ module.exports.getPaginationData = async (qData) => {
       _id: 1,
       name: { $ifNull: [`$name.${language}`, ""] },
       image: 1,
-      price: 1,
       yarnId: 1,
       createdAt: 1,
       updatedAt: 1,
@@ -138,7 +137,7 @@ module.exports.getCardListPaginationData = async (qData) => {
       _id: 1,
       name: { $ifNull: [`$name.${language}`, ""] },
       image: 1,
-      price: 1,
+      price: { $ifNull: [`$materialInfo.price`, 0] },
       yarnId: 1,
     },
   };
@@ -150,6 +149,15 @@ module.exports.getCardListPaginationData = async (qData) => {
   // Aggregation Query
   const aggregationPipeline = [
     matchStage,
+    {
+      $lookup: {
+        from: "materials",
+        localField: "materialId",
+        foreignField: "_id",
+        as: "materialInfo",
+      },
+    },
+    { $unwind: { path: "$materialInfo", preserveNullAndEmptyArrays: true } },
     projectStage,
     { $sort: sortOptions },
     { $skip: (page - 1) * perPage },
@@ -199,7 +207,7 @@ module.exports.getDetailsById = async (id, language) => {
         $ifNull: [`$perceivedWeightInfo.name.${language}`, ""],
       },
       image: 1,
-      price: 1,
+      price: { $ifNull: [`$materialInfo.price`, 0] },
       yarnId: 1,
       yarns: {
         $map: {
@@ -306,7 +314,7 @@ module.exports.getYarnStepData = async (id,
         $ifNull: [`$colourInfo.name.${language}`, ""],
       },
       image: 1,
-      price: 1,
+      price: { $ifNull: [`$materialInfo.price`, 0] },
     },
   };
 
@@ -321,6 +329,15 @@ module.exports.getYarnStepData = async (id,
       },
     },
     { $unwind: { path: "$colourInfo", preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: "materials",
+        localField: "materialId",
+        foreignField: "_id",
+        as: "materialInfo",
+      },
+    },
+    { $unwind: { path: "$materialInfo", preserveNullAndEmptyArrays: true } },
     projectStage,
   ];
 

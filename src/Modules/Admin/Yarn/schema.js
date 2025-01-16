@@ -12,10 +12,6 @@ const yarnSchema = new mongoose.Schema(
       type: Types.String,
       default: "",
     },
-    price: {
-      type: Types.Number,
-      default: 0,
-    },
     // yarn origin
     countryId: {
       type: Types.ObjectId,
