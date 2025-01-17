@@ -31,5 +31,13 @@ exports.stepDetailsValidator = Joi.object({
   style: Joi.string().hex().length(24).optional(),
   fitting: Joi.string().hex().length(24).optional(),
   productTypeId: Joi.string().hex().length(24).optional(),
-  nextStepSlug: Joi.string().required(),
+  nextStepSlug: Joi.string().optional(),
+});
+
+exports.stepFullViewValidator = Joi.object({
+  yarn: Joi.string().hex().length(24).optional(),
+  gauge: Joi.string().hex().length(24).optional(),
+  style: Joi.string().hex().length(24).optional(),
+  fitting: Joi.string().hex().length(24).optional(),
+  productTypeId: Joi.string().hex().length(24).optional(),
 });

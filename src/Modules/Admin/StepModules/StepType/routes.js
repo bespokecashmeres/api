@@ -7,6 +7,7 @@ const {
   tabsValidator,
   activeTabsValidator,
   stepDetailsValidator,
+  stepFullViewValidator,
 } = require("./validation");
 const {
   createController,
@@ -19,6 +20,7 @@ const {
   tabsController,
   dropdownOptionsController,
   stepDetailsController,
+  stepFullViewController,
 } = require("./controller");
 const { asyncHandler } = require("../../../../../utils/asyncHandler");
 const {
@@ -74,6 +76,7 @@ module.exports = (app) => {
     middleware(stepDetailsValidator),
     asyncHandler(stepDetailsController)
   );
+  app.post("/step-type/full-view", verifyToken, middleware(stepFullViewValidator), asyncHandler(stepFullViewController))
   app.get(
     "/step-type/:_id",
     verifyToken,

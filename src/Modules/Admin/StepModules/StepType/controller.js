@@ -2,7 +2,8 @@ const { serverResponseMessage } = require("../../../../../config/message");
 const { httpResponses } = require("../../../../../utils/http-responses");
 const { httpStatusCodes } = require("../../../../../utils/http-status-codes");
 const { success } = require("../../../../../utils/response");
-const { getYarnStepData } = require("../../Yarn/dbQuery");
+const CostCalculations = require("../../CostCalculation/schema");
+const { getYarnStepData, getDetailsById } = require("../../Yarn/dbQuery");
 const { findOneRecord: stepCardFindOneRecord, getStepListByStepType, getStepCardData } = require("../StepCard/dbQuery");
 const {
   create,
@@ -13,6 +14,8 @@ const {
   rowsReorderData,
   getTabsData,
   getDataForDropdown,
+  getStepDetailsBySlugAndId,
+  getSteps,
 } = require("./dbQuery");
 const { ObjectId } = require("mongoose").Types;
 
@@ -179,19 +182,41 @@ exports.dropdownOptionsController = async (req, res, next) => {
     );
 };
 
+exports.stepFullViewController = async (req, res, next) => {
+  const acceptLanguage = req.headers["accept-language"];
+  const { yarn, gauge, style, fitting, productTypeId } = req.body;
+  const [stepList, yarnData, gaugeData, styleData, fittingData] = await Promise.all([getSteps(productTypeId, acceptLanguage), getDetailsById(yarn, acceptLanguage), getStepDetailsBySlugAndId("gauge", gauge, acceptLanguage), getStepDetailsBySlugAndId("style", style, acceptLanguage), getStepDetailsBySlugAndId("fitting", fitting, acceptLanguage)]);
+
+  // const response  = await CostCalculations.findOne({ gauge: gaugeData.stepCard.slug, size: 'xs' })
+  // console.log("response: ", response);
+
+  return res
+    .status(httpStatusCodes.SUCCESS)
+    .json(
+      success(
+        httpStatusCodes.SUCCESS,
+        httpResponses.SUCCESS,
+        res.__(serverResponseMessage.RECORD_FETCHED),
+        { yarn: yarnData, steps: stepList, gauge: gaugeData, style: styleData, fitting: fittingData }
+      )
+    );
+}
+
 exports.stepDetailsController = async (req, res, next) => {
   const acceptLanguage = req.headers["accept-language"];
   const { yarn, gauge, style, fitting, nextStepSlug, productTypeId } = req.body;
-  console.log("req.body: ", req.body);
 
   // Fetch yarn and step list data in parallel
-  const [yarnData, stepList] = await Promise.all([
-    getYarnStepData(yarn, acceptLanguage),
-    getStepListByStepType(nextStepSlug, productTypeId, acceptLanguage),
-  ]);
+  const yarnData = await getYarnStepData(yarn, acceptLanguage);
 
   // Prepare optional data fetching promises
   const optionalDataPromises = [];
+  if (nextStepSlug) {
+    optionalDataPromises.push(getStepListByStepType(nextStepSlug, productTypeId, acceptLanguage));
+  } else {
+    optionalDataPromises.push(Promise.resolve([]));
+  }
+
   if (gauge) {
     optionalDataPromises.push(getStepCardData(gauge, acceptLanguage));
   } else {
@@ -211,7 +236,7 @@ exports.stepDetailsController = async (req, res, next) => {
   }
 
   // Fetch optional data in parallel
-  const [gaugeData, styleData, fittingData] = await Promise.all(optionalDataPromises);
+  const [stepList, gaugeData, styleData, fittingData] = await Promise.all(optionalDataPromises);
 
 
   return res
