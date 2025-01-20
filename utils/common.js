@@ -108,3 +108,38 @@ module.exports.generateYarnId = async () => {
 
   return yarnId; // Return the unique ID
 };
+
+module.exports.calculateFinalPrice = (initialPrice, calculations) => {
+  let finalPrice = initialPrice;
+
+  calculations.forEach(calculation => {
+    const { value, operation, unit } = calculation;
+
+    if (unit === "number") {
+      switch (operation) {
+        case "increase":
+          finalPrice += value;
+          break;
+        case "decrease":
+          finalPrice -= value;
+          break;
+        case "multiply":
+          finalPrice *= value;
+          break;
+        case "divide":
+          if (value !== 0) {
+            finalPrice /= value;
+          } else {
+            throw new Error("Cannot divide by zero.");
+          }
+          break;
+        default:
+          throw new Error(`Unsupported operation: ${operation}`);
+      }
+    } else {
+      throw new Error(`Unsupported unit: ${unit}`);
+    }
+  });
+
+  return finalPrice;
+}
