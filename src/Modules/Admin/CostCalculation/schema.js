@@ -6,6 +6,9 @@ const costCalculationsSchema = new mongoose.Schema({
   gauge: {
     type: Types.String,
   },
+  pattern: {
+    type: Types.String,
+  },
   size: {
     type: Types.String,
   },

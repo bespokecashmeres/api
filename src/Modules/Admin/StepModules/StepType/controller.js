@@ -1,7 +1,9 @@
 const { serverResponseMessage } = require("../../../../../config/message");
+const { calculateFinalPrice } = require("../../../../../utils/common");
 const { httpResponses } = require("../../../../../utils/http-responses");
 const { httpStatusCodes } = require("../../../../../utils/http-status-codes");
 const { success } = require("../../../../../utils/response");
+const AdditionalCostCalculations = require("../../AdditionalCostCalculation/schema");
 const CostCalculations = require("../../CostCalculation/schema");
 const { getYarnStepData, getDetailsById } = require("../../Yarn/dbQuery");
 const { findOneRecord: stepCardFindOneRecord, getStepListByStepType, getStepCardData } = require("../StepCard/dbQuery");
@@ -184,11 +186,21 @@ exports.dropdownOptionsController = async (req, res, next) => {
 
 exports.stepFullViewController = async (req, res, next) => {
   const acceptLanguage = req.headers["accept-language"];
-  const { yarn, gauge, style, fitting, productTypeId } = req.body;
-  const [stepList, yarnData, gaugeData, styleData, fittingData] = await Promise.all([getSteps(productTypeId, acceptLanguage), getDetailsById(yarn, acceptLanguage), getStepDetailsBySlugAndId("gauge", gauge, acceptLanguage), getStepDetailsBySlugAndId("style", style, acceptLanguage), getStepDetailsBySlugAndId("fitting", fitting, acceptLanguage)]);
+  const { yarn, gauge, pattern, style, fitting, productTypeId } = req.body;
+  const [stepList, yarnData, gaugeData, patternData, styleData, fittingData] = await Promise.all([getSteps(productTypeId, acceptLanguage), getDetailsById(yarn, acceptLanguage), getStepDetailsBySlugAndId("gauge", gauge, acceptLanguage), getStepDetailsBySlugAndId("pattern", pattern, acceptLanguage), getStepDetailsBySlugAndId("style", style, acceptLanguage), getStepDetailsBySlugAndId("fitting", fitting, acceptLanguage)]);
 
-  // const response  = await CostCalculations.findOne({ gauge: gaugeData.stepCard.slug, size: 'xs' })
-  // console.log("response: ", response);
+  console.log("gaugeData: ", gaugeData);
+  console.log("patternData: ", patternData);
+  const costCalculation = await CostCalculations.findOne({ gauge: gaugeData.stepCard.slug, size: 'xs', pattern: patternData.stepCard.slug })
+  console.log("Cost Calculation: ", costCalculation);
+  const additionalCostResponse = await AdditionalCostCalculations.findOne({ slug: styleData.stepCard.slug })
+  console.log("additionalCostResponse: ", additionalCostResponse);
+
+  const totalFactoryCost = yarnData.price * costCalculation.weightPerGram * costCalculation.knitWastage / 1000 + costCalculation.manufacturingCost + costCalculation.trimsCost + costCalculation.laborCost;
+  console.log("totalFactoryCost: ", totalFactoryCost.toFixed(2));
+
+  const totalCost = calculateFinalPrice(totalFactoryCost, additionalCostResponse.calculations);
+  console.log("totalCost: ", totalCost.toFixed(2));
 
   return res
     .status(httpStatusCodes.SUCCESS)
@@ -197,14 +209,14 @@ exports.stepFullViewController = async (req, res, next) => {
         httpStatusCodes.SUCCESS,
         httpResponses.SUCCESS,
         res.__(serverResponseMessage.RECORD_FETCHED),
-        { yarn: yarnData, steps: stepList, gauge: gaugeData, style: styleData, fitting: fittingData }
+        { yarn: { ...yarnData, price: totalCost.toFixed(2) }, steps: stepList, gauge: gaugeData, pattern: patternData, style: styleData, fitting: fittingData }
       )
     );
 }
 
 exports.stepDetailsController = async (req, res, next) => {
   const acceptLanguage = req.headers["accept-language"];
-  const { yarn, gauge, style, fitting, nextStepSlug, productTypeId } = req.body;
+  const { yarn, gauge, pattern, style, fitting, nextStepSlug, productTypeId } = req.body;
 
   // Fetch yarn and step list data in parallel
   const yarnData = await getYarnStepData(yarn, acceptLanguage);
@@ -223,6 +235,12 @@ exports.stepDetailsController = async (req, res, next) => {
     optionalDataPromises.push(Promise.resolve(undefined));
   }
 
+  if (pattern) {
+    optionalDataPromises.push(getStepCardData(pattern, acceptLanguage));
+  } else {
+    optionalDataPromises.push(Promise.resolve(undefined));
+  }
+
   if (style) {
     optionalDataPromises.push(getStepCardData(style, acceptLanguage));
   } else {
@@ -236,7 +254,7 @@ exports.stepDetailsController = async (req, res, next) => {
   }
 
   // Fetch optional data in parallel
-  const [stepList, gaugeData, styleData, fittingData] = await Promise.all(optionalDataPromises);
+  const [stepList, gaugeData, patternData, styleData, fittingData] = await Promise.all(optionalDataPromises);
 
 
   return res
@@ -246,7 +264,7 @@ exports.stepDetailsController = async (req, res, next) => {
         httpStatusCodes.SUCCESS,
         httpResponses.SUCCESS,
         res.__(serverResponseMessage.RECORD_FETCHED),
-        { yarn: yarnData, list: stepList, gauge: gaugeData, style: styleData, fitting: fittingData }
+        { yarn: yarnData, list: stepList, gauge: gaugeData, pattern: patternData, style: styleData, fitting: fittingData }
       )
     );
 };

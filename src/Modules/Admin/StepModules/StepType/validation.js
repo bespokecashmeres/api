@@ -28,6 +28,7 @@ exports.activeTabsValidator = Joi.object({
 exports.stepDetailsValidator = Joi.object({
   yarn: Joi.string().hex().length(24).required(),
   gauge: Joi.string().hex().length(24).optional(),
+  pattern: Joi.string().hex().length(24).optional(),
   style: Joi.string().hex().length(24).optional(),
   fitting: Joi.string().hex().length(24).optional(),
   productTypeId: Joi.string().hex().length(24).optional(),
@@ -37,6 +38,7 @@ exports.stepDetailsValidator = Joi.object({
 exports.stepFullViewValidator = Joi.object({
   yarn: Joi.string().hex().length(24).optional(),
   gauge: Joi.string().hex().length(24).optional(),
+  pattern: Joi.string().hex().length(24).optional(),
   style: Joi.string().hex().length(24).optional(),
   fitting: Joi.string().hex().length(24).optional(),
   productTypeId: Joi.string().hex().length(24).optional(),
