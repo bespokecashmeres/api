@@ -186,76 +186,100 @@ exports.dropdownOptionsController = async (req, res, next) => {
 
 exports.stepFullViewController = async (req, res, next) => {
   const acceptLanguage = req.headers["accept-language"];
-  const { yarn, gauge, pattern, style, fitting, productTypeId } = req.body;
-  const [stepList, yarnData, gaugeData, patternData, styleData, fittingData] = await Promise.all([getSteps(productTypeId, acceptLanguage), getDetailsById(yarn, acceptLanguage), getStepDetailsBySlugAndId("gauge", gauge, acceptLanguage), getStepDetailsBySlugAndId("pattern", pattern, acceptLanguage), getStepDetailsBySlugAndId("style", style, acceptLanguage), getStepDetailsBySlugAndId("fitting", fitting, acceptLanguage)]);
+  const { yarn, steps = {}, productTypeId } = req.body;
+  
+  // Extract step IDs from steps object
+  const gaugeId = steps.gauge;
+  const patternId = steps.pattern;
+  const styleId = steps.style;
+  const fittingId = steps.fitting;
 
-  console.log("gaugeData: ", gaugeData);
-  console.log("patternData: ", patternData);
-  const costCalculation = await CostCalculations.findOne({ gauge: gaugeData.stepCard.slug, size: 'xs', pattern: patternData.stepCard.slug })
-  console.log("Cost Calculation: ", costCalculation);
-  const additionalCostResponse = await AdditionalCostCalculations.findOne({ slug: styleData.stepCard.slug })
-  console.log("additionalCostResponse: ", additionalCostResponse);
+  const [stepList, yarnData, gaugeData, patternData, styleData, fittingData] = await Promise.all([
+    getSteps(productTypeId, acceptLanguage),
+    getDetailsById(yarn, acceptLanguage),
+    getStepDetailsBySlugAndId("gauge", gaugeId, acceptLanguage),
+    getStepDetailsBySlugAndId("pattern", patternId, acceptLanguage),
+    getStepDetailsBySlugAndId("style", styleId, acceptLanguage),
+    getStepDetailsBySlugAndId("fitting", fittingId, acceptLanguage)
+  ]);
 
-  const totalFactoryCost = yarnData.price * costCalculation.weightPerGram * costCalculation.knitWastage / 1000 + costCalculation.manufacturingCost + costCalculation.trimsCost + costCalculation.laborCost;
-  console.log("totalFactoryCost: ", totalFactoryCost.toFixed(2));
+  const costCalculation = await CostCalculations.findOne({ 
+    gauge: gaugeData.stepCard.slug, 
+    size: 'xs', 
+    pattern: patternData.stepCard.slug 
+  });
+  
+  const additionalCostResponse = await AdditionalCostCalculations.findOne({ 
+    slug: styleData.stepCard.slug 
+  });
+
+  const totalFactoryCost = yarnData.price * costCalculation.weightPerGram * costCalculation.knitWastage / 1000 
+    + costCalculation.manufacturingCost 
+    + costCalculation.trimsCost 
+    + costCalculation.laborCost;
 
   const totalCost = calculateFinalPrice(totalFactoryCost, additionalCostResponse.calculations);
-  console.log("totalCost: ", totalCost.toFixed(2));
 
-  return res
-    .status(httpStatusCodes.SUCCESS)
-    .json(
-      success(
-        httpStatusCodes.SUCCESS,
-        httpResponses.SUCCESS,
-        res.__(serverResponseMessage.RECORD_FETCHED),
-        { yarn: { ...yarnData, price: totalCost.toFixed(2) }, steps: stepList, gauge: gaugeData, pattern: patternData, style: styleData, fitting: fittingData }
-      )
-    );
+  return res.status(httpStatusCodes.SUCCESS).json(
+    success(
+      httpStatusCodes.SUCCESS,
+      httpResponses.SUCCESS,
+      res.__(serverResponseMessage.RECORD_FETCHED),
+      { 
+        yarn: { ...yarnData, price: totalCost.toFixed(2) }, 
+        steps: stepList, 
+        gauge: gaugeData, 
+        pattern: patternData, 
+        style: styleData, 
+        fitting: fittingData 
+      }
+    )
+  );
 }
 
 exports.stepDetailsController = async (req, res, next) => {
   const acceptLanguage = req.headers["accept-language"];
-  const { yarn, gauge, pattern, style, fitting, nextStepSlug, productTypeId } = req.body;
+  const { yarn, steps = {}, nextStepSlug, productTypeId } = req.body;
 
-  // Fetch yarn and step list data in parallel
+  // Fetch yarn data
   const yarnData = await getYarnStepData(yarn, acceptLanguage);
 
   // Prepare optional data fetching promises
   const optionalDataPromises = [];
+  
+  // Handle step list if nextStepSlug is provided
   if (nextStepSlug) {
     optionalDataPromises.push(getStepListByStepType(nextStepSlug, productTypeId, acceptLanguage));
   } else {
     optionalDataPromises.push(Promise.resolve([]));
   }
 
-  if (gauge) {
-    optionalDataPromises.push(getStepCardData(gauge, acceptLanguage));
-  } else {
-    optionalDataPromises.push(Promise.resolve(undefined));
-  }
+  // Create a map to store step data
+  const stepDataMap = {};
+  
+  // Add promises for each step in the steps object
+  Object.entries(steps).forEach(([key, value]) => {
+    if (value) {
+      optionalDataPromises.push(getStepCardData(value, acceptLanguage));
+      stepDataMap[key] = optionalDataPromises.length; // Store the index for later mapping
+    }
+  });
 
-  if (pattern) {
-    optionalDataPromises.push(getStepCardData(pattern, acceptLanguage));
-  } else {
-    optionalDataPromises.push(Promise.resolve(undefined));
-  }
+  // Fetch all data in parallel
+  const results = await Promise.all(optionalDataPromises);
+  
+  // Map the results to their corresponding keys
+  const responseData = {
+    yarn: yarnData,
+    list: results[0], // stepList is always first in results
+  };
 
-  if (style) {
-    optionalDataPromises.push(getStepCardData(style, acceptLanguage));
-  } else {
-    optionalDataPromises.push(Promise.resolve(undefined));
-  }
-
-  if (fitting) {
-    optionalDataPromises.push(getStepCardData(fitting, acceptLanguage));
-  } else {
-    optionalDataPromises.push(Promise.resolve(undefined));
-  }
-
-  // Fetch optional data in parallel
-  const [stepList, gaugeData, patternData, styleData, fittingData] = await Promise.all(optionalDataPromises);
-
+  // Map step data to their corresponding keys
+  Object.keys(steps).forEach(key => {
+    if (steps[key] && stepDataMap[key]) {
+      responseData[key] = results[stepDataMap[key] - 1];
+    }
+  });
 
   return res
     .status(httpStatusCodes.SUCCESS)
@@ -264,7 +288,7 @@ exports.stepDetailsController = async (req, res, next) => {
         httpStatusCodes.SUCCESS,
         httpResponses.SUCCESS,
         res.__(serverResponseMessage.RECORD_FETCHED),
-        { yarn: yarnData, list: stepList, gauge: gaugeData, pattern: patternData, style: styleData, fitting: fittingData }
+        responseData
       )
     );
 };
