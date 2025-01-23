@@ -2,6 +2,29 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const createProductSchema = new Schema({
+  // ... existing code ...
+  title: {
+    type: Map,
+    of: String,
+    required: true
+  },
+  image: {
+    type: String,
+    required: true
+  },
+  contents: [{
+    title: {
+      type: Map,
+      of: String,
+      required: true
+    },
+    description: {
+      type: Map,
+      of: String,
+      required: true
+    },
+    _id: false
+  }],
   yarn: {
     type: Schema.Types.ObjectId,
     ref: 'yarns',
@@ -17,7 +40,8 @@ const createProductSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: 'stepcards',
       required: true
-    }
+    },
+    _id: false
   }],
   productTypeId: {
     type: Schema.Types.ObjectId,
