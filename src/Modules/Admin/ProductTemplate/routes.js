@@ -15,27 +15,29 @@ const {
 } = require("./controller");
 const { asyncHandler } = require("../../../../utils/asyncHandler");
 const { IdValidator, listValidator, statusValidator } = require("../../../../utils/validation");
+const uploadKeyBase = require("../../../../middleware/uploadKeyBaseMiddleware");
 
 module.exports = (app) => {
   // Create new product template
   app.post(
-    "/product-template",
+    "/product-template/add",
     verifyToken,
     hasRole(["admin"]),
+    uploadKeyBase.fields([{ name: "image", maxCount: 1 }]),
     middleware(createValidator),
     asyncHandler(createController)
   );
 
   // Update product template
   app.put(
-    "/product-template/:_id",
+    "/product-template/update",
     verifyToken,
     hasRole(["admin"]),
+    uploadKeyBase.fields([{ name: "image", maxCount: 1 }]),
     middleware(updateValidator),
     asyncHandler(updateController)
   );
 
-  // Get single product template
   app.get(
     "/product-template/:_id",
     verifyToken,
@@ -44,7 +46,6 @@ module.exports = (app) => {
     asyncHandler(getDetailController)
   );
 
-  // List product templates with filters
   app.post(
     "/product-template/list",
     verifyToken,
@@ -53,7 +54,6 @@ module.exports = (app) => {
     asyncHandler(listController)
   );
 
-  // Delete product template
   app.delete(
     "/product-template/:_id",
     verifyToken,
@@ -62,9 +62,8 @@ module.exports = (app) => {
     asyncHandler(deleteController)
   );
 
-  // Update product template status
   app.patch(
-    "/product-template/:_id/status",
+    "/product-template/status",
     verifyToken,
     hasRole(["admin"]),
     middleware(statusValidator),

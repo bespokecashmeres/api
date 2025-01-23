@@ -3,6 +3,14 @@ const Joi = require("joi");
 const { statusJoiValidation } = require("../../../../utils/validation");
 
 exports.createValidator = Joi.object({
+  title: Joi.string().required(),
+  image: Joi.any().optional(),
+  contents: Joi.array().items(
+    Joi.object({
+      title: Joi.string().optional(),
+      description: Joi.string().optional()
+    })
+  ).optional(),
   yarn: Joi.string()
     .hex()
     .length(24)
@@ -31,6 +39,14 @@ exports.updateValidator = Joi.object({
     .hex()
     .length(24)
     .required(),
+  title: Joi.string().optional(),
+  image: Joi.any().optional(),
+  contents: Joi.array().items(
+    Joi.object({
+      title: Joi.string().optional(),
+      description: Joi.string().optional()
+    })
+  ).optional(),
   yarn: Joi.string()
     .hex()
     .length(24)

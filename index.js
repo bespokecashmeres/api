@@ -35,6 +35,7 @@ const stepCardModule = require("./src/Modules/Admin/StepModules/StepCard/routes"
 const fittingSizesModule = require("./src/Modules/Admin/FittingModule/FittingSizes/routes");
 const sizeMeasurementFields = require("./src/Modules/Admin/SizeMeasurementFields/routes");
 const sizeMeasurement = require("./src/Modules/Admin/FittingModule/SizeMeasurement/routes");
+const productTemplateModule = require("./src/Modules/Admin/ProductTemplate/routes");
 
 const { logger } = require("./utils/logger");
 const connectToDatabase = require("./database/db");
@@ -121,6 +122,7 @@ stepCardModule(app);
 fittingSizesModule(app);
 sizeMeasurementFields(app);
 sizeMeasurement(app);
+productTemplateModule(app);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
