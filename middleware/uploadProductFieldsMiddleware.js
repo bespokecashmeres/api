@@ -35,5 +35,16 @@ const uploadYarnFields = (count) => {
   return upload.fields(fields);
 };
 
+const uploadStoryFields = (count) => {
+  const fields = [];
+  fields.push({ name: "image", maxCount: 1 });
+  for (let i = 0; i < count; i++) {
+    fields.push({ name: `story[${i}][image]`, maxCount: 1 });
+  }
+  console.log(fields);
+  return upload.fields(fields);
+};
+
 exports.uploadYarnFields = uploadYarnFields;
 exports.uploadProductFields = uploadProductFields;
+exports.uploadStoryFields = uploadStoryFields;

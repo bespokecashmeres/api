@@ -18,11 +18,6 @@ const yarnSchema = new mongoose.Schema(
       ref: "countries",
       default: null,
     },
-    genderId: {
-      type: Types.ObjectId,
-      ref: "genders",
-      default: null,
-    },
     yarnId: {
       type: Types.String,
       require: true,

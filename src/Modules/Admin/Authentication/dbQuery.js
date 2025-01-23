@@ -47,7 +47,6 @@ module.exports.getUserData = async (data) => {
   ];
 
   const result = await user.aggregate(pipeline);
-
   const document = result.length > 0 ? result[0] : null;
   // Return the document or handle the case where it's null
   return document;
