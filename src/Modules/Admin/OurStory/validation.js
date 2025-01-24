@@ -1,7 +1,12 @@
 const joi = require("joi");
+const { statusJoiValidation } = require("../../../../utils/validation");
 
 exports.createOurStory = joi.object({
-  bg_image: joi.string().required().messages({
+  bg_image: joi.any().optional().messages({
+    "object.base": "Background image must be an object",
+    "any.required": "Background image is required",
+  }),
+  thumb_image: joi.any().optional().messages({
     "object.base": "Background image must be an object",
     "any.required": "Background image is required",
   }),
@@ -31,7 +36,7 @@ exports.createOurStory = joi.object({
         description: joi.object().optional().messages({
           "object.base": "Description must be an object",
         }),
-        uuid: joi.string().uuid().optional().messages({
+        uuid: joi.string().optional().messages({
           "string.guid": "UUID must be a valid UUID",
         }),
       })
@@ -40,9 +45,7 @@ exports.createOurStory = joi.object({
     .messages({
       "array.base": "My Stories must be an array",
     }),
-  status: joi.boolean().optional().messages({
-    "boolean.base": "Status must be a boolean",
-  }),
+  status: statusJoiValidation
 });
 
 exports.updateOurStory = joi.object({
@@ -53,6 +56,9 @@ exports.updateOurStory = joi.object({
     "any.required": "ID is required",
   }),
   bg_image: joi.string().optional().messages({
+    "object.base": "Background image must be an object",
+  }),
+  thumb_image: joi.string().optional().messages({
     "object.base": "Background image must be an object",
   }),
   title: joi.object().optional().messages({
@@ -78,7 +84,7 @@ exports.updateOurStory = joi.object({
         description: joi.object().optional().messages({
           "object.base": "Description must be an object",
         }),
-        uuid: joi.string().uuid().optional().messages({
+        uuid: joi.string().optional().messages({
           "string.guid": "UUID must be a valid UUID",
         }),
       })

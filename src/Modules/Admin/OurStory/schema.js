@@ -6,7 +6,11 @@ const ourStorySchema = new mongoose.Schema(
   {
     bg_image: {
       type: Types.String,
-      required: true,
+      required: false,
+    },
+    thumb_image: {
+      type: Types.String,
+      required: false,
     },
     title: {
       type: Types.Object,

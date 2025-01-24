@@ -37,11 +37,12 @@ const uploadYarnFields = (count) => {
 
 const uploadStoryFields = (count) => {
   const fields = [];
-  fields.push({ name: "image", maxCount: 1 });
+  fields.push({ name: "bg_image", maxCount: 1 });
+  fields.push({ name: "thumb_image", maxCount: 1 });
+
   for (let i = 0; i < count; i++) {
-    fields.push({ name: `story[${i}][image]`, maxCount: 1 });
+    fields.push({ name: `my_stories[${i}][image]`, maxCount: 1 });
   }
-  console.log(fields);
   return upload.fields(fields);
 };
 

@@ -7,7 +7,8 @@ const {
   createOurStoryController,updateOurStoryController,
   listOurStoryController,
   getOurStoryController,
-  deleteController
+  deleteController,
+  statusController
 } = require("./controller");
 const { asyncHandler } = require("../../../../utils/asyncHandler");
 const { uploadStoryFields } = require("../../../../middleware/uploadProductFieldsMiddleware");
@@ -24,13 +25,18 @@ module.exports = (app) => {
     asyncHandler(createOurStoryController)
   );
 
-  app.patch(
+  app.put(
     "/story/update",
+    (req, res, next) => {
+      const count = parseInt(req.headers["count"] || "0", 10);
+      const uploadMiddleware = uploadStoryFields(count);
+      uploadMiddleware(req, res, next);
+    },
     middleware(updateOurStory),
     asyncHandler(updateOurStoryController)
   );
 
-  app.get(
+  app.post(
     "/story/list",
     asyncHandler(listOurStoryController)
   );
@@ -39,6 +45,12 @@ module.exports = (app) => {
     "/story/:_id",
     asyncHandler(getOurStoryController)
   );
+
+  app.patch(
+    "/story/status",
+    asyncHandler(statusController)
+  );
+
 
   app.delete(
     "/story/:_id",

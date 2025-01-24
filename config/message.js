@@ -60,13 +60,14 @@ exports.serverResponseMessage = {
 
 
   //Our Story
-  OUR_STORY_CREATED : "Story Created Successfully",
-  OUR_STORY_EXIST : "Story Already Exist",
-  OUR_STORY_NOT_EXIST : "Our Story Not Exist",
-  OUR_STORY_UPDATED : "Our Story Updated Successfully",
-  NO_STORY_FOUND: "No Story Found",
+  STORY_CREATED : "Story Created Successfully",
+  STORY_EXIST : "Story Already Exist",
+  STORY_NOT_EXIST : "Story Not Exist",
+  STORY_UPDATED : "Story Updated Successfully",
+  STORY_FOUND: "No Story Found",
   STORY_FETCHED:"Story Fetched Successfully",
   STORY_DELETED:"Story Deleted Successfully",
+
 
 
    //Home Page
