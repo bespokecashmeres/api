@@ -4,7 +4,7 @@ const { statusJoiValidation } = require("../../../../utils/validation");
 
 exports.createValidator = Joi.object({
   title: Joi.string().required(),
-  image: Joi.any().optional(),
+  images: Joi.any().optional(),
   contents: Joi.array().items(
     Joi.object({
       title: Joi.string().optional(),
@@ -27,6 +27,7 @@ exports.createValidator = Joi.object({
         .required()
     })
   ).required(),
+  relatedProducts: Joi.array().optional(),
   productTypeId: Joi.string()
     .hex()
     .length(24)
@@ -40,13 +41,17 @@ exports.updateValidator = Joi.object({
     .length(24)
     .required(),
   title: Joi.string().optional(),
-  image: Joi.any().optional(),
+  images: Joi.any().optional(),
   contents: Joi.array().items(
     Joi.object({
       title: Joi.string().optional(),
       description: Joi.string().optional()
     })
   ).optional(),
+  existingImages: Joi.string()
+    .optional(),
+  deleteImages: Joi.string()
+    .optional(),
   yarn: Joi.string()
     .hex()
     .length(24)
@@ -63,9 +68,17 @@ exports.updateValidator = Joi.object({
         .required()
     })
   ).optional(),
+  relatedProducts: Joi.array().optional(),
   productTypeId: Joi.string()
     .hex()
     .length(24)
     .optional(),
   status: statusJoiValidation.optional()
 });
+
+exports.dropdownValidator = Joi.object({
+  _id: Joi.string()
+    .hex()
+    .length(24)
+    .optional()
+})

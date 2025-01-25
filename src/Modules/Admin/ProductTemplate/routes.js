@@ -4,6 +4,7 @@ const hasRole = require("../../../../middleware/hasRole");
 const {
   createValidator,
   updateValidator,
+  dropdownValidator,
 } = require("./validation");
 const {
   createController,
@@ -12,6 +13,7 @@ const {
   getDetailController,
   deleteController,
   statusController,
+  dropdownOptionsController,
 } = require("./controller");
 const { asyncHandler } = require("../../../../utils/asyncHandler");
 const { IdValidator, listValidator, statusValidator } = require("../../../../utils/validation");
@@ -23,7 +25,7 @@ module.exports = (app) => {
     "/product-template/add",
     verifyToken,
     hasRole(["admin"]),
-    uploadKeyBase.fields([{ name: "image", maxCount: 1 }]),
+    uploadKeyBase.fields([{ name: "images", maxCount: 4 }]),
     middleware(createValidator),
     asyncHandler(createController)
   );
@@ -33,7 +35,7 @@ module.exports = (app) => {
     "/product-template/update",
     verifyToken,
     hasRole(["admin"]),
-    uploadKeyBase.fields([{ name: "image", maxCount: 1 }]),
+    uploadKeyBase.fields([{ name: "images", maxCount: 4 }]),
     middleware(updateValidator),
     asyncHandler(updateController)
   );
@@ -52,6 +54,14 @@ module.exports = (app) => {
     hasRole(["admin"]),
     middleware(listValidator),
     asyncHandler(listController)
+  );
+
+  app.post(
+    "/product-template/options",
+    verifyToken,
+    hasRole(["admin"]),
+    middleware(dropdownValidator),
+    asyncHandler(dropdownOptionsController)
   );
 
   app.delete(
