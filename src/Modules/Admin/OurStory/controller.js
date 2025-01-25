@@ -119,7 +119,6 @@ exports.listOurStoryController = async (req, res) => {
 
   
   const data = await OurStorylist();
-  console.log(data);
   if(!data){
     throw {
       code: httpStatusCodes.BAD_REQUEST,

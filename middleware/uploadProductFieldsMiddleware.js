@@ -46,6 +46,42 @@ const uploadStoryFields = (count) => {
   return upload.fields(fields);
 };
 
+const uploadHomePageFields = () => {
+  const fields = [];
+  fields.push({ name: "section1[bg_image]", maxCount: 1 });
+  fields.push({ name: "section2[bg_image]", maxCount: 1 });
+  fields.push({ name: "section2[left_image]", maxCount: 1 });
+  
+
+  for (let i = 0; i < 4; i++) {
+    fields.push({ name: `section3[${i}][image]`, maxCount: 1 });
+  }
+
+  for (let i = 0; i < 5; i++) {
+    fields.push({ name: `section4[cards][${i}][bg_image]`, maxCount: 1 });
+  }
+
+  for (let i = 0; i < 6; i++) {
+    fields.push({ name: `section6[cards][${i}][image]`, maxCount: 1 });
+  }
+
+  for (let i = 0; i < 4; i++) {
+    fields.push({ name: `section7[cards][${i}][image]`, maxCount: 1 });
+  }
+
+  fields.push({ name: "section8[card1][first_image]", maxCount: 1 });
+  fields.push({ name: "section8[card1][second_image]", maxCount: 1 });
+  fields.push({ name: "section8[card2][image]", maxCount: 1 });
+  fields.push({ name: "section8[card3][image]", maxCount: 1 });
+  fields.push({ name: "section9[bg_image]", maxCount: 1 });
+  fields.push({ name: "section9[left_image]", maxCount: 1 });
+
+
+  return upload.fields(fields);
+};
+
 exports.uploadYarnFields = uploadYarnFields;
 exports.uploadProductFields = uploadProductFields;
 exports.uploadStoryFields = uploadStoryFields;
+exports.uploadHomePageFields = uploadHomePageFields;
+
