@@ -123,6 +123,7 @@ module.exports.getById = async (id) => {
       images: 1,
       contents: 1,
       yarn: 1,
+      genderId: 1,
       steps: 1,
       productTypeId: 1,
       status: 1,

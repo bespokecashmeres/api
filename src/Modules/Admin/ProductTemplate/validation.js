@@ -1,6 +1,6 @@
 "use strict";
 const Joi = require("joi");
-const { statusJoiValidation } = require("../../../../utils/validation");
+const { statusJoiValidation, genderJoiOptionalValidation, genderJoiValidation } = require("../../../../utils/validation");
 
 exports.createValidator = Joi.object({
   title: Joi.string().required(),
@@ -32,7 +32,8 @@ exports.createValidator = Joi.object({
     .hex()
     .length(24)
     .required(),
-  status: statusJoiValidation
+  status: statusJoiValidation,
+  genderId: genderJoiValidation,
 });
 
 exports.updateValidator = Joi.object({
@@ -73,6 +74,7 @@ exports.updateValidator = Joi.object({
     .hex()
     .length(24)
     .optional(),
+  genderId: genderJoiOptionalValidation,
   status: statusJoiValidation.optional()
 });
 
