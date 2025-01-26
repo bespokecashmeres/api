@@ -53,6 +53,11 @@ const createProductSchema = new Schema({
     default: [],
     ref: "producttemplates"
   },
+  genderId: {
+    type: Schema.Types.ObjectId,
+    ref: "genders",
+    required: true,
+  },
   status: {
     type: Boolean,
     default: true

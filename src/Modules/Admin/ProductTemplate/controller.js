@@ -19,8 +19,6 @@ const {
 } = require("./dbQuery");
 
 exports.createController = async (req, res, next) => {
-
-
   // Parse multilingual data
   try {
     req.body.title = req.body.title ? JSON.parse(req.body.title) : {};
