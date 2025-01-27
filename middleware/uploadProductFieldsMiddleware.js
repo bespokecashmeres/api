@@ -43,6 +43,8 @@ const uploadStoryFields = (count) => {
   for (let i = 0; i < count; i++) {
     fields.push({ name: `my_stories[${i}][image]`, maxCount: 1 });
   }
+
+  console.log(fields);
   return upload.fields(fields);
 };
 

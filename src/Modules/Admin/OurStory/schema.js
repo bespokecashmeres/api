@@ -6,27 +6,36 @@ const ourStorySchema = new mongoose.Schema(
   {
     bg_image: {
       type: Types.String,
-      required: false,
+      default:""
     },
     thumb_image: {
       type: Types.String,
-      required: false,
+      default:""
     },
     title: {
       type: Types.Object,
-      required: true,
+      default: {},
     },
     sub_title: {
       type: Types.Object,
-      required: true,
+      default: {},
     },
-    description: {
+    description:{
       type: Types.Object,
-      required: true,
+      default: {},
     },
     my_stories: [
       {
-        image: Types.String,
+
+        uuid: {
+          type: Types.String,
+          default: "",
+        },
+        image:{
+          type: Types.String,
+          default:""
+
+        },
         title: {
           type: Types.Object,
           default: {},
@@ -34,11 +43,8 @@ const ourStorySchema = new mongoose.Schema(
         description: {
           type: Types.Object,
           default: {},
-        },
-        uuid: {
-          type: Types.String,
-          default: "",
-        },
+        }
+        
       },
     ],
     status: {

@@ -12,6 +12,7 @@ const {
 } = require("./controller");
 const { asyncHandler } = require("../../../../utils/asyncHandler");
 const { uploadStoryFields } = require("../../../../middleware/uploadProductFieldsMiddleware");
+const { listValidator } = require("../../../../utils/validation");
 
 module.exports = (app) => {
   app.post(
@@ -38,6 +39,7 @@ module.exports = (app) => {
 
   app.post(
     "/story/list",
+    middleware(listValidator),
     asyncHandler(listOurStoryController)
   );
 

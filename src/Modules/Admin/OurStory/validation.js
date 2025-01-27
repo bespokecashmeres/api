@@ -10,15 +10,15 @@ exports.createOurStory = joi.object({
     "object.base": "Background image must be an object",
     "any.required": "Background image is required",
   }),
-  title: joi.object().required().messages({
-    "object.base": "Title must be an object",
+  title: joi.string().required().messages({
+    "object.base": "Title must be an string",
     "any.required": "Title is required",
   }),
-  sub_title: joi.object().required().messages({
+  sub_title: joi.string().required().messages({
     "object.base": "Sub-title must be an object",
     "any.required": "Sub-title is required",
   }),
-  description: joi.object().required().messages({
+  description: joi.string().required().messages({
     "object.base": "Description must be an object",
     "any.required": "Description is required",
   }),
@@ -26,14 +26,13 @@ exports.createOurStory = joi.object({
     .array()
     .items(
       joi.object({
-        image: joi.string().uri().optional().messages({
-          "string.base": "Image must be a string",
-          "string.uri": "Image must be a valid URI",
+        image: joi.any().optional().messages({
+          "string.base": "Image must be a any type",
         }),
-        title: joi.object().optional().messages({
+        title: joi.string().optional().messages({
           "object.base": "Title must be an object",
         }),
-        description: joi.object().optional().messages({
+        description: joi.string().optional().messages({
           "object.base": "Description must be an object",
         }),
         uuid: joi.string().optional().messages({
@@ -61,27 +60,27 @@ exports.updateOurStory = joi.object({
   thumb_image: joi.string().optional().messages({
     "object.base": "Background image must be an object",
   }),
-  title: joi.object().optional().messages({
+  title: joi.string().optional().messages({
     "object.base": "Title must be an object",
   }),
-  sub_title: joi.object().optional().messages({
+  sub_title: joi.string().optional().messages({
     "object.base": "Sub-title must be an object",
   }),
-  description: joi.object().optional().messages({
+  description: joi.string().optional().messages({
     "object.base": "Description must be an object",
   }),
   my_stories: joi
     .array()
     .items(
       joi.object({
-        image: joi.string().uri().optional().messages({
+        image: joi.any().optional().messages({
           "string.base": "Image must be a string",
           "string.uri": "Image must be a valid URI",
         }),
-        title: joi.object().optional().messages({
+        title: joi.string().optional().messages({
           "object.base": "Title must be an object",
         }),
-        description: joi.object().optional().messages({
+        description: joi.string().optional().messages({
           "object.base": "Description must be an object",
         }),
         uuid: joi.string().optional().messages({
@@ -93,7 +92,5 @@ exports.updateOurStory = joi.object({
     .messages({
       "array.base": "My Stories must be an array",
     }),
-  status: joi.boolean().optional().messages({
-    "boolean.base": "Status must be a boolean",
-  }),
+  status: statusJoiValidation
 });
