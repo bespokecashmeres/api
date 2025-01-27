@@ -19,7 +19,6 @@ module.exports.DeleteHome = async (_id) => {
 };
 
 module.exports.HomeUpdate = async (data) => {
-  console.log("data",data)
   return await database
     .findOneAndUpdate(
       { _id: data._id },
@@ -30,6 +29,9 @@ module.exports.HomeUpdate = async (data) => {
     )
     .lean();
 };
+
+
+
 
 module.exports.OurStorylist = async (req) => {
   return await database.find({status:true});

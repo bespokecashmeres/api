@@ -46,26 +46,34 @@ const uploadStoryFields = (count) => {
   return upload.fields(fields);
 };
 
-const uploadHomePageFields = () => {
+const uploadHomePageFields = (allCount) => {
+
+
+ const section3 = allCount[0];
+ const section4 = allCount[1];
+ const section6 = allCount[2];
+ const section7 = allCount[3];
+
+
   const fields = [];
   fields.push({ name: "section1[bg_image]", maxCount: 1 });
   fields.push({ name: "section2[bg_image]", maxCount: 1 });
   fields.push({ name: "section2[left_image]", maxCount: 1 });
   
 
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < section3; i++) {
     fields.push({ name: `section3[${i}][image]`, maxCount: 1 });
   }
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < section4; i++) {
     fields.push({ name: `section4[cards][${i}][bg_image]`, maxCount: 1 });
   }
 
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < section6; i++) {
     fields.push({ name: `section6[cards][${i}][image]`, maxCount: 1 });
   }
 
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < section7; i++) {
     fields.push({ name: `section7[cards][${i}][image]`, maxCount: 1 });
   }
 
@@ -76,6 +84,7 @@ const uploadHomePageFields = () => {
   fields.push({ name: "section9[bg_image]", maxCount: 1 });
   fields.push({ name: "section9[left_image]", maxCount: 1 });
 
+  console.log(fields);
 
 
   return upload.fields(fields);

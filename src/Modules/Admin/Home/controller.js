@@ -11,7 +11,7 @@ const {
   HomeExist
 } = require("./dbQuery");
 
-const { uploadToS3 } = require("../../../../utils/fileUploads");
+const { uploadToS3, deleteFromS3 } = require("../../../../utils/fileUploads");
 
 
 exports.CreateHomeCtrl = async (req, res) => {
@@ -306,70 +306,121 @@ exports.CreateHomeCtrl = async (req, res) => {
   );
 };
 
-exports.UpdateHomeCtrl = async (req, res) => {
-  const {_id} = req.body;
-  const isStoryExist = await FindHome(_id);
-  console.log(isStoryExist);
-  if(!isStoryExist){
+exports.updateHomeController = async (req, res, next) => {
+  console.log("step 1",req.body);
+  console.log("files",req.files);
+
+  const { _id } = req.body;
+
+  // Fetch the existing record
+  const existingRecord = await FindHome(_id);
+  if (!existingRecord) {
     throw {
-      code: httpStatusCodes.BAD_REQUEST,
+      code: httpStatusCodes.NOT_FOUND,
       message: res.__(serverResponseMessage.HOME_NOT_EXIST),
     };
   }
-  const data = await HomeUpdate(req.body);
-  if (!data) {
-    throw {
-      code: httpStatusCodes.BAD_REQUEST,
-      message: res.__(serverResponseMessage.HOME_EXIST),
-    };
-  }
-  return res.json(
-    success(
-      httpStatusCodes.SUCCESS,
-      httpResponses.SUCCESS,
-      res.__(serverResponseMessage.HOME_UPDATED),
-      data
-    )
-  );
-};
+
+  console.log("step 3",existingRecord);
+
+  // Initialize deleted images array
+  const deletedImages = [];
 
 
 
-exports.GetHomeCtrl = async (req, res) => {
-  const {_id} = req.params;
-  const data = await FindHome(_id);
-  if(!data){
-    throw {
-      code: httpStatusCodes.BAD_REQUEST,
-      message: res.__(serverResponseMessage.HOME_NOT_EXIST),
-    };
-  }
-  return res.json(
-    success(
-      httpStatusCodes.SUCCESS,
-      httpResponses.SUCCESS,
-      res.__(serverResponseMessage.HOME_FETCHED),
-      data
-    )
-  );
-};
+  //section 1 : bg_image
 
-exports.deleteHomeCtrl = async (req, res) => {
-  const {_id} = req.params;
-  const data = await DeleteHome(_id);
+   if (req.files?.["section1[bg_image]"]) {
+    const image = req.files?.["section1[bg_image]"]?.[0]; // First file object
+    console.log("Image Object: ", image);
   
-  if(!data){
-    throw {
-      code: httpStatusCodes.BAD_REQUEST,
-      message: res.__(serverResponseMessage.HOME_NOT_EXIST),
-    };
+    try {
+      // Ensure section1 exists in req.body
+      req.body.section1 = req.body.section1 || {};
+  
+      // Upload image to S3
+      const imageURL = await uploadToS3(image, "home/section1");
+      req.body.section1["bg_image"] = imageURL;
+  
+      // Add old image to deletedImages for cleanup
+      if (existingRecord?.section1?.bg_image) {
+        deletedImages.push(existingRecord.section1.bg_image);
+      }
+  
+      console.log("Uploaded Image URL:", imageURL);
+    } catch (error) {
+      console.error("Main image upload failed:", error);
+    }
+  } else {
+    // If no image is uploaded, retain the existing one
+    req.body.section1 = req.body.section1 || {};
+    req.body.section1["bg_image"] = existingRecord?.section1?.bg_image || "";
   }
-  return res.json(
+  
+
+  console.log("delete images array : ",deletedImages);
+  if (deletedImages.length) {
+    try {
+      await Promise.allSettled(
+        deletedImages.map((image) => deleteFromS3(image))
+      );
+    } catch (err) {
+      console.error("Image deletion failed:", err);
+    }
+  }
+
+
+
+  // Update the record in the database
+  const updatedRecord = await HomeUpdate(req.body);
+
+  // Return success response
+  return res.status(httpStatusCodes.SUCCESS).json(
     success(
       httpStatusCodes.SUCCESS,
-      httpResponses.SUCCESS,
-      res.__(serverResponseMessage.HOME_DELETED),
-      data
+      httpStatusCodes.SUCCESS,
+      res.__(serverResponseMessage.RECORD_UPDATED),
+      updatedRecord
     )
   );
 };
+
+
+// exports.GetHomeCtrl = async (req, res) => {
+//   const {_id} = req.params;
+//   const data = await FindHome(_id);
+//   if(!data){
+//     throw {
+//       code: httpStatusCodes.BAD_REQUEST,
+//       message: res.__(serverResponseMessage.HOME_NOT_EXIST),
+//     };
+//   }
+//   return res.json(
+//     success(
+//       httpStatusCodes.SUCCESS,
+//       httpResponses.SUCCESS,
+//       res.__(serverResponseMessage.HOME_FETCHED),
+//       data
+//     )
+//   );
+// };
+
+// exports.deleteHomeCtrl = async (req, res) => {
+//   const {_id} = req.params;
+//   const data = await DeleteHome(_id);
+  
+//   if(!data){
+//     throw {
+//       code: httpStatusCodes.BAD_REQUEST,
+//       message: res.__(serverResponseMessage.HOME_NOT_EXIST),
+//     };
+//   }
+//   return res.json(
+//     success(
+//       httpStatusCodes.SUCCESS,
+//       httpResponses.SUCCESS,
+//       res.__(serverResponseMessage.HOME_DELETED),
+//       data
+//     )
+//   );
+// };
