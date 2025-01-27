@@ -7,13 +7,24 @@ const {
   HomeCreate,
   HomeUpdate,
   FindHome,
-  DeleteHome
+  DeleteHome,
+  HomeExist
 } = require("./dbQuery");
 
 const { uploadToS3 } = require("../../../../utils/fileUploads");
 
 
 exports.CreateHomeCtrl = async (req, res) => {
+
+
+
+  const isHomeExist = await HomeExist();
+  if(isHomeExist){
+    throw {
+      code: httpStatusCodes.BAD_REQUEST,
+      message: res.__(serverResponseMessage.HOME_EXIST),
+    };
+  }
 
 
   //section-1:bg_image

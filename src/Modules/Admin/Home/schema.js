@@ -3,7 +3,11 @@ const mongoose = require("mongoose");
 const Types = mongoose.Schema.Types;
 
 
-const cardSchema = new mongoose.Schema({
+const card4Schema = new mongoose.Schema({
+  uuid: {
+    type: Types.String,
+    default: "",
+  },
   bg_image: {
     type: Types.String,
   },
@@ -25,6 +29,10 @@ const cardSchema = new mongoose.Schema({
 });
 
 const card6Schema = new mongoose.Schema({
+  uuid: {
+    type: Types.String,
+    default: "",
+  },
   image: {
     type: Types.String,
   },
@@ -40,6 +48,10 @@ const card6Schema = new mongoose.Schema({
 });
 
 const card7Schema = new mongoose.Schema({
+  uuid: {
+    type: Types.String,
+    default: "",
+  },
   image: {
     type: Types.String,
   },
@@ -93,6 +105,10 @@ const homeSchema = new mongoose.Schema(
 
     section3: [
       {
+        uuid: {
+        type: Types.String,
+        default: "",
+      },
         title: {
           type: Types.Object,
           default: {},
@@ -115,7 +131,7 @@ const homeSchema = new mongoose.Schema(
         type: Types.Object,
         default: {},
       },
-      cards: [cardSchema],
+      cards: [card4Schema],
     },
 
     section5: {
@@ -159,6 +175,10 @@ const homeSchema = new mongoose.Schema(
         default: {},
       },
       card1:{
+        uuid: {
+          type: Types.String,
+          default: "",
+        },
         first_image: {
           type: Types.String,
         },
@@ -184,6 +204,10 @@ const homeSchema = new mongoose.Schema(
         button_link:Types.String
       },
       card2:{
+        uuid: {
+          type: Types.String,
+          default: "",
+        },
         image: {
           type: Types.String,
         },
@@ -206,6 +230,10 @@ const homeSchema = new mongoose.Schema(
         button_link:Types.String
       },
       card3:{
+        uuid: {
+          type: Types.String,
+          default: "",
+        },
         image: {
           type: Types.String,
         },

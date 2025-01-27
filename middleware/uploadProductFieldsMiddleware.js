@@ -77,6 +77,7 @@ const uploadHomePageFields = () => {
   fields.push({ name: "section9[left_image]", maxCount: 1 });
 
 
+
   return upload.fields(fields);
 };
 

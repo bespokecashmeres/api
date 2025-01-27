@@ -6,6 +6,10 @@ module.exports.HomeCreate = async (req) => {
   return await database.create(req);
 };
 
+module.exports.HomeExist = async () => {
+  return await database.findOne({status:true});
+};
+
 module.exports.FindHome = async (_id) => {
   return await database.findById(_id);
 };
