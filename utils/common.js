@@ -136,6 +136,14 @@ module.exports.calculateFinalPrice = (initialPrice, calculations) => {
         default:
           throw new Error(`Unsupported operation: ${operation}`);
       }
+    } else if (unit === "percentage") {
+      switch (operation) {
+        case "multiply":
+          finalPrice *= (value / 100);
+          break;
+        default:
+          throw new Error(`Unsupported operation: ${operation}`);
+      }
     } else {
       throw new Error(`Unsupported unit: ${unit}`);
     }
