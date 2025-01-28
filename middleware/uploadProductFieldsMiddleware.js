@@ -48,6 +48,14 @@ const uploadStoryFields = (count) => {
   return upload.fields(fields);
 };
 
+
+const uploadBannerFields = () => {
+  const fields = [];
+  fields.push({ name: "bg_image", maxCount: 1 });
+  console.log(fields);
+  return upload.fields(fields);
+};
+
 const uploadHomePageFields = (allCount) => {
 
 
@@ -96,4 +104,6 @@ exports.uploadYarnFields = uploadYarnFields;
 exports.uploadProductFields = uploadProductFields;
 exports.uploadStoryFields = uploadStoryFields;
 exports.uploadHomePageFields = uploadHomePageFields;
+exports.uploadBannerFields = uploadBannerFields;
+
 
