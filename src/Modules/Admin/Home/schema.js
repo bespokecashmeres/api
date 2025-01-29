@@ -76,17 +76,9 @@ const homeSchema = new mongoose.Schema(
       bg_image: {
         type: Types.String,
       },
-      uuid: {
-        type: Types.String,
-        default: "",
-      },
     },
 
     section2: {
-      uuid: {
-        type: Types.String,
-        default: "",
-      },
       bg_image: {
         type: Types.String,
       },
@@ -135,10 +127,6 @@ const homeSchema = new mongoose.Schema(
     },
 
     section5: {
-      uuid: {
-        type: Types.String,
-        default: "",
-      },
       title: {
         type: Types.Object,
         default: {},
@@ -258,10 +246,6 @@ const homeSchema = new mongoose.Schema(
     },
 
     section9: {
-      uuid: {
-        type: Types.String,
-        default: "",
-      },
       bg_image: {
         type: Types.String,
       },

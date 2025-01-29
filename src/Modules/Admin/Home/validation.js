@@ -7,11 +7,9 @@ const CreateHomeValidation = Joi.object({
   section1: Joi.object({
     title: Joi.string().default({}).required(), // Matches the schema's default
     bg_image: Joi.any().optional(),
-    uuid: Joi.string().default("").required(),
   }).optional(),
 
   section2: Joi.object({
-    uuid: Joi.string().default("").required(),
     bg_image: Joi.any().optional(),
     left_image: Joi.any().optional(),
     title: Joi.string().default({}).required(),
@@ -47,7 +45,6 @@ const CreateHomeValidation = Joi.object({
   }).optional(),
 
   section5: Joi.object({
-    uuid: Joi.string().default("").required(),
     title: Joi.string().default({}).required(),
   }).optional(),
 
@@ -118,7 +115,6 @@ const CreateHomeValidation = Joi.object({
 
 
   section9: Joi.object({
-    uuid: Joi.string().default("").required(),
     bg_image: Joi.any().optional(),
     left_image: Joi.string().optional(),
     title: Joi.string().default({}).required(),
@@ -132,6 +128,8 @@ const CreateHomeValidation = Joi.object({
 
 
   status: statusJoiValidation, // Validate status with existing function
+
+
 });
 
 
@@ -139,45 +137,42 @@ const CreateHomeValidation = Joi.object({
 // Validation for updateHomeSchema
 const UpdateHomeValidation = Joi.object({
 
-  _id: Joi.string().required(),
-
+  _id: Joi.string().optional(),
 
   section1: Joi.object({
-    title: Joi.object().default({}).optional(),
+    title: Joi.string().optional(),
     bg_image: Joi.any().optional(),
-    uuid: Joi.string().default("").optional(),
   }).optional(),
 
   section2: Joi.object({
-    uuid: Joi.string().default("").optional(),
     bg_image: Joi.any().optional(),
-    left_image: Joi.string().optional(),
-    title: Joi.object().default({}).optional(),
-    description: Joi.object().default({}).optional(),
+    left_image: Joi.any().optional(),
+    title: Joi.string().optional(),
+    description: Joi.string().optional(),
   }).optional(),
 
   section3: Joi.array()
-    .items(
-      Joi.object({
-        uuid: Joi.string().default("").optional(),
-        title: Joi.object().default({}).optional(),
-        image: Joi.any().optional(),
-        image_link: Joi.string().optional(),
-      })
-    )
-    .optional(),
+  .items(
+    Joi.object({
+      uuid: Joi.string().optional(),
+      title: Joi.string().optional(),
+      image: Joi.any().optional(),
+      image_link: Joi.string().optional(),
+    })
+  )
+  .optional(),
 
   section4: Joi.object({
-    title: Joi.object().default({}).optional(),
-    description: Joi.object().default({}).optional(),
+    title: Joi.string().optional(),
+    description: Joi.string().optional(),
     cards: Joi.array()
       .items(
         Joi.object({
-          uuid: Joi.string().default("").optional(),
+          uuid: Joi.string().optional(),
           bg_image: Joi.any().optional(),
-          title1: Joi.object().default({}).optional(),
-          title2: Joi.object().default({}).optional(),
-          button_text: Joi.object().default({}).optional(),
+          title1: Joi.string().optional(),
+          title2: Joi.string().optional(),
+          button_text: Joi.string().optional(),
           button_link: Joi.string().optional(),
         })
       )
@@ -185,82 +180,82 @@ const UpdateHomeValidation = Joi.object({
   }).optional(),
 
   section5: Joi.object({
-    uuid: Joi.string().default("").optional(),
-    title: Joi.object().default({}).optional(),
+    title: Joi.string().optional(),
   }).optional(),
 
   section6: Joi.object({
-    title: Joi.object().default({}).optional(),
+    title: Joi.string().optional(),
     cards: Joi.array()
       .items(
         Joi.object({
-          uuid: Joi.string().default("").optional(),
+          uuid: Joi.string().optional(),
           image: Joi.any().optional(),
-          title: Joi.object().default({}).optional(),
-          description: Joi.object().default({}).optional(),
+          title: Joi.string().optional(),
+          description: Joi.string().optional(),
         })
       )
       .optional(),
   }).optional(),
 
   section7: Joi.object({
-    title: Joi.object().default({}).optional(),
-    sub_title: Joi.object().default({}).optional(),
+    title: Joi.string().optional(),
+    sub_title: Joi.string().optional(),
     cards: Joi.array()
       .items(
         Joi.object({
-          uuid: Joi.string().default("").optional(),
+          uuid: Joi.string().optional(),
           image: Joi.any().optional(),
-          title: Joi.object().default({}).optional(),
-          description: Joi.object().default({}).optional(),
+          title: Joi.string().optional(),
+          description: Joi.string().optional(),
         })
       )
       .optional(),
   }).optional(),
 
   section8: Joi.object({
-    title: Joi.object().default({}).optional(),
+    title: Joi.string().optional(),
     card1: Joi.object({
-      uuid: Joi.string().default("").optional(),
+      uuid: Joi.string().optional(),
       first_image: Joi.any().optional(),
       second_image: Joi.any().optional(),
-      title: Joi.object().default({}).optional(),
-      sub_title: Joi.object().default({}).optional(),
-      description: Joi.object().default({}).optional(),
-      button_text: Joi.object().default({}).optional(),
+      title: Joi.string().optional(),
+      sub_title: Joi.string().optional(),
+      description: Joi.string().optional(),
+      button_text: Joi.string().optional(),
       button_link: Joi.string().optional(),
     }).optional(),
     card2: Joi.object({
-      uuid: Joi.string().default("").optional(),
+      uuid: Joi.string().optional(),
       image: Joi.any().optional(),
-      title: Joi.object().default({}).optional(),
-      sub_title: Joi.object().default({}).optional(),
-      description: Joi.object().default({}).optional(),
-      button_text: Joi.object().default({}).optional(),
+      title: Joi.string().optional(),
+      sub_title: Joi.string().optional(),
+      description: Joi.string().optional(),
+      button_text: Joi.string().optional(),
       button_link: Joi.string().optional(),
     }).optional(),
     card3: Joi.object({
-      uuid: Joi.string().default("").optional(),
+      uuid: Joi.string().optional(),
       image: Joi.any().optional(),
-      title: Joi.object().default({}).optional(),
-      sub_title: Joi.object().default({}).optional(),
-      description: Joi.object().default({}).optional(),
-      button_text: Joi.object().default({}).optional(),
+      title: Joi.string().optional(),
+      sub_title: Joi.string().optional(),
+      description: Joi.string().optional(),
+      button_text: Joi.string().optional(),
       button_link: Joi.string().optional(),
     }).optional(),
   }).optional(),
 
   section9: Joi.object({
-    uuid: Joi.string().default("").optional(),
     bg_image: Joi.any().optional(),
     left_image: Joi.string().optional(),
-    title: Joi.object().default({}).optional(),
-    description: Joi.object().default({}).optional(),
-    link_text: Joi.object().default({}).optional(),
+    title: Joi.string().optional(),
+    description: Joi.string().optional(),
+    link_text: Joi.string().optional(),
     link_url: Joi.string().optional(),
+
   }).optional(),
 
-  status: statusJoiValidation.optional(),
+  status: statusJoiValidation, // Validate status with existing function
+
 });
 
 

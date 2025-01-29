@@ -120,7 +120,11 @@ module.exports.getPaginationData = async (qData) => {
     language = DEFAULT_LOCALE,
   } = qData;
 
+  console.log("search ",search)
+  console.log("type of search ",typeof(search));
+
   const trimmedSearch = search?.trim() ?? "";
+
 
   // Match Stage for Filtering and Searching
   const matchStage = {
@@ -136,6 +140,8 @@ module.exports.getPaginationData = async (qData) => {
     },
   };
 
+  console.log("match stage : ",matchStage);
+
   // Project Stage for Translating Fields
   const projectStage = {
     $project: {
@@ -150,6 +156,8 @@ module.exports.getPaginationData = async (qData) => {
     },
   };
 
+  console.log("project stage ",projectStage);
+
   // Sort Options
   const sortOptions = {};
   sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
@@ -163,17 +171,26 @@ module.exports.getPaginationData = async (qData) => {
     { $limit: perPage },
   ];
 
+  console.log("aggregation pipeline",aggregationPipeline);
+
   // Execute the Aggregation
-  const [data, totalCount] = await Promise.all([
-    database.aggregate(aggregationPipeline).exec(),
-    database.countDocuments(matchStage.$match),
-  ]);
+  // const [data, totalCount] = await Promise.all([
+  //   database.aggregate(aggregationPipeline).exec(),
+  //   database.countDocuments(matchStage.$match),
+  // ]);
+
+  console.log("step A ")
+  const data = await database.aggregate(aggregationPipeline);
+  console.log("data ",data)
+  const totalCount = await database.countDocuments(matchStage.$match);
+  console.log("totol Count :  ",totalCount);
 
   // Return the Paginated Data
-  return {
+  const datas = {
     currentPage: page,
     totalCount,
     totalPage: Math.ceil(totalCount / perPage),
     data,
   };
+  return datas;
 };

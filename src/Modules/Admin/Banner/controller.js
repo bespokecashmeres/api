@@ -109,14 +109,15 @@ exports.updateController = async (req, res, next) => {
     };
   }
 
+  console.log(isExsist);
+
 
   if (req.files?.bg_image) {
     const image = req.files["bg_image"][0];
     try {
       req.body.bg_image = await uploadToS3(image, "banner");
       if (isExsist?.bg_image) {
-        const isDeleted = await deleteFromS3(isExsist.bg_image);
-        console.log("Previous image deleted successfully",isDeleted);    //image is not able to delete : undefined
+        await deleteFromS3(isExsist.bg_image);
       }
     } catch (error) {
       console.error("Error handling image update:", error);
