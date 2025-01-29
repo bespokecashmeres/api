@@ -14,6 +14,11 @@ const genderSchema = new mongoose.Schema(
       enum: [true, false],
       default: true,
     },
+    slug: {
+      type: Types.String,
+      require: true,
+      unique: true,
+    },
   },
   {
     timestamps: true,

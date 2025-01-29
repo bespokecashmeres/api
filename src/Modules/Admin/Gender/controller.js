@@ -192,7 +192,7 @@ exports.dropdownOptionsController = async (req, res, next) => {
 
 exports.getActiveController = async (req, res, next) => {
   const acceptLanguage = req.headers["accept-language"];
-  const activeList = await modelOperations.getActive(acceptLanguage);
+  const activeList = await modelOperations.getActive(acceptLanguage, { slug: 1 });
   return res
     .status(httpStatusCodes.SUCCESS)
     .json(
