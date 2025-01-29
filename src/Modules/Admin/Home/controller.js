@@ -741,8 +741,7 @@ exports.updateHomeController = async (req,res) => {
 
 
 exports.GetHomeCtrl = async (req, res) => {
-  const {_id} = req.params;
-  const data = await FindHome(_id);
+  const data = await HomeExist();
   if(!data){
     throw {
       code: httpStatusCodes.BAD_REQUEST,

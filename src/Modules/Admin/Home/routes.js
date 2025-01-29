@@ -53,7 +53,7 @@ module.exports = (app) => {
   );
 
   app.get(
-    "/home/:_id",
+    "/home",
     asyncHandler(GetHomeCtrl)
   );
 
