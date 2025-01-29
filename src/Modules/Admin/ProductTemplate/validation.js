@@ -33,7 +33,7 @@ exports.createValidator = Joi.object({
     .length(24)
     .required(),
   status: statusJoiValidation,
-  genderId: genderJoiValidation,
+  genderId: genderJoiOptionalValidation,
   basePriceXs: Joi.number().required(),
   colourId: Joi.string().hex().length(24).required(),
   materialId: Joi.string().hex().length(24).required(),

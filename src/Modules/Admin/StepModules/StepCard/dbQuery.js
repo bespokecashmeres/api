@@ -1,6 +1,7 @@
 const { DEFAULT_LOCALE } = require("../../../../../utils/constants");
 const { getStepBySlug, getDataForDropdown } = require("../StepType/dbQuery");
 const database = require("./schema");
+const stepTypeDatabase = require("../StepType/schema");
 const { ObjectId } = require("mongoose").Types;
 
 RegExp.escape = function (s) {
@@ -156,6 +157,39 @@ module.exports.getDataForDropdown = async (
   ];
 
   return await database.aggregate(pipeline);
+};
+
+module.exports.getDataForDropdownBySlug = async (
+  language = DEFAULT_LOCALE,
+  slug
+) => {
+  const pipeline = [
+    {
+      $match: { slug: slug }
+    },
+    {
+      $lookup: {
+        from: "stepcards",
+        localField: "_id",
+        foreignField: "stepTypeId",
+        as: "stepCards"
+      }
+    },
+    {
+      $unwind: "$stepCards"
+    },
+    {
+      $project: {
+        value: "$stepCards._id",
+        label: { 
+          $ifNull: [`$stepCards.title.${language}`, ""]
+        },
+        _id: 0
+      }
+    }
+  ];
+
+  return await stepTypeDatabase.aggregate(pipeline);
 };
 
 module.exports.Update = async (data) => {

@@ -12,6 +12,7 @@ const {
   rowsReorderData,
   getDataForDropdown,
   getByQuery,
+  getDataForDropdownBySlug,
 } = require("./dbQuery");
 const {
   deleteFromS3,
@@ -175,6 +176,21 @@ exports.dropdownOptionsController = async (req, res, next) => {
         httpResponses.SUCCESS,
         res.__(serverResponseMessage.RECORD_FETCHED),
         await getDataForDropdown(acceptLanguage, stepTypeId)
+      )
+    );
+};
+
+exports.dropdownOptionsBySlugController = async (req, res, next) => {
+  const acceptLanguage = req.headers["accept-language"];
+  const { slug } = req.params;
+  return res
+    .status(httpStatusCodes.SUCCESS)
+    .json(
+      success(
+        httpStatusCodes.SUCCESS,
+        httpResponses.SUCCESS,
+        res.__(serverResponseMessage.RECORD_FETCHED),
+        await getDataForDropdownBySlug(acceptLanguage, slug)
       )
     );
 };

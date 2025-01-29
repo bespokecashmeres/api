@@ -17,7 +17,8 @@ module.exports.getDataForDropdown = async (language = DEFAULT_LOCALE) => {
 module.exports.getPaginationData = async (queryData) => {
   return await baseQueryService.getPaginatedDataForNameField(
     database,
-    queryData
+    queryData,
+    { slug: 1 }
   );
 };
 
@@ -49,7 +50,7 @@ module.exports.bulkCreate = async (data, uniqueField) => {
   }
 };
 
-module.exports.getActive = async (language = DEFAULT_LOCALE) => {
+module.exports.getActive = async (language = DEFAULT_LOCALE, columns = {}) => {
   return await database.aggregate([
     {
       $match: { status: true },
@@ -58,6 +59,7 @@ module.exports.getActive = async (language = DEFAULT_LOCALE) => {
       $project: {
         _id: 1,
         name: `$name.${language}`,
+        ...columns,
       },
     },
   ]);

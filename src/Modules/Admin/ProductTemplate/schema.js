@@ -56,7 +56,7 @@ const createProductSchema = new Schema({
   genderId: {
     type: Schema.Types.ObjectId,
     ref: "genders",
-    required: true,
+    default: null,
   },
   status: {
     type: Boolean,
