@@ -8,7 +8,8 @@ const {
   listOurStoryController,
   getOurStoryController,
   deleteController,
-  statusController
+  statusController,
+  fetchOurStoryController
 } = require("./controller");
 const { asyncHandler } = require("../../../../utils/asyncHandler");
 const { uploadStoryFields } = require("../../../../middleware/uploadProductFieldsMiddleware");
@@ -46,6 +47,11 @@ module.exports = (app) => {
   app.get(
     "/story/:_id",
     asyncHandler(getOurStoryController)
+  );
+
+  app.get(
+    "/story/fetch/:_id",
+     asyncHandler(fetchOurStoryController)
   );
 
   app.patch(

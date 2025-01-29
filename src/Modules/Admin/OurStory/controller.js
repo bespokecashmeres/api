@@ -329,6 +329,29 @@ exports.getOurStoryController = async (req, res) => {
   );
 };
 
+exports.fetchOurStoryController = async (req, res) => {
+  
+  const {_id} = req.params;
+  console.log("step 1",_id);
+
+  const data = await FindStory(_id);
+  console.log("step 2",data);
+  if(!data){
+    throw {
+      code: httpStatusCodes.BAD_REQUEST,
+      message: res.__(serverResponseMessage.NO_STORY_FOUND),
+    };
+  }
+  return res.json(
+    success(
+      httpStatusCodes.SUCCESS,
+      httpResponses.SUCCESS,
+      res.__(serverResponseMessage.STORY_FETCHED),
+      data
+    )
+  );
+};
+
 exports.statusController = async (req, res) => {
   const data = await UpdateStatus(req.body);
   if(!data){

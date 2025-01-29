@@ -40,6 +40,8 @@ const home = require("./src/Modules/Admin/Home/routes");
 const productTemplateModule = require("./src/Modules/Admin/ProductTemplate/routes");
 const faqModule = require("./src/Modules/Admin/FAQ/routes");
 const bannerModule = require("./src/Modules/Admin/Banner/routes")
+const fetchOurStory = require("./src/Modules/User/OurStory/routes")
+const fetchHomePage = require("./src/Modules/User/HomePage/routes")
 
 const { logger } = require("./utils/logger");
 const connectToDatabase = require("./database/db");
@@ -131,6 +133,8 @@ home(app);
 productTemplateModule(app);
 faqModule(app);
 bannerModule(app);
+fetchOurStory(app);
+fetchHomePage(app);
 
 app.use(express.static(path.join(__dirname, 'public')));
 

@@ -1,35 +1,16 @@
-// const middleware = require("../../../../middleware/middleware");
+const {fetchOurStoryController} = require("../../Admin/OurStory/controller")
 
-// const {
-//   createOurStory,updateOurStory
-// } = require("./validation");
-// const {
-//   createOurStoryController,updateOurStoryController,
-//   listOurStoryController,
-//   getOurStoryController,
-//   deleteController,
-//   statusController
-// } = require("./controller");
-// const { asyncHandler } = require("../../../../utils/asyncHandler");
-// const { uploadStoryFields } = require("../../../../middleware/uploadProductFieldsMiddleware");
-// const { listValidator } = require("../../../../utils/validation");
+const { asyncHandler } = require("../../../../utils/asyncHandler");
 
-// module.exports = (app) => {
+module.exports = (app) => {
  
 
-//   app.get(
-//     "/story/:_id",
-//     asyncHandler(getOurStoryController)
-//   );
-
-//   app.patch(
-//     "/story/status",
-//     asyncHandler(statusController)
-//   );
+  
+    app.get(
+      "/fetch-story/:_id",
+      asyncHandler(fetchOurStoryController)
+    );
 
 
-//   app.delete(
-//     "/story/:_id",
-//     asyncHandler(deleteController)
-//   );
-// };
+
+};
