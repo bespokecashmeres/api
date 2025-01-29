@@ -1,8 +1,14 @@
 [
   {
-    "name": "men"
+    "name": {
+      "en": "women",
+      "da": "kvinder"
+    }
   },
   {
-    "name": "women"
+    "name": {
+      "en": "men",
+      "da": "mænd"
+    }
   }
 ]

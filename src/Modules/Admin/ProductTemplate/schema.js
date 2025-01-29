@@ -61,6 +61,25 @@ const createProductSchema = new Schema({
   status: {
     type: Boolean,
     default: true
+  },
+  basePriceXs: {
+    type: Number,
+    required: true
+  },
+  colourId: {
+    type: Schema.Types.ObjectId,
+    ref: "colours",
+    required: true,
+  },
+  materialId: {
+    type: Schema.Types.ObjectId,
+    ref: "materials",
+    required: true,
+  },
+  patternId: {
+    type: Schema.Types.ObjectId,
+    ref: "stepcards",
+    required: true,
   }
 }, {
   timestamps: true,

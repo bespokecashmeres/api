@@ -34,6 +34,10 @@ exports.createValidator = Joi.object({
     .required(),
   status: statusJoiValidation,
   genderId: genderJoiValidation,
+  basePriceXs: Joi.number().required(),
+  colourId: Joi.string().hex().length(24).required(),
+  materialId: Joi.string().hex().length(24).required(),
+  patternId: Joi.string().hex().length(24).required(),
 });
 
 exports.updateValidator = Joi.object({
@@ -75,7 +79,11 @@ exports.updateValidator = Joi.object({
     .length(24)
     .optional(),
   genderId: genderJoiOptionalValidation,
-  status: statusJoiValidation.optional()
+  status: statusJoiValidation.optional(),
+  basePriceXs: Joi.number().optional(),
+  colourId: Joi.string().hex().length(24).optional(),
+  materialId: Joi.string().hex().length(24).optional(),
+  patternId: Joi.string().hex().length(24).optional(),
 });
 
 exports.dropdownValidator = Joi.object({

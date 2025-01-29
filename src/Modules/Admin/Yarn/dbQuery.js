@@ -194,11 +194,17 @@ module.exports.getDetailsById = async (id, language) => {
     $project: {
       _id: 1,
       name: { $ifNull: [`$name.${language}`, ""] },
+      materialId: {
+        $ifNull: [`$materialInfo._id`, ""],
+      },
       material: {
         $ifNull: [`$materialInfo.name.${language}`, ""],
       },
       seasonality: {
         $ifNull: [`$seasonalityInfo.name.${language}`, ""],
+      },
+      colourId: {
+        $ifNull: [`$colourInfo._id`, ""],
       },
       colour: {
         $ifNull: [`$colourInfo.name.${language}`, ""],
