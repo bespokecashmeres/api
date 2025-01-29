@@ -15,43 +15,14 @@ const {
 
 exports.createController = async (req, res, next) => {
 
-  const {genderId} = req.body;
+  const {slug} = req.body;
 
-  const isExsist = await findOneRecord({ faqId: req.body.faqId });
-  if (isExsist)
+  const isRecordExist = await findOneRecord(slug);
+  if (isRecordExist)
     throw {
       code: httpStatusCodes.BAD_REQUEST,
-      message: res.__(serverResponseMessage.YARN_ID_ALREADY_EXISTS),
+      message: res.__(serverResponseMessage.RECORD_ALREADY_EXISTS),
     };
-
-    const isGenderExist = await GenderExist(genderId);
-    if(!isGenderExist){
-      throw {
-        code: httpStatusCodes.BAD_REQUEST,
-        message: res.__(serverResponseMessage.RECORD_DOES_NOT_EXISTS),
-      };
-    }
-
-
-
-
-    // try {
-    //   req.body.title = req.body.title ? JSON.parse(req.body.title) : {};
-    // } catch (error) {
-    //   throw {
-    //     code: httpStatusCodes.BAD_REQUEST,
-    //     message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
-    //   };
-    // }
-
-    //  try {
-    //   req.body.description = req.body.description ? JSON.parse(req.body.description) : {};
-    // } catch (error) {
-    //   throw {
-    //     code: httpStatusCodes.BAD_REQUEST,
-    //     message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
-    //   };
-    // }
 
 
 
@@ -80,15 +51,6 @@ exports.updateController = async (req, res, next) => {
     };
   }
 
-  // Parse the multilingual data for the main record
-  // try {
-  //   req.body.title = req.body.title ? JSON.parse(req.body.title) : {};
-  // } catch (error) {
-  //   throw {
-  //     code: httpStatusCodes.BAD_REQUEST,
-  //     message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
-  //   };
-  // }
 
 
 

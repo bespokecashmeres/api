@@ -4,7 +4,7 @@ const Types = mongoose.Schema.Types;
 
 const faqSchema = new mongoose.Schema(
   {
-    faqId:{
+    slug:{
         type: Types.String,
         required: true
     },
@@ -16,13 +16,6 @@ const faqSchema = new mongoose.Schema(
         type: Types.Object,
         require: true,
       },
-
-    //gender Id
-    genderId: {
-      type: Types.ObjectId,
-      ref: "genders",
-      default: null,
-    },
     status: {
       type: Types.Boolean,
       enum: [true, false],

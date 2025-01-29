@@ -14,7 +14,7 @@ module.exports.create = async (req) => {
 };
 
 module.exports.findOneRecord = async (req) => {
-  return await database.findOne(req);
+  return await database.findOne({slug:req});
 };
 
 

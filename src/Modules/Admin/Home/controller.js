@@ -14,10 +14,6 @@ const {
 const { uploadToS3, deleteFromS3 } = require("../../../../utils/fileUploads");
 
 exports.CreateHomeCtrl = async (req, res) => {
-
-
-
-
   //section 1
 
   if (req.body?.section1?.title) {
@@ -669,6 +665,78 @@ exports.CreateHomeCtrl = async (req, res) => {
     )
   );
 };
+
+
+exports.updateHomeController = async (req,res) => {
+
+  const isExsist = await HomeExist(req.body._id);
+  if(!isExsist){
+    throw {
+      code: httpStatusCodes.BAD_REQUEST,
+      message: res.__(serverResponseMessage.HOME_EXIST),
+    };
+  }
+
+  console.log("step 1",req.body);
+  console.log("files : ",req.files);
+  // console.log("is Exist ",isExsist);
+
+
+
+  //section 1
+
+
+
+  if (req.body?.section1?.title) {
+    try {
+      req.body.section1.title = JSON.parse(req.body.section1.title);
+    } catch (error) {
+      throw {
+        code: httpStatusCodes.BAD_REQUEST,
+        message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
+      };
+    }
+  }
+
+  const deletedImages = [];
+
+  if (req.files?.section1?.bg_image) {
+    const image = req.files.section1["bg_image"][0];
+    try {
+      req.body.section1.bg_image = await uploadToS3(image, "home/section1");
+      if (isExsist?.section1?.bg_image) {
+        console.log("step A : ",isExsist.section1.bg_image);
+        deletedImages.push(isExsist.section1.bg_image); // Add old image for deletion
+      }
+    } catch (error) {
+      console.error("Main image upload failed:", error);
+    }
+  } else {
+    // If no new image is uploaded, retain the existing image
+    req.body.section1.bg_image = isExsist?.section1?.bg_image || "";
+  }
+
+  console.log("step 2",req.body);
+
+  console.log("deleted images ",deletedImages);
+
+
+  const data = await HomeUpdate(req.body);
+  if (!data) {
+    throw {
+      code: httpStatusCodes.BAD_REQUEST,
+      message: res.__(serverResponseMessage.HOME_EXIST),
+    };
+  }
+  return res.json(
+    success(
+      httpStatusCodes.SUCCESS,
+      httpResponses.SUCCESS,
+      res.__(serverResponseMessage.HOME_UPDATED ),
+      data
+    )
+  );
+}
 
 
 

@@ -24,8 +24,7 @@ module.exports = (app) => {
     // verifyToken,
     // hasRole(["admin"]),
     (req, res, next) => {
-      const count = parseInt(req.headers["count"] || "0", 10);
-      const uploadMiddleware = uploadBannerFields(count);
+      const uploadMiddleware = uploadBannerFields();
       uploadMiddleware(req, res, next);
     },
     middleware(createValidator),

@@ -103,7 +103,7 @@ module.exports.DeleteById = async (id) => {
   return await database.findByIdAndDelete(id);
 };
 
-module.exports.GenderExist = async (id) => {
-  return await Gender.findById(id);
+module.exports.isSlugExist = async (req) => {
+  return await database.findOne({slug:req});
 };
 

@@ -17,12 +17,9 @@ const bannerSchema = new mongoose.Schema(
       type: Types.String,
       default: "",
     },
-
-    //gender Id
-    genderId: {
-      type: Types.ObjectId,
-      ref: "genders",
-      default: null,
+    slug: {
+      type: Types.String,
+      require: true
     },
     status: {
       type: Types.Boolean,
