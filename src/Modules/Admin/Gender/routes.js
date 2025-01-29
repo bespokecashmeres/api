@@ -3,21 +3,22 @@ const { asyncHandler } = require("../../../../utils/asyncHandler");
 const { verifyToken } = require("../../../../services/auth");
 const hasRole = require("../../../../middleware/hasRole");
 const { getActiveController, createController, updateController, getDetailController, listController, dropdownOptionsController, deleteController, statusController } = require("./controller");
-const { createNameValidator, updateNameValidator, IdValidator, listValidator, statusValidator } = require("../../../../utils/validation");
+const { IdValidator, listValidator, statusValidator } = require("../../../../utils/validation");
+const { createGenderValidator, updateGenderValidator } = require("./validation");
 
 module.exports = (app) => {
   app.post(
     "/gender/add",
     verifyToken,
     hasRole(["admin"]),
-    middleware(createNameValidator),
+    middleware(createGenderValidator),
     asyncHandler(createController)
   );
   app.put(
     "/gender/update",
     verifyToken,
     hasRole(["admin"]),
-    middleware(updateNameValidator),
+    middleware(updateGenderValidator),
     asyncHandler(updateController)
   );
   app.get("/gender/active", asyncHandler(getActiveController));

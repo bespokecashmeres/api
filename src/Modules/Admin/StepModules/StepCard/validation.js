@@ -69,3 +69,7 @@ exports.statusValidator = Joi.object({
 exports.optionValidator = Joi.object({
   stepTypeId: Joi.string().hex().length(24).required(),
 })
+
+exports.optionSlugValidator = Joi.object({
+  slug: slugJoiValidation,
+})
