@@ -17,31 +17,37 @@ const { uploadToS3 } = require("../../../../utils/fileUploads");
 exports.createOurStoryController = async (req, res) => {
 
 
-  try {
-    req.body.title = req.body.title ? JSON.parse(req.body.title) : {};
-  } catch (error) {
-    throw {
-      code: httpStatusCodes.BAD_REQUEST,
-      message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
-    };
+  if(req.body?.title){
+    try {
+      req.body.title = req.body.title ? JSON.parse(req.body.title) : {};
+    } catch (error) {
+      throw {
+        code: httpStatusCodes.BAD_REQUEST,
+        message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
+      };
+    }
   }
 
-  try {
-    req.body.sub_title = req.body.sub_title ? JSON.parse(req.body.sub_title) : {};
-  } catch (error) {
-    throw {
-      code: httpStatusCodes.BAD_REQUEST,
-      message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
-    };
+  if(req.body?.sub_title){
+    try {
+      req.body.sub_title = req.body.sub_title ? JSON.parse(req.body.sub_title) : {};
+    } catch (error) {
+      throw {
+        code: httpStatusCodes.BAD_REQUEST,
+        message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
+      };
+    }
   }
 
-  try {
-    req.body.description = req.body.description ? JSON.parse(req.body.description) : {};
-  } catch (error) {
-    throw {
-      code: httpStatusCodes.BAD_REQUEST,
-      message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
-    };
+  if(req.body.description){
+    try {
+      req.body.description = req.body.description ? JSON.parse(req.body.description) : {};
+    } catch (error) {
+      throw {
+        code: httpStatusCodes.BAD_REQUEST,
+        message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
+      };
+    }
   }
 
   if (req.files) {
@@ -137,24 +143,29 @@ exports.updateOurStoryController = async (req, res) => {
   }
 
 
-  try {
-    req.body.title = req.body.title ? JSON.parse(req.body.title) : {};
-  } catch (error) {
-    throw {
-      code: httpStatusCodes.BAD_REQUEST,
-      message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
-    };
+  if(req.body?.title){
+    try {
+      req.body.title = req.body.title ? JSON.parse(req.body.title) : {};
+    } catch (error) {
+      throw {
+        code: httpStatusCodes.BAD_REQUEST,
+        message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
+      };
+    }
   }
 
-  try {
-    req.body.sub_title = req.body.sub_title ? JSON.parse(req.body.sub_title) : {};
-  } catch (error) {
-    throw {
-      code: httpStatusCodes.BAD_REQUEST,
-      message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
-    };
+  if(req.body?.sub_title){
+    try {
+      req.body.sub_title = req.body.sub_title ? JSON.parse(req.body.sub_title) : {};
+    } catch (error) {
+      throw {
+        code: httpStatusCodes.BAD_REQUEST,
+        message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
+      };
+    }
   }
 
+ if(req.body?.description){
   try {
     req.body.description = req.body.description ? JSON.parse(req.body.description) : {};
   } catch (error) {
@@ -163,6 +174,7 @@ exports.updateOurStoryController = async (req, res) => {
       message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
     };
   }
+ }
 
   const deletedImages = []; // Store URLs of images to delete
 
