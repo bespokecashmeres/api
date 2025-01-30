@@ -62,7 +62,6 @@ const uploadHomePageFields = (allCount) => {
  const section3 = allCount[0];
  const section4 = allCount[1];
  const section6 = allCount[2];
- const section7 = allCount[3];
 
 
   const fields = [];
@@ -83,9 +82,6 @@ const uploadHomePageFields = (allCount) => {
     fields.push({ name: `section6[cards][${i}][image]`, maxCount: 1 });
   }
 
-  for (let i = 0; i < section7; i++) {
-    fields.push({ name: `section7[cards][${i}][image]`, maxCount: 1 });
-  }
 
   fields.push({ name: "section8[card1][first_image]", maxCount: 1 });
   fields.push({ name: "section8[card1][second_image]", maxCount: 1 });

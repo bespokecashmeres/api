@@ -337,6 +337,7 @@ exports.CreateHomeCtrl = async (req, res) => {
     }
   }
 
+
   if(req.body?.section7?.cards?.length){
     const data = await fetchOurStory();
     for(let i=0; i<data.length; i++){
@@ -345,6 +346,7 @@ exports.CreateHomeCtrl = async (req, res) => {
       req.body.section7.cards[i].image = data[i].thumb_image
     }
   }
+
 
 
 
