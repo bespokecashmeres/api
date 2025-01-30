@@ -1,4 +1,5 @@
 const database = require("./schema");
+const OurStoryModel = require("../../Admin/OurStory/schema")
 
 
 
@@ -9,6 +10,14 @@ module.exports.HomeCreate = async (req) => {
 module.exports.HomeExist = async () => {
   return await database.findOne({status:true});
 };
+
+module.exports.fetchOurStory = async () => {
+  return await OurStoryModel.find({ status: true })
+    .sort({ createdAt: -1 })  // Sort by creation date, descending
+    .limit(4)
+    .select("title sub_title thumb_image -_id");  // Select only specific fields
+};
+
 
 module.exports.FindHome = async (_id) => {
   return await database.findById(_id);

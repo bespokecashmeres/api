@@ -9,6 +9,7 @@ const {
   FindHome,
   DeleteHome,
   HomeExist,
+  fetchOurStory,
 } = require("./dbQuery");
 
 const { uploadToS3, deleteFromS3 } = require("../../../../utils/fileUploads");
@@ -101,6 +102,23 @@ exports.CreateHomeCtrl = async (req, res) => {
       }
     }
   }
+
+
+
+  //sectionN-string
+
+
+  if(req.body?.sectionNString?.title){
+    try {
+      req.body.sectionNString.title = req.body.sectionNString.title ? JSON.parse(req.body.sectionNString.title) : {};
+    } catch (error) {
+      throw {
+        code: httpStatusCodes.BAD_REQUEST,
+        message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
+      };
+    }
+   }
+
 
   //section-3:
 
@@ -295,7 +313,7 @@ exports.CreateHomeCtrl = async (req, res) => {
 
 
 
-  //  //section-7
+  //  //section-7  
 
   if(req.body?.section7?.title){
     try {
@@ -319,49 +337,17 @@ exports.CreateHomeCtrl = async (req, res) => {
     }
   }
 
-  if (req.body?.section7?.cards?.length) {
-    for (const [index, home] of req.body.section7.cards.entries()) {
-      if (home.title) {
-        home.title = JSON.parse(home.title);
-      }
-      if(home.description){
-        home.description = JSON.parse(home.description);
-      }
+  if(req.body?.section7?.cards?.length){
+    const data = await fetchOurStory();
+    for(let i=0; i<data.length; i++){
+      req.body.section7.cards[i].title = data[i].title
+      req.body.section7.cards[i].description = data[i].sub_title
+      req.body.section7.cards[i].image = data[i].thumb_image
     }
   }
 
 
-  if (req.files) {
-    const imageUploadPromise = [];
-    if (req.body?.section7?.cards?.length) {
-      for (const [index] of req.body?.section7?.cards?.entries()) {
-        if (req.files[`section7[cards][${index}][image]`]) {
-          const singleImageFile =
-            req.files[`section7[cards][${index}][image]`][0];
-          try {
-            if (singleImageFile) {
-              imageUploadPromise.push(
-                uploadToS3(singleImageFile, "home/section7").then(
-                  (imageUrl) => {
-                    req.body.section7.cards[index].image = imageUrl;
-                  }
-                )
-              );
-            }
-          } catch (err) {
-            console.error("Stories Images upload failed:", err);
-          }
-        }
-      }
-    }
-    if (imageUploadPromise.length) {
-      try {
-        await Promise.allSettled(imageUploadPromise).then();
-      } catch (err) {
-        console.log("imageUploadPromise error", err);
-      }
-    }
-  }
+
 
 
 
@@ -705,7 +691,6 @@ exports.updateHomeController = async (req,res) => {
     try {
       req.body.section1.bg_image = await uploadToS3(image, "home/section1");
       if (isExsist?.section1?.bg_image) {
-        console.log("step A : ",isExsist.section1.bg_image);
         deletedImages.push(isExsist.section1.bg_image); // Add old image for deletion
       }
     } catch (error) {

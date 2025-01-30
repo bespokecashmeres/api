@@ -95,6 +95,13 @@ const homeSchema = new mongoose.Schema(
       },
     },
 
+    sectionNString:{
+      title: {
+        type: Types.Object,
+        default: {},
+      },
+    },
+
     section3: [
       {
         uuid: {

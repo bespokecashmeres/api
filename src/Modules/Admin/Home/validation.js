@@ -16,6 +16,10 @@ const CreateHomeValidation = Joi.object({
     description: Joi.string().default({}).required(),
   }).optional(),
 
+  sectionNString: Joi.object({
+    title: Joi.string().default({}).required(), // Matches the schema's default
+  }).optional(),
+
   section3: Joi.array()
   .items(
     Joi.object({
@@ -72,9 +76,6 @@ const CreateHomeValidation = Joi.object({
       .items(
         Joi.object({
           uuid: Joi.string().default("").required(),
-          image: Joi.any().optional(),
-          title: Joi.string().default({}).optional(),
-          description: Joi.string().default({}).optional(),
         })
       )
       .optional(),
@@ -150,6 +151,8 @@ const UpdateHomeValidation = Joi.object({
     title: Joi.string().optional(),
     description: Joi.string().optional(),
   }).optional(),
+
+
 
   section3: Joi.array()
   .items(
