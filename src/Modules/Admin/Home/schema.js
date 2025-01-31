@@ -36,13 +36,13 @@ const card6Schema = new mongoose.Schema({
   image: {
     type: Types.String,
   },
-  title: {
+  button_text: {
     type: Types.Object,
     default: {},
   },
-  description: {
-    type: Types.Object,
-    default: {},
+  button_link: {
+    type: Types.String,
+    default: "",
   },
 
 });

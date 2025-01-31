@@ -269,11 +269,8 @@ exports.CreateHomeCtrl = async (req, res) => {
 
   if (req.body?.section6?.cards?.length) {
     for (const [index, home] of req.body.section6.cards.entries()) {
-      if (home.title) {
-        home.title = JSON.parse(home.title);
-      }
-      if(home.description){
-        home.description = JSON.parse(home.description);
+      if (home.button_text) {
+        home.button_text = JSON.parse(home.button_text);
       }
     }
   }
@@ -948,11 +945,8 @@ exports.updateHomeController = async (req,res) => {
 
   if (req.body?.section6?.cards?.length) {
     for (const [index, yarn] of req.body.section6.cards.entries()) {
-      if (yarn.title) {
-        yarn.title = JSON.parse(yarn.title);
-      }
-      if (yarn.description) {
-        yarn.description = JSON.parse(yarn.description);
+      if (yarn.button_text) {
+        yarn.button_text = JSON.parse(yarn.button_text);
       }
       
     }

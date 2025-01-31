@@ -61,8 +61,8 @@ const CreateHomeValidation = Joi.object({
         Joi.object({
           uuid: Joi.string().default("").required(),
           image: Joi.any().optional(),
-          title: Joi.string().optional(),
-          description: Joi.string().optional(),
+          button_text: Joi.string().optional(),
+          button_link: Joi.string().optional(),
         })
       )
       .optional(),
@@ -195,8 +195,8 @@ const UpdateHomeValidation = Joi.object({
         Joi.object({
           uuid: Joi.string().optional(),
           image: Joi.any().optional(),
-          title: Joi.string().optional(),
-          description: Joi.string().optional(),
+          button_text: Joi.string().optional(),
+          button_link: Joi.string().optional(),
         })
       )
       .optional(),
