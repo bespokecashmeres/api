@@ -12,10 +12,14 @@ module.exports.HomeExist = async () => {
 };
 
 module.exports.fetchOurStory = async () => {
-  return await OurStoryModel.find({ status: true })
+  console.log('inside step 1')
+  const data = await OurStoryModel.find({ status: true })
     .sort({ createdAt: -1 })  // Sort by creation date, descending
     .limit(4)
     .select("title sub_title thumb_image -_id");  // Select only specific fields
+    console.log("inside step 2",data);
+
+    return data;
 };
 
 

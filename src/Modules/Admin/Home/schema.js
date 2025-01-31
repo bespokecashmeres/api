@@ -47,24 +47,21 @@ const card6Schema = new mongoose.Schema({
 
 });
 
-const card7Schema = new mongoose.Schema({
-  uuid: {
-    type: Types.String,
-    default: "",
-  },
-  image: {
-    type: Types.String,
-  },
-  title: {
-    type: Types.Object,
-    default: {},
-  },
-  description: {
-    type: Types.Object,
-    default: {},
-  },
+// const card7Schema = new mongoose.Schema({
+//   image: {
+//     type: Types.String,
+//     default: "",
+//   },
+//   title: {
+//     type: Types.Object,
+//     default: {},
+//   },
+//   description: {
+//     type: Types.Object,
+//     default: {},
+//   },
 
-});
+// });
 
 const homeSchema = new mongoose.Schema(
   {
@@ -159,7 +156,7 @@ const homeSchema = new mongoose.Schema(
         type: Types.Object,
         default: {},
       },
-      cards: [card7Schema],
+      // cards: [card7Schema],
     },
 
 

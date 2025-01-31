@@ -72,13 +72,13 @@ const CreateHomeValidation = Joi.object({
   section7: Joi.object({
     title: Joi.string().required(),
     sub_title: Joi.string().required(),
-    cards: Joi.array()
-      .items(
-        Joi.object({
-          uuid: Joi.string().default("").required(),
-        })
-      )
-      .optional(),
+    // cards: Joi.array()
+    //   .items(
+    //     Joi.object({
+    //       uuid: Joi.string().default("").required(),
+    //     })
+    //   )
+    //   .optional(),
   }).optional(),
 
 

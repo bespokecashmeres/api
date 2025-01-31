@@ -338,14 +338,14 @@ exports.CreateHomeCtrl = async (req, res) => {
   }
 
 
-  if(req.body?.section7?.cards?.length){
-    const data = await fetchOurStory();
-    for(let i=0; i<data.length; i++){
-      req.body.section7.cards[i].title = data[i].title
-      req.body.section7.cards[i].description = data[i].sub_title
-      req.body.section7.cards[i].image = data[i].thumb_image
-    }
-  }
+  // if(req.body?.section7?.cards?.length){
+  //   const data = await fetchOurStory();
+  //   for(let i=0; i<data.length; i++){
+  //     req.body.section7.cards[i].title = data[i].title
+  //     req.body.section7.cards[i].description = data[i].sub_title
+  //     req.body.section7.cards[i].image = data[i].thumb_image
+  //   }
+  // }
 
 
 
@@ -982,6 +982,26 @@ exports.updateHomeController = async (req,res) => {
       };
     }
   }
+
+
+
+  // if(req.body?.section7){
+  //   const data = await fetchOurStory();
+  //   console.log("step A ",data);
+  //   for(let i=0; i<data.length; i++){
+  //     console.log("step AA")
+  //     req.body.section7.cards[i].title = data[i].title
+  //     console.log("step AB")
+  //     req.body.section7.cards[i].description = data[i]?.sub_title
+  //     console.log("step Ac")
+  //     req.body.section7.cards[i].image = data[i]?.thumb_image
+  //     console.log("step AD")
+  //   }
+  // }
+    
+
+    // console.log("step B");
+    // console.log(req.body.section7);
 
 
 
