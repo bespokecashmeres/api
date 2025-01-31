@@ -61,8 +61,8 @@ const CreateHomeValidation = Joi.object({
         Joi.object({
           uuid: Joi.string().default("").required(),
           image: Joi.any().optional(),
-          title: Joi.string().default({}).optional(),
-          description: Joi.string().default({}).optional(),
+          title: Joi.string().optional(),
+          description: Joi.string().optional(),
         })
       )
       .optional(),
@@ -70,8 +70,8 @@ const CreateHomeValidation = Joi.object({
 
 
   section7: Joi.object({
-    title: Joi.string().default({}).required(),
-    sub_title: Joi.string().default({}).required(),
+    title: Joi.string().required(),
+    sub_title: Joi.string().required(),
     cards: Joi.array()
       .items(
         Joi.object({
@@ -138,7 +138,7 @@ const CreateHomeValidation = Joi.object({
 // Validation for updateHomeSchema
 const UpdateHomeValidation = Joi.object({
 
-  _id: Joi.string().optional(),
+  _id: Joi.string().required(),
 
   section1: Joi.object({
     title: Joi.string().optional(),
@@ -152,7 +152,9 @@ const UpdateHomeValidation = Joi.object({
     description: Joi.string().optional(),
   }).optional(),
 
-
+  sectionNString: Joi.object({
+    title: Joi.string().required(),
+  }).optional(),
 
   section3: Joi.array()
   .items(
@@ -203,22 +205,12 @@ const UpdateHomeValidation = Joi.object({
   section7: Joi.object({
     title: Joi.string().optional(),
     sub_title: Joi.string().optional(),
-    cards: Joi.array()
-      .items(
-        Joi.object({
-          uuid: Joi.string().optional(),
-          image: Joi.any().optional(),
-          title: Joi.string().optional(),
-          description: Joi.string().optional(),
-        })
-      )
-      .optional(),
   }).optional(),
 
   section8: Joi.object({
     title: Joi.string().optional(),
     card1: Joi.object({
-      uuid: Joi.string().optional(),
+      // uuid: Joi.string().optional(),
       first_image: Joi.any().optional(),
       second_image: Joi.any().optional(),
       title: Joi.string().optional(),
@@ -228,7 +220,7 @@ const UpdateHomeValidation = Joi.object({
       button_link: Joi.string().optional(),
     }).optional(),
     card2: Joi.object({
-      uuid: Joi.string().optional(),
+      // uuid: Joi.string().optional(),
       image: Joi.any().optional(),
       title: Joi.string().optional(),
       sub_title: Joi.string().optional(),
@@ -237,7 +229,7 @@ const UpdateHomeValidation = Joi.object({
       button_link: Joi.string().optional(),
     }).optional(),
     card3: Joi.object({
-      uuid: Joi.string().optional(),
+      // uuid: Joi.string().optional(),
       image: Joi.any().optional(),
       title: Joi.string().optional(),
       sub_title: Joi.string().optional(),

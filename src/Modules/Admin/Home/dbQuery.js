@@ -28,6 +28,8 @@ module.exports.DeleteHome = async (_id) => {
 };
 
 module.exports.HomeUpdate = async (data) => {
+
+  console.log("step Z");
   return await database
     .findOneAndUpdate(
       { _id: data._id },
