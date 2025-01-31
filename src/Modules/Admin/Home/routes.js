@@ -6,7 +6,8 @@ const { CreateHomeValidation, UpdateHomeValidation } = require('./validation')
 const {
   CreateHomeCtrl,
   updateHomeController,
-  GetHomeCtrl
+  GetHomeCtrl,
+  GetHomeOurStory
 } = require("./controller");
 const { asyncHandler } = require("../../../../utils/asyncHandler");
 const {  uploadHomePageFields } = require("../../../../middleware/uploadProductFieldsMiddleware");
@@ -49,6 +50,11 @@ module.exports = (app) => {
   app.get(
     "/home",
     asyncHandler(GetHomeCtrl)
+  );
+
+  app.get(
+    "/home/our-story",
+    asyncHandler(GetHomeOurStory)
   );
 
   // app.delete(

@@ -1371,6 +1371,21 @@ exports.GetHomeCtrl = async (req, res) => {
   );
 };
 
+
+exports.GetHomeOurStory = async (req, res) => {
+
+  const ourStoryData = await fetchOurStory();
+  
+  return res.json(
+    success(
+      httpStatusCodes.SUCCESS,
+      httpResponses.SUCCESS,
+      res.__(serverResponseMessage.RECORD_FETCHED),
+      ourStoryData
+    )
+  );
+};
+
 // exports.deleteHomeCtrl = async (req, res) => {
 //   const {_id} = req.params;
 //   const data = await DeleteHome(_id);
