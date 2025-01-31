@@ -3264,7 +3264,7 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_heading_1 .
   <br />
 <p style="font-size: 14px; line-height: 140%; margin: 0px;">Thank you for signing up with BESPOKE CASHMERES! We are thrilled to welcome you to our community. You are now officially part of our exciting competition, where you have the chance to win prizes worth USD 5,000 in exclusive cashmere sweaters over the next two months.</p>
 <br />
-  <p style="font-size: 14px; line-height: 140%; margin: 0px;">As a token of our appreciation, we’re delighted to offer you 20% off your total first order. Simply follow us on our new Instagram page [Instagram link], and you’ll receive your discount!</p>
+  <p style="font-size: 14px; line-height: 140%; margin: 0px;">As a token of our appreciation, we’re delighted to offer you 20% off your total first order. Simply follow us on our new Instagram page <a href="https://www.instagram.com/bespokecashmeres/">Instagram link</a>, and you’ll receive your discount!</p>
   <br />
   <p style="font-size: 14px; line-height: 140%; margin: 0px;">At BESPOKE CASHMERES, we are passionate about giving you the opportunity to design your own unique cashmere sweaters, tailored perfectly for both men and women. Our official launch is set for the end of January 2025, and we can’t wait to share our one-of-a-kind designs with you.</p>
   <br />
