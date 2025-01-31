@@ -141,3 +141,178 @@ module.exports.getPaginationData = async (qData) => {
   };
 };
 
+module.exports.getProductCostCalculationsDetails = async (id, size = "xs") => {
+  const pipeline = [
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(id),
+      }
+    },
+    {
+      $lookup: {
+        from: "yarns",
+        localField: "yarn",
+        foreignField: "_id",
+        as: "yarnDetails"
+      }
+    },
+    {
+      $unwind: { path: "$yarnDetails", preserveNullAndEmptyArrays: true }
+    },
+    {
+      $lookup: {
+        from: "materials",
+        localField: "yarnDetails.materialId",
+        foreignField: "_id",
+        as: "materialDetails"
+      }
+    },
+    {
+      $unwind: { path: "$materialDetails", preserveNullAndEmptyArrays: true }
+    },
+    {
+      $lookup: {
+        from: "steptypes",
+        localField: "steps.stepType",
+        foreignField: "_id",
+        as: "stepTypes"
+      }
+    },
+    {
+      $lookup: {
+        from: "stepcards",
+        localField: "steps.stepCard",
+        foreignField: "_id",
+        as: "stepCards"
+      }
+    },
+    {
+      $project: {
+        materialPrice: "$materialDetails.price",
+        steps: {
+          $arrayToObject: {
+            $filter: {
+              input: {
+                $map: {
+                  input: "$steps",
+                  as: "step",
+                  in: {
+                    k: {
+                      $let: {
+                        vars: {
+                          matchedType: {
+                            $first: {
+                              $filter: {
+                                input: "$stepTypes",
+                                cond: { $eq: ["$$this._id", "$$step.stepType"] }
+                              }
+                            }
+                          }
+                        },
+                        in: "$$matchedType.slug"
+                      }
+                    },
+                    v: {
+                      $let: {
+                        vars: {
+                          matchedCard: {
+                            $first: {
+                              $filter: {
+                                input: "$stepCards",
+                                cond: { $eq: ["$$this._id", "$$step.stepCard"] }
+                              }
+                            }
+                          }
+                        },
+                        in: "$$matchedCard.slug"
+                      }
+                    }
+                  }
+                }
+              },
+              as: "pair",
+              cond: { $and: [{ $ne: ["$$pair.k", null] }, { $ne: ["$$pair.v", null] }] }
+            }
+          }
+        }
+      }
+    }
+  ];
+
+  const data = await database.aggregate(pipeline);
+  return data ? data[0] : null;
+}
+
+module.exports.getProductDetails = async (id, language = DEFAULT_LOCALE) => {
+  const pipeline = [
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(id),
+      },
+    },
+    {
+      $addFields: {
+        relatedProducts: {
+          $map: {
+            input: "$relatedProducts",
+            as: "relatedProduct",
+            in: { $toObjectId: "$$relatedProduct" },
+          },
+        },
+      }
+    },
+    {
+      $lookup: {
+        from: "genders",
+        localField: "genderId",
+        foreignField: "_id",
+        as: "genderInfo",
+      },
+    },
+    { $unwind: { path: "$genderInfo", preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: "producttemplates",
+        localField: "relatedProducts",
+        foreignField: "_id",
+        as: "relatedProductsDetails"
+      }
+    },
+    {
+      $project: {
+        title: `$title.${language}`,
+        basePriceXs: 1,
+        images: 1,
+        gender: {
+          $ifNull: ["$genderInfo.slug", ""],
+        },
+        contents: {
+          $map: {
+            input: "$contents",
+            as: "content",
+            in: {
+              title: `$$content.title.${language}`,
+              description: `$$content.description.${language}`,
+            },
+          },
+        },
+        relatedProducts: {
+          $map: {
+            input: "$relatedProductsDetails",
+            as: "product",
+            in: {
+              _id: "$$product._id",
+              title: `$$product.title.${language}`,
+              image: { $arrayElemAt: ["$$product.images", 0] },
+              basePriceXs: "$$product.basePriceXs"
+            }
+          }
+        }
+      }
+    }
+  ];
+
+  console.log(JSON.stringify(pipeline));
+  const data = await database.aggregate(pipeline);
+  return data ? data[0] : null;
+}
