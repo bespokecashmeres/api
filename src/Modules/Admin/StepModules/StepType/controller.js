@@ -1,10 +1,8 @@
 const { serverResponseMessage } = require("../../../../../config/message");
-const { calculateFinalPrice } = require("../../../../../utils/common");
+const { getTotalCost } = require("../../../../../utils/common");
 const { httpResponses } = require("../../../../../utils/http-responses");
 const { httpStatusCodes } = require("../../../../../utils/http-status-codes");
 const { success } = require("../../../../../utils/response");
-const AdditionalCostCalculations = require("../../AdditionalCostCalculation/schema");
-const CostCalculations = require("../../CostCalculation/schema");
 const { getYarnStepData, getDetailsById } = require("../../Yarn/dbQuery");
 const { findOneRecord: stepCardFindOneRecord, getStepListByStepType, getStepCardData } = require("../StepCard/dbQuery");
 const {
@@ -203,22 +201,7 @@ exports.stepFullViewController = async (req, res, next) => {
     getStepDetailsBySlugAndId("fitting", fittingId, acceptLanguage)
   ]);
 
-  const costCalculation = await CostCalculations.findOne({ 
-    gauge: gaugeData.stepCard.slug, 
-    size: 'xs', 
-    pattern: patternData.stepCard.slug 
-  });
-  
-  const additionalCostResponse = await AdditionalCostCalculations.findOne({ 
-    slug: styleData.stepCard.slug 
-  });
-
-  const totalFactoryCost = yarnData.price * costCalculation.weightPerGram * costCalculation.knitWastage / 1000 
-    + costCalculation.manufacturingCost 
-    + costCalculation.trimsCost 
-    + costCalculation.laborCost;
-
-  const totalCost = calculateFinalPrice(totalFactoryCost, additionalCostResponse.calculations);
+  const totalCost = await getTotalCost({ gauge: gaugeData.stepCard.slug, pattern: patternData.stepCard.slug, style: styleData.stepCard.slug, materialPrice: yarnData.price });
 
   return res.status(httpStatusCodes.SUCCESS).json(
     success(
@@ -226,7 +209,7 @@ exports.stepFullViewController = async (req, res, next) => {
       httpResponses.SUCCESS,
       res.__(serverResponseMessage.RECORD_FETCHED),
       { 
-        yarn: { ...yarnData, price: totalCost.toFixed(2) }, 
+        yarn: { ...yarnData, price: totalCost }, 
         steps: stepList, 
         gauge: gaugeData, 
         pattern: patternData, 
