@@ -38,6 +38,7 @@ const sizeMeasurement = require("./src/Modules/Admin/FittingModule/SizeMeasureme
 const productTemplateModule = require("./src/Modules/Admin/ProductTemplate/routes");
 const userProductListingModule = require("./src/Modules/User/ProductListing/routes");
 const userProductSizeModule = require("./src/Modules/User/ProductSizes/routes");
+const userSweaterModule = require("./src/Modules/User/Sweater/routes");
 
 const { logger } = require("./utils/logger");
 const connectToDatabase = require("./database/db");
@@ -127,6 +128,7 @@ sizeMeasurement(app);
 productTemplateModule(app);
 userProductListingModule(app);
 userProductSizeModule(app);
+userSweaterModule(app);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
