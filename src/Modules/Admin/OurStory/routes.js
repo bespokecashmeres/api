@@ -54,8 +54,8 @@ module.exports = (app) => {
 
   app.get(
     "/story/:_id",
-    verifyToken,
-    hasRole(["admin"]),
+    // verifyToken,
+    // hasRole(["admin"]),
     asyncHandler(getOurStoryController)
   );
 

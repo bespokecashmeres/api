@@ -313,10 +313,10 @@ exports.listOurStoryController = async (req, res) => {
 
 exports.getOurStoryController = async (req, res) => {
 
-  const language = req.headers["accept-language"];
+  // const language = req.headers["accept-language"];
 
   const {_id} = req.params;
-  const data = await FindStoryData(_id,language);
+  const data = await FindStoryData(_id);
   if(!data){
     throw {
       code: httpStatusCodes.BAD_REQUEST,
