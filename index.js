@@ -35,7 +35,13 @@ const stepCardModule = require("./src/Modules/Admin/StepModules/StepCard/routes"
 const fittingSizesModule = require("./src/Modules/Admin/FittingModule/FittingSizes/routes");
 const sizeMeasurementFields = require("./src/Modules/Admin/SizeMeasurementFields/routes");
 const sizeMeasurement = require("./src/Modules/Admin/FittingModule/SizeMeasurement/routes");
+const ourStory = require("./src/Modules/Admin/OurStory/routes");
+const home = require("./src/Modules/Admin/Home/routes");
 const productTemplateModule = require("./src/Modules/Admin/ProductTemplate/routes");
+const faqModule = require("./src/Modules/Admin/FAQ/routes");
+const bannerModule = require("./src/Modules/Admin/Banner/routes")
+const fetchOurStory = require("./src/Modules/User/OurStory/routes")
+const fetchHomePage = require("./src/Modules/User/HomePage/routes")
 const userProductListingModule = require("./src/Modules/User/ProductListing/routes");
 const userProductSizeModule = require("./src/Modules/User/ProductSizes/routes");
 const userSweaterModule = require("./src/Modules/User/Sweater/routes");
@@ -125,7 +131,13 @@ stepCardModule(app);
 fittingSizesModule(app);
 sizeMeasurementFields(app);
 sizeMeasurement(app);
+ourStory(app);
+home(app);
 productTemplateModule(app);
+faqModule(app);
+bannerModule(app);
+fetchOurStory(app);
+fetchHomePage(app);
 userProductListingModule(app);
 userProductSizeModule(app);
 userSweaterModule(app);

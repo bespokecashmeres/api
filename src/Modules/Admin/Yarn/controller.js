@@ -37,10 +37,6 @@ exports.createController = async (req, res, next) => {
     };
   }
 
-  if (req.body.genderId === "") {
-    req.body.genderId = null;
-  }
-
   if (req.files) {
     const image = req.files?.["image"] ? req.files["image"][0] : null;
     if (image) {
@@ -125,10 +121,6 @@ exports.updateController = async (req, res, next) => {
       code: httpStatusCodes.BAD_REQUEST,
       message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
     };
-  }
-
-  if (req.body.genderId === "") {
-    req.body.genderId = null;
   }
 
   // Initialize lists for tracking image uploads and deletions

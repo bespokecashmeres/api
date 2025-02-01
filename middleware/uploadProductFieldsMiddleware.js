@@ -35,5 +35,71 @@ const uploadYarnFields = (count) => {
   return upload.fields(fields);
 };
 
+const uploadStoryFields = (count) => {
+  const fields = [];
+  fields.push({ name: "bg_image", maxCount: 1 });
+  fields.push({ name: "thumb_image", maxCount: 1 });
+
+  for (let i = 0; i < count; i++) {
+    fields.push({ name: `my_stories[${i}][image]`, maxCount: 1 });
+  }
+
+  console.log(fields);
+  return upload.fields(fields);
+};
+
+
+const uploadBannerFields = () => {
+  const fields = [];
+  fields.push({ name: "bg_image", maxCount: 1 });
+  console.log(fields);
+  return upload.fields(fields);
+};
+
+const uploadHomePageFields = (allCount) => {
+
+
+ const section3 = allCount[0];
+ const section4 = allCount[1];
+ const section6 = allCount[2];
+
+
+  const fields = [];
+  fields.push({ name: "section1[bg_image]", maxCount: 1 });
+  fields.push({ name: "section2[bg_image]", maxCount: 1 });
+  fields.push({ name: "section2[left_image]", maxCount: 1 });
+  
+
+  for (let i = 0; i < section3; i++) {
+    fields.push({ name: `section3[${i}][image]`, maxCount: 1 });
+  }
+
+  for (let i = 0; i < section4; i++) {
+    fields.push({ name: `section4[cards][${i}][bg_image]`, maxCount: 1 });
+  }
+
+  for (let i = 0; i < section6; i++) {
+    fields.push({ name: `section6[cards][${i}][image]`, maxCount: 1 });
+  }
+
+
+  fields.push({ name: "section8[card1][first_image]", maxCount: 1 });
+  fields.push({ name: "section8[card1][second_image]", maxCount: 1 });
+  fields.push({ name: "section8[card2][image]", maxCount: 1 });
+  fields.push({ name: "section8[card3][image]", maxCount: 1 });
+  fields.push({ name: "section9[bg_image]", maxCount: 1 });
+  fields.push({ name: "section9[left_image]", maxCount: 1 });
+
+  console.log(fields);
+
+
+  return upload.fields(fields);
+};
+
 exports.uploadYarnFields = uploadYarnFields;
 exports.uploadProductFields = uploadProductFields;
+exports.uploadStoryFields = uploadStoryFields;
+exports.uploadHomePageFields = uploadHomePageFields;
+exports.uploadBannerFields = uploadBannerFields;
+
+

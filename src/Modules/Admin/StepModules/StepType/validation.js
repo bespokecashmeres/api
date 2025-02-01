@@ -27,23 +27,19 @@ exports.activeTabsValidator = Joi.object({
 
 exports.stepDetailsValidator = Joi.object({
   yarn: Joi.string().hex().length(24).required(),
-  steps: Joi.object()
-    .pattern(
-      Joi.string(), // key pattern (any string)
-      Joi.string().hex().length(24) // value pattern (24 char hex string)
-    )
-    .optional(),
+  gauge: Joi.string().hex().length(24).optional(),
+  pattern: Joi.string().hex().length(24).optional(),
+  style: Joi.string().hex().length(24).optional(),
+  fitting: Joi.string().hex().length(24).optional(),
   productTypeId: Joi.string().hex().length(24).optional(),
   nextStepSlug: Joi.string().optional(),
 });
 
 exports.stepFullViewValidator = Joi.object({
   yarn: Joi.string().hex().length(24).optional(),
-  steps: Joi.object()
-    .pattern(
-      Joi.string(), // key pattern (any string)
-      Joi.string().hex().length(24) // value pattern (24 char hex string)
-    )
-    .optional(),
+  gauge: Joi.string().hex().length(24).optional(),
+  pattern: Joi.string().hex().length(24).optional(),
+  style: Joi.string().hex().length(24).optional(),
+  fitting: Joi.string().hex().length(24).optional(),
   productTypeId: Joi.string().hex().length(24).optional(),
 });
