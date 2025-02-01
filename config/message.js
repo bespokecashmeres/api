@@ -58,6 +58,27 @@ exports.serverResponseMessage = {
   USER_CREATED_SUCCESSFULLY: "USER_CREATED_SUCCESSFULLY",
   USER_UPDATED_SUCCESSFULLY: "USER_UPDATED_SUCCESSFULLY",
 
+
+  //Our Story
+  STORY_CREATED : "Story Created Successfully",
+  STORY_EXIST : "Story Already Exist",
+  STORY_NOT_EXIST : "Story Not Exist",
+  STORY_UPDATED : "Story Updated Successfully",
+  STORY_FOUND: "No Story Found",
+  STORY_FETCHED:"Story Fetched Successfully",
+  STORY_DELETED:"Story Deleted Successfully",
+
+
+
+   //Home Page
+   HOME_CREATED : "Home Page Created Successfully",
+   HOME_EXIST : "Home Page Already Exist",
+   HOME_NOT_EXIST : "Home Page Not Exist",
+   HOME_UPDATED : "Home Page Updated Successfully",
+   HOME_FOUND: "No Home Page Found",
+   HOME_FETCHED:"Home Page Fetched Successfully",
+   HOME_DELETED:"Home Page Deleted Successfully",
+
   // Common Error
   INTERNAL_SERVER_ERROR: "INTERNAL_SERVER_ERROR",
 

@@ -184,22 +184,15 @@ exports.dropdownOptionsController = async (req, res, next) => {
 
 exports.stepFullViewController = async (req, res, next) => {
   const acceptLanguage = req.headers["accept-language"];
-  const { yarn, steps = {}, productTypeId } = req.body;
-  
-  // Extract step IDs from steps object
-  const gaugeId = steps.gauge;
-  const patternId = steps.pattern;
-  const styleId = steps.style;
-  const fittingId = steps.fitting;
+  const { yarn, gauge, pattern, style, fitting, productTypeId } = req.body;
+  const [stepList, yarnData, gaugeData, patternData, styleData, fittingData] = await Promise.all([getSteps(productTypeId, acceptLanguage), getDetailsById(yarn, acceptLanguage), getStepDetailsBySlugAndId("gauge", gauge, acceptLanguage), getStepDetailsBySlugAndId("pattern", pattern, acceptLanguage), getStepDetailsBySlugAndId("style", style, acceptLanguage), getStepDetailsBySlugAndId("fitting", fitting, acceptLanguage)]);
 
-  const [stepList, yarnData, gaugeData, patternData, styleData, fittingData] = await Promise.all([
-    getSteps(productTypeId, acceptLanguage),
-    getDetailsById(yarn, acceptLanguage),
-    getStepDetailsBySlugAndId("gauge", gaugeId, acceptLanguage),
-    getStepDetailsBySlugAndId("pattern", patternId, acceptLanguage),
-    getStepDetailsBySlugAndId("style", styleId, acceptLanguage),
-    getStepDetailsBySlugAndId("fitting", fittingId, acceptLanguage)
-  ]);
+  console.log("gaugeData: ", gaugeData);
+  console.log("patternData: ", patternData);
+  const costCalculation = await CostCalculations.findOne({ gauge: gaugeData.stepCard.slug, size: 'xs', pattern: patternData.stepCard.slug })
+  console.log("Cost Calculation: ", costCalculation);
+  const additionalCostResponse = await AdditionalCostCalculations.findOne({ slug: styleData.stepCard.slug })
+  console.log("additionalCostResponse: ", additionalCostResponse);
 
   const totalCost = await getTotalCost({ gauge: gaugeData.stepCard.slug, pattern: patternData.stepCard.slug, style: styleData.stepCard.slug, materialPrice: yarnData.price });
 
@@ -271,7 +264,62 @@ exports.stepDetailsController = async (req, res, next) => {
         httpStatusCodes.SUCCESS,
         httpResponses.SUCCESS,
         res.__(serverResponseMessage.RECORD_FETCHED),
-        responseData
+        { yarn: { ...yarnData, price: totalCost.toFixed(2) }, steps: stepList, gauge: gaugeData, pattern: patternData, style: styleData, fitting: fittingData }
+      )
+    );
+}
+
+exports.stepDetailsController = async (req, res, next) => {
+  const acceptLanguage = req.headers["accept-language"];
+  const { yarn, gauge, pattern, style, fitting, nextStepSlug, productTypeId } = req.body;
+
+  // Fetch yarn and step list data in parallel
+  const yarnData = await getYarnStepData(yarn, acceptLanguage);
+
+  // Prepare optional data fetching promises
+  const optionalDataPromises = [];
+  if (nextStepSlug) {
+    optionalDataPromises.push(getStepListByStepType(nextStepSlug, productTypeId, acceptLanguage));
+  } else {
+    optionalDataPromises.push(Promise.resolve([]));
+  }
+
+  if (gauge) {
+    optionalDataPromises.push(getStepCardData(gauge, acceptLanguage));
+  } else {
+    optionalDataPromises.push(Promise.resolve(undefined));
+  }
+
+  if (pattern) {
+    optionalDataPromises.push(getStepCardData(pattern, acceptLanguage));
+  } else {
+    optionalDataPromises.push(Promise.resolve(undefined));
+  }
+
+  if (style) {
+    optionalDataPromises.push(getStepCardData(style, acceptLanguage));
+  } else {
+    optionalDataPromises.push(Promise.resolve(undefined));
+  }
+
+  if (fitting) {
+    optionalDataPromises.push(getStepCardData(fitting, acceptLanguage));
+  } else {
+    optionalDataPromises.push(Promise.resolve(undefined));
+  }
+
+  // Fetch optional data in parallel
+  const [stepList, gaugeData, patternData, styleData, fittingData] = await Promise.all(optionalDataPromises);
+
+
+  return res
+    .status(httpStatusCodes.SUCCESS)
+    .json(
+      success(
+        httpStatusCodes.SUCCESS,
+        httpResponses.SUCCESS,
+        res.__(serverResponseMessage.RECORD_FETCHED),
+        { yarn: yarnData, list: stepList, gauge: gaugeData, pattern: patternData, style: styleData, fitting: fittingData }
       )
     );
 };
