@@ -8,45 +8,14 @@ module.exports.OurStoryCreate = async (req) => {
   return await database.create(req);
 };
 
-module.exports.FindStory = async (id) => {
+module.exports.FindStory = async (_id) => {
   return await database.findById(_id);
 };
 
-module.exports.FindStoryData = async (id,language=DEFAULT_LOCALE) => {
-  try {
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      console.error("Invalid ObjectId:", id);
-      return null;
-    }
 
-    const [data] = await database.aggregate([
-      {
-        $match: { _id: new mongoose.Types.ObjectId(id) },      },
-      {
-        $project: {
-          title: { $ifNull: [`$title.${language}`, `$title.en`] },
-          description: { $ifNull: [`$description.${language}`, `$description.en`] },
-          my_stories: {
-            $map: {
-              input: "$my_stories",
-              as: "story",
-              in: {
-                uuid: "$$story.uuid",
-                image: "$$story.image",
-                title: { $ifNull: [`$$story.title.${language}`, `$$story.title.en`] },
-                description: { $ifNull: [`$$story.description.${language}`, `$$story.description.en`] },
-              },
-            },
-          },
-        },
-      },
-    ]);
-
-    return data || null;
-  } catch (error) {
-    console.error("Error fetching story:", error);
-    throw error;
-  }};
+module.exports.FindStoryData = async (_id) => {
+  return await database.findById(_id);
+};
 
 module.exports.UpdateStatus = async (data) => {
   return await database.findByIdAndUpdate(data._id,{
