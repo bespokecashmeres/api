@@ -194,13 +194,6 @@ exports.stepFullViewController = async (req, res, next) => {
   const additionalCostResponse = await AdditionalCostCalculations.findOne({ slug: styleData.stepCard.slug })
   console.log("additionalCostResponse: ", additionalCostResponse);
 
-<<<<<<< HEAD
-  const totalFactoryCost = yarnData.price * costCalculation.weightPerGram * costCalculation.knitWastage / 1000 + costCalculation.manufacturingCost + costCalculation.trimsCost + costCalculation.laborCost;
-  console.log("totalFactoryCost: ", totalFactoryCost.toFixed(2));
-
-  const totalCost = calculateFinalPrice(totalFactoryCost, additionalCostResponse.calculations);
-  console.log("totalCost: ", totalCost.toFixed(2));
-=======
   const totalCost = await getTotalCost({ gauge: gaugeData.stepCard.slug, pattern: patternData.stepCard.slug, style: styleData.stepCard.slug, materialPrice: yarnData.price });
 
   return res.status(httpStatusCodes.SUCCESS).json(
@@ -263,7 +256,6 @@ exports.stepDetailsController = async (req, res, next) => {
       responseData[key] = results[stepDataMap[key] - 1];
     }
   });
->>>>>>> 0613957e7fcdab533e3c944fa47c1438d4ac0746
 
   return res
     .status(httpStatusCodes.SUCCESS)

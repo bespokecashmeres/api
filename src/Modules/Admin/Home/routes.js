@@ -11,10 +11,14 @@ const {
 } = require("./controller");
 const { asyncHandler } = require("../../../../utils/asyncHandler");
 const {  uploadHomePageFields } = require("../../../../middleware/uploadProductFieldsMiddleware");
+const hasRole = require("../../../../middleware/hasRole");
+const { verifyToken } = require("../../../../services/auth");
 
 module.exports = (app) => {
   app.post(
     "/home/create",
+    verifyToken,
+    hasRole(["admin"]),
     (req, res, next) => {
       const allCount = [];
       const count_section3 = parseInt(req.headers["count_section3"])
@@ -32,6 +36,8 @@ module.exports = (app) => {
 
   app.patch(
     "/home/update",
+    verifyToken,
+    hasRole(["admin"]),
     (req, res, next) => {
       const allCount = [];
       const count_section3 = parseInt(req.headers["count_section3"])
@@ -49,11 +55,15 @@ module.exports = (app) => {
 
   app.get(
     "/home",
+    verifyToken,
+    hasRole(["admin"]),
     asyncHandler(GetHomeCtrl)
   );
 
   app.get(
     "/home/our-story",
+    verifyToken,
+    hasRole(["admin"]),
     asyncHandler(GetHomeOurStory)
   );
 

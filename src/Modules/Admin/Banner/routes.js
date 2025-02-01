@@ -21,8 +21,8 @@ module.exports = (app) => {
   //creat api
   app.post(
     "/banner/create",
-    // verifyToken,
-    // hasRole(["admin"]),
+    verifyToken,
+    hasRole(["admin"]),
     (req, res, next) => {
       const uploadMiddleware = uploadBannerFields();
       uploadMiddleware(req, res, next);
@@ -34,12 +34,12 @@ module.exports = (app) => {
   //update api
   app.put(
     "/banner/update",
+    verifyToken,
+    hasRole(["admin"]),
     (req, res, next) => {
       const uploadMiddleware = uploadBannerFields();
       uploadMiddleware(req, res, next);
     },
-    // verifyToken,
-    // hasRole(["admin"]),
     middleware(updateValidator),
     asyncHandler(updateController)
   );
@@ -47,8 +47,8 @@ module.exports = (app) => {
   //get by id
   app.get(
     "/banner/:_id",
-    // verifyToken,
-    // hasRole(["admin"]),
+    verifyToken,
+    hasRole(["admin"]),
     middleware(IdValidator),
     asyncHandler(getDetailController)
   );
@@ -59,8 +59,8 @@ module.exports = (app) => {
   //delete api
   app.delete(
     "/banner/:_id",
-    // verifyToken,
-    // hasRole(["admin"]),
+    verifyToken,
+    hasRole(["admin"]),
     middleware(IdValidator),
     asyncHandler(deleteController)
   );

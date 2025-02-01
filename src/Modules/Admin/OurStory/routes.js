@@ -14,10 +14,14 @@ const {
 const { asyncHandler } = require("../../../../utils/asyncHandler");
 const { uploadStoryFields } = require("../../../../middleware/uploadProductFieldsMiddleware");
 const { listValidator } = require("../../../../utils/validation");
+const hasRole = require("../../../../middleware/hasRole");
+const { verifyToken } = require("../../../../services/auth");
 
 module.exports = (app) => {
   app.post(
     "/story/create",
+    verifyToken,
+    hasRole(["admin"]),
     (req, res, next) => {
       const count = parseInt(req.headers["count"] || "0", 10);
       const uploadMiddleware = uploadStoryFields(count);
@@ -29,6 +33,8 @@ module.exports = (app) => {
 
   app.put(
     "/story/update",
+    verifyToken,
+    hasRole(["admin"]),
     (req, res, next) => {
       const count = parseInt(req.headers["count"] || "0", 10);
       const uploadMiddleware = uploadStoryFields(count);
@@ -40,12 +46,16 @@ module.exports = (app) => {
 
   app.post(
     "/story/list",
+    verifyToken,
+    hasRole(["admin"]),
     middleware(listValidator),
     asyncHandler(listOurStoryController)
   );
 
   app.get(
     "/story/:_id",
+    verifyToken,
+    hasRole(["admin"]),
     asyncHandler(getOurStoryController)
   );
 
@@ -56,12 +66,14 @@ module.exports = (app) => {
 
   app.patch(
     "/story/status",
+    verifyToken,
+    hasRole(["admin"]),
     asyncHandler(statusController)
   );
 
 
-  app.delete(
-    "/story/:_id",
-    asyncHandler(deleteController)
-  );
+  // app.delete(
+  //   "/story/:_id",
+  //   asyncHandler(deleteController)
+  // );
 };
