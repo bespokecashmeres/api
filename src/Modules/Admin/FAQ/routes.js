@@ -21,8 +21,8 @@ module.exports = (app) => {
   //creat api
   app.post(
     "/faq/create",
-    // verifyToken,
-    // hasRole(["admin"]),
+    verifyToken,
+    hasRole(["admin"]),
     middleware(createValidator),
     asyncHandler(createController)
   );
@@ -30,8 +30,8 @@ module.exports = (app) => {
   //update api
   app.put(
     "/faq/update",
-    // verifyToken,
-    // hasRole(["admin"]),
+    verifyToken,
+    hasRole(["admin"]),
     middleware(updateValidator),
     asyncHandler(updateController)
   );
@@ -39,8 +39,8 @@ module.exports = (app) => {
   //get by id
   app.get(
     "/faq/:_id",
-    // verifyToken,
-    // hasRole(["admin"]),
+    verifyToken,
+    hasRole(["admin"]),
     middleware(IdValidator),
     asyncHandler(getDetailController)
   );
@@ -49,8 +49,8 @@ module.exports = (app) => {
   //list api
   app.post(
     "/faq/list",
-    // verifyToken,
-    // hasRole(["admin"]),
+    verifyToken,
+    hasRole(["admin"]),
     middleware(listValidator),
     asyncHandler(listController)
   );
@@ -59,8 +59,8 @@ module.exports = (app) => {
   //delete api
   app.delete(
     "/faq/:_id",
-    // verifyToken,
-    // hasRole(["admin"]),
+    verifyToken,
+    hasRole(["admin"]),
     middleware(IdValidator),
     asyncHandler(deleteController)
   );
@@ -68,8 +68,8 @@ module.exports = (app) => {
   //status
   app.patch(
     "/faq/status",
-    // verifyToken,
-    // hasRole(["admin"]),
+    verifyToken,
+    hasRole(["admin"]),
     middleware(statusValidator),
     asyncHandler(statusController)
   );
