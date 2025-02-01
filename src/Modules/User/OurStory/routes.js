@@ -1,4 +1,4 @@
-const {fetchOurStoryController} = require("../../Admin/OurStory/controller")
+const {fetchOurStoryController} = require("./controller")
 
 const { asyncHandler } = require("../../../../utils/asyncHandler");
 

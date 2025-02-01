@@ -49,10 +49,10 @@ module.exports = (app) => {
     asyncHandler(getOurStoryController)
   );
 
-  app.get(
-    "/story/fetch/:_id",
-     asyncHandler(fetchOurStoryController)
-  );
+  // app.get(
+  //   "/story/fetch/:_id",
+  //    asyncHandler(fetchOurStoryController)
+  // );
 
   app.patch(
     "/story/status",

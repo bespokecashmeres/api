@@ -10,7 +10,8 @@ const {
   OurStorylist,
   DeleteStory,
   getPaginationData,
-  UpdateStatus
+  UpdateStatus,
+  FindStoryData
 } = require("./dbQuery");
 const { uploadToS3 } = require("../../../../utils/fileUploads");
 
@@ -311,8 +312,11 @@ exports.listOurStoryController = async (req, res) => {
 };
 
 exports.getOurStoryController = async (req, res) => {
+
+  const language = req.headers["accept-language"];
+
   const {_id} = req.params;
-  const data = await FindStory(_id);
+  const data = await FindStoryData(_id,language);
   if(!data){
     throw {
       code: httpStatusCodes.BAD_REQUEST,
