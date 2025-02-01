@@ -2,15 +2,15 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const createProductSchema = new Schema({
-  // ... existing code ...
   title: {
     type: Map,
     of: String,
     required: true
   },
-  image: {
-    type: String,
-    required: true
+  images: {
+    type: Schema.Types.Array,
+    required: true,
+    default: []
   },
   contents: [{
     title: {
@@ -48,9 +48,38 @@ const createProductSchema = new Schema({
     ref: "producttypes",
     required: true,
   },
+  relatedProducts: {
+    type: Schema.Types.Array,
+    default: [],
+    ref: "producttemplates"
+  },
+  genderId: {
+    type: Schema.Types.ObjectId,
+    ref: "genders",
+    default: null,
+  },
   status: {
     type: Boolean,
     default: true
+  },
+  basePriceXs: {
+    type: Number,
+    required: true
+  },
+  colourId: {
+    type: Schema.Types.ObjectId,
+    ref: "colours",
+    required: true,
+  },
+  materialId: {
+    type: Schema.Types.ObjectId,
+    ref: "materials",
+    required: true,
+  },
+  patternId: {
+    type: Schema.Types.ObjectId,
+    ref: "stepcards",
+    required: true,
   }
 }, {
   timestamps: true,

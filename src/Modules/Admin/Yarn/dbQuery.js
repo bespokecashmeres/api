@@ -107,17 +107,18 @@ module.exports.getCardListPaginationData = async (qData) => {
     filter = {},
     language = DEFAULT_LOCALE,
   } = qData;
+
+  // const { minPrice, maxPrice } = filter;
+
   const trimedSearch = search?.trim() ?? "";
   const newFilterObj = Object.fromEntries(
     Object.keys(filter).map((filterKey) => [
       filterKey,
-      filterKey.endsWith("Id")
-        ? new ObjectId(filter[filterKey])
-        : filter[filterKey],
+      filterKey.endsWith("Id") ? new ObjectId(filter[filterKey]) : filter[filterKey],
     ])
   );
 
-  // Match Stage for Filtering and Searching
+  // Match Stage (without price filtering, since materialInfo is not yet available)
   const matchStage = {
     $match: {
       ...newFilterObj,
@@ -130,6 +131,29 @@ module.exports.getCardListPaginationData = async (qData) => {
       status: true,
     },
   };
+
+  // Lookup materials
+  const lookupStage = {
+    $lookup: {
+      from: "materials",
+      localField: "materialId",
+      foreignField: "_id",
+      as: "materialInfo",
+    },
+  };
+
+  // Unwind the materialInfo array
+  const unwindStage = {
+    $unwind: { path: "$materialInfo", preserveNullAndEmptyArrays: true },
+  };
+
+  // Price Filtering (AFTER lookup & unwind)
+  // const priceFilterStage = { $match: {} };
+  // if (minPrice !== undefined || maxPrice !== undefined) {
+  //   priceFilterStage.$match["materialInfo.price"] = {};
+  //   if (minPrice !== undefined) priceFilterStage.$match["materialInfo.price"].$gte = minPrice;
+  //   if (maxPrice !== undefined) priceFilterStage.$match["materialInfo.price"].$lte = maxPrice;
+  // }
 
   // Project Stage for Translating Fields
   const projectStage = {
@@ -146,18 +170,12 @@ module.exports.getCardListPaginationData = async (qData) => {
   const sortOptions = {};
   sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
 
-  // Aggregation Query
+  // Aggregation Pipeline
   const aggregationPipeline = [
     matchStage,
-    {
-      $lookup: {
-        from: "materials",
-        localField: "materialId",
-        foreignField: "_id",
-        as: "materialInfo",
-      },
-    },
-    { $unwind: { path: "$materialInfo", preserveNullAndEmptyArrays: true } },
+    lookupStage,
+    unwindStage,
+    // priceFilterStage,
     projectStage,
     { $sort: sortOptions },
     { $skip: (page - 1) * perPage },
@@ -168,13 +186,30 @@ module.exports.getCardListPaginationData = async (qData) => {
   const [data, totalCount] = await Promise.all([
     database.aggregate(aggregationPipeline).exec(),
     database.countDocuments(matchStage.$match),
+    // database.aggregate([
+    //   matchStage,
+    //   lookupStage,
+    //   unwindStage,
+    //   {
+    //     $group: {
+    //       _id: null,
+    //       minPrice: { $min: "$materialInfo.price" },
+    //       maxPrice: { $max: "$materialInfo.price" },
+    //     },
+    //   },
+    // ]).exec(),
   ]);
 
-  // Return Paginated Data
+  // Extract min and max price
+  // const { minPrice: min, maxPrice: max } = priceRange[0] || { minPrice: 0, maxPrice: 0 };
+
+  // Return Paginated Data with Price Range
   return {
     currentPage: page,
     totalCount,
     totalPage: Math.ceil(totalCount / perPage),
+    // minPrice: min,
+    // maxPrice: max,
     data,
   };
 };
@@ -194,11 +229,17 @@ module.exports.getDetailsById = async (id, language) => {
     $project: {
       _id: 1,
       name: { $ifNull: [`$name.${language}`, ""] },
+      materialId: {
+        $ifNull: [`$materialInfo._id`, ""],
+      },
       material: {
         $ifNull: [`$materialInfo.name.${language}`, ""],
       },
       seasonality: {
         $ifNull: [`$seasonalityInfo.name.${language}`, ""],
+      },
+      colourId: {
+        $ifNull: [`$colourInfo._id`, ""],
       },
       colour: {
         $ifNull: [`$colourInfo.name.${language}`, ""],

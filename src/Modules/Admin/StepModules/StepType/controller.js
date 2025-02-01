@@ -1,10 +1,8 @@
 const { serverResponseMessage } = require("../../../../../config/message");
-const { calculateFinalPrice } = require("../../../../../utils/common");
+const { getTotalCost } = require("../../../../../utils/common");
 const { httpResponses } = require("../../../../../utils/http-responses");
 const { httpStatusCodes } = require("../../../../../utils/http-status-codes");
 const { success } = require("../../../../../utils/response");
-const AdditionalCostCalculations = require("../../AdditionalCostCalculation/schema");
-const CostCalculations = require("../../CostCalculation/schema");
 const { getYarnStepData, getDetailsById } = require("../../Yarn/dbQuery");
 const { findOneRecord: stepCardFindOneRecord, getStepListByStepType, getStepCardData } = require("../StepCard/dbQuery");
 const {
@@ -196,11 +194,76 @@ exports.stepFullViewController = async (req, res, next) => {
   const additionalCostResponse = await AdditionalCostCalculations.findOne({ slug: styleData.stepCard.slug })
   console.log("additionalCostResponse: ", additionalCostResponse);
 
+<<<<<<< HEAD
   const totalFactoryCost = yarnData.price * costCalculation.weightPerGram * costCalculation.knitWastage / 1000 + costCalculation.manufacturingCost + costCalculation.trimsCost + costCalculation.laborCost;
   console.log("totalFactoryCost: ", totalFactoryCost.toFixed(2));
 
   const totalCost = calculateFinalPrice(totalFactoryCost, additionalCostResponse.calculations);
   console.log("totalCost: ", totalCost.toFixed(2));
+=======
+  const totalCost = await getTotalCost({ gauge: gaugeData.stepCard.slug, pattern: patternData.stepCard.slug, style: styleData.stepCard.slug, materialPrice: yarnData.price });
+
+  return res.status(httpStatusCodes.SUCCESS).json(
+    success(
+      httpStatusCodes.SUCCESS,
+      httpResponses.SUCCESS,
+      res.__(serverResponseMessage.RECORD_FETCHED),
+      { 
+        yarn: { ...yarnData, price: totalCost }, 
+        steps: stepList, 
+        gauge: gaugeData, 
+        pattern: patternData, 
+        style: styleData, 
+        fitting: fittingData 
+      }
+    )
+  );
+}
+
+exports.stepDetailsController = async (req, res, next) => {
+  const acceptLanguage = req.headers["accept-language"];
+  const { yarn, steps = {}, nextStepSlug, productTypeId } = req.body;
+
+  // Fetch yarn data
+  const yarnData = await getYarnStepData(yarn, acceptLanguage);
+
+  // Prepare optional data fetching promises
+  const optionalDataPromises = [];
+  
+  // Handle step list if nextStepSlug is provided
+  if (nextStepSlug) {
+    optionalDataPromises.push(getStepListByStepType(nextStepSlug, productTypeId, acceptLanguage));
+  } else {
+    optionalDataPromises.push(Promise.resolve([]));
+  }
+
+  // Create a map to store step data
+  const stepDataMap = {};
+  
+  // Add promises for each step in the steps object
+  Object.entries(steps).forEach(([key, value]) => {
+    if (value) {
+      optionalDataPromises.push(getStepCardData(value, acceptLanguage));
+      stepDataMap[key] = optionalDataPromises.length; // Store the index for later mapping
+    }
+  });
+
+  // Fetch all data in parallel
+  const results = await Promise.all(optionalDataPromises);
+  
+  // Map the results to their corresponding keys
+  const responseData = {
+    yarn: yarnData,
+    list: results[0], // stepList is always first in results
+  };
+
+  // Map step data to their corresponding keys
+  Object.keys(steps).forEach(key => {
+    if (steps[key] && stepDataMap[key]) {
+      responseData[key] = results[stepDataMap[key] - 1];
+    }
+  });
+>>>>>>> 0613957e7fcdab533e3c944fa47c1438d4ac0746
 
   return res
     .status(httpStatusCodes.SUCCESS)

@@ -2,6 +2,8 @@ const { serverResponseMessage } = require("../../../../config/message");
 const {
   uploadToS3,
   deleteFromS3,
+  uploadManyToS3,
+  deleteManyFromS3,
 } = require("../../../../utils/fileUploads");
 const { httpResponses } = require("../../../../utils/http-responses");
 const { httpStatusCodes } = require("../../../../utils/http-status-codes");
@@ -13,63 +15,56 @@ const {
   getPaginationData,
   deleteById,
   updateStatus,
+  getDropdownOptions,
 } = require("./dbQuery");
 
 exports.createController = async (req, res, next) => {
+  // Parse multilingual data
   try {
-    // Handle main image upload
-    if (req.files?.image?.[0]) {
-      try {
-        req.body.image = await uploadToS3(req.files.image[0], "new-products");
-      } catch (error) {
-        console.error("Product Image upload failed:", error);
-        throw {
-          code: httpStatusCodes.BAD_REQUEST,
-          message: res.__(serverResponseMessage.IMAGE_UPLOAD_FAILED),
-        };
-      }
+    req.body.title = req.body.title ? JSON.parse(req.body.title) : {};
+    if (req.body?.contents?.length) {
+      req.body.contents = req.body.contents.map(content => ({
+        title: JSON.parse(content.title),
+        description: JSON.parse(content.description)
+      }));
     }
+  } catch (error) {
+    console.log(error);
+    throw {
+      code: httpStatusCodes.BAD_REQUEST,
+      message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
+    };
+  }
 
-    // Parse multilingual data
+  // Handle main image upload
+  if (req.files?.images && req.files.images.length) {
     try {
-      req.body.title = req.body.title ? JSON.parse(req.body.title) : {};
-      if (req.body?.contents?.length) {
-        req.body.contents = req.body.contents.map(content => ({
-          title: JSON.parse(content.title),
-          description: JSON.parse(content.description)
-        }));
-      }
+      req.body.images = await uploadManyToS3(req.files.images, "new-products");
     } catch (error) {
-      console.log(error);
+      console.error("Product Image upload failed:", error);
       throw {
         code: httpStatusCodes.BAD_REQUEST,
-        message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
+        message: res.__(serverResponseMessage.IMAGE_UPLOAD_FAILED),
       };
     }
-
-    const createRecord = await create(req.body);
-    return res
-      .status(httpStatusCodes.SUCCESS)
-      .json(
-        success(
-          httpStatusCodes.CREATED,
-          httpResponses.SUCCESS,
-          res.__(serverResponseMessage.RECORD_CREATED),
-          createRecord
-        )
-      );
-  } catch (error) {
-    // Clean up uploaded image if record creation fails
-    if (req.body.image) {
-      await deleteFromS3(req.body.image).catch(console.error);
-    }
-    throw error;
   }
+
+  const createRecord = await create(req.body);
+  return res
+    .status(httpStatusCodes.SUCCESS)
+    .json(
+      success(
+        httpStatusCodes.CREATED,
+        httpResponses.SUCCESS,
+        res.__(serverResponseMessage.RECORD_CREATED),
+        createRecord
+      )
+    );
 };
 
 exports.updateController = async (req, res, next) => {
   const { _id } = req.body;
-  
+
   // Fetch existing record
   const existingRecord = await getById(_id);
   if (!existingRecord) {
@@ -79,74 +74,70 @@ exports.updateController = async (req, res, next) => {
     };
   }
 
-  let oldImage = existingRecord.image;
-
   try {
-    // Handle main image upload
-    if (req.files?.image?.[0]) {
-      try {
-        req.body.image = await uploadToS3(req.files.image[0], "new-products");
-      } catch (error) {
-        console.error("Product Image upload failed:", error);
-        throw {
-          code: httpStatusCodes.BAD_REQUEST,
-          message: res.__(serverResponseMessage.IMAGE_UPLOAD_FAILED),
-        };
-      }
+    if (req.body.title) {
+      req.body.title = JSON.parse(req.body.title);
     }
-
-    // Parse multilingual data
-    try {
-      if (req.body.title) {
-        req.body.title = JSON.parse(req.body.title);
-      }
-      if (req.body?.contents?.length) {
-        req.body.contents = req.body.contents.map(content => ({
-          title: JSON.parse(content.title),
-          description: JSON.parse(content.description)
-        }));
-      }
-    } catch (error) {
-      console.log(error);
-      throw {
-        code: httpStatusCodes.BAD_REQUEST,
-        message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
-      };
+    if (req.body?.contents?.length) {
+      req.body.contents = req.body.contents.map(content => ({
+        title: JSON.parse(content.title),
+        description: JSON.parse(content.description)
+      }));
     }
-
-    const updatedRecord = await update(req.body);
-
-    // Delete old image if new image was uploaded successfully
-    if (req.body.image && oldImage) {
-      await deleteFromS3(oldImage).catch(console.error);
-    }
-
-    return res
-      .status(httpStatusCodes.SUCCESS)
-      .json(
-        success(
-          httpStatusCodes.SUCCESS,
-          httpResponses.SUCCESS,
-          res.__(serverResponseMessage.RECORD_UPDATED),
-          updatedRecord
-        )
-      );
   } catch (error) {
-    // Clean up newly uploaded image if update fails
-    if (req.body.image && req.body.image !== oldImage) {
-      await deleteFromS3(req.body.image).catch(console.error);
-    }
-    throw error;
+    console.log(error);
+    throw {
+      code: httpStatusCodes.BAD_REQUEST,
+      message: res.__(serverResponseMessage.INVALID_MULTILINGUAL_DATA),
+    };
   }
+
+  let existingImages = existingRecord.images;
+  if (req?.body?.existingImages) {
+    existingImages = JSON.parse(req.body.existingImages);
+    req.body.images = existingImages;
+  }
+
+  if (req?.body?.deleteImages) {
+    const deleteImages = JSON.parse(req.body.deleteImages);
+    try {
+      await deleteManyFromS3(deleteImages);
+    } catch (error) {
+      console.error(error);
+    }
+    req.body.images = existingImages.filter(image => !deleteImages.includes(image));
+  }
+
+  if (req?.files && req?.files?.images?.length) {
+    try {
+      const newImages = await uploadManyToS3(req.files.images, "new-products");
+      req.body.images = [...req.body.images, ...newImages];
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const updatedRecord = await update(req.body);
+
+  return res
+    .status(httpStatusCodes.SUCCESS)
+    .json(
+      success(
+        httpStatusCodes.SUCCESS,
+        httpResponses.SUCCESS,
+        res.__(serverResponseMessage.RECORD_UPDATED),
+        updatedRecord
+      )
+    );
 };
 
 exports.listController = async (req, res, next) => {
   const acceptLanguage = req.headers["accept-language"];
-  const data = await getPaginationData({ 
-    language: acceptLanguage, 
-    ...req.body 
+  const data = await getPaginationData({
+    language: acceptLanguage,
+    ...req.body
   });
-  
+
   return res
     .status(httpStatusCodes.SUCCESS)
     .json(
@@ -159,9 +150,21 @@ exports.listController = async (req, res, next) => {
     );
 };
 
+exports.dropdownOptionsController = async (req, res, next) => {
+  const acceptLanguage = req.headers["accept-language"];
+  return res.status(httpStatusCodes.SUCCESS).json(
+    success(
+      httpStatusCodes.SUCCESS,
+      httpResponses.SUCCESS,
+      res.__(serverResponseMessage.RECORD_FETCHED),
+      await getDropdownOptions(req.body, acceptLanguage)
+    )
+  )
+}
+
 exports.getDetailController = async (req, res, next) => {
   const { _id } = req.params;
-  
+
   const record = await getById(_id);
   if (!record) {
     throw {
@@ -184,7 +187,7 @@ exports.getDetailController = async (req, res, next) => {
 
 exports.deleteController = async (req, res, next) => {
   const { _id } = req.params;
-  
+
   const existingRecord = await getById(_id);
   if (!existingRecord) {
     throw {
@@ -198,7 +201,7 @@ exports.deleteController = async (req, res, next) => {
     if (existingRecord.image) {
       await deleteFromS3(existingRecord.image).catch(console.error);
     }
-    
+
     await deleteById(_id);
 
     return res

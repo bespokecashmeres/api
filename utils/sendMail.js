@@ -3,13 +3,13 @@ const { config } = require("../config/config");
 
 // Configure Nodemailer transporter with environment variables
 const transporter = nodemailer.createTransport({
-    host: config.EMAIL_HOST,
-    port: config.EMAIL_PORT,
-    secure: config.EMAIL_SECURE === 'true',
-    service: config.GMAIL,
+    host: 'smtp.office365.com', // Use the correct SMTP server
+    port: 587, // Use the correct port (587 for TLS)
+    secure: false, // Set to false for TLS
+    service: 'hotmail',
     auth: {
-        user: config.PROVIDER_MAIL,
-        pass: config.PROVIDER_PASS,
+        user: 'contact@bespokecashmeres.com',
+        pass: 'Malou194869!!',
     }
 });
 
@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
 async function sendEmail(to, subject, text, html) {
     try {
         const info = await transporter.sendMail({
-            from: config.EMAIL_FROM,
+            from: 'contact@bespokecashmeres.com',
             to,
             subject,
             text,

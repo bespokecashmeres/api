@@ -9,6 +9,7 @@ const {
   reorderValidator,
   statusValidator,
   optionValidator,
+  optionSlugValidator,
 } = require("./validation");
 const {
   createController,
@@ -20,6 +21,7 @@ const {
   statusController,
   getActiveController,
   dropdownOptionsController,
+  dropdownOptionsBySlugController,
 } = require("./controller");
 const { asyncHandler } = require("../../../../../utils/asyncHandler");
 const uploadKeyBase = require("../../../../../middleware/uploadKeyBaseMiddleware");
@@ -59,6 +61,11 @@ module.exports = (app) => {
     "/step-card/options/:stepTypeId",
     middleware(optionValidator),
     asyncHandler(dropdownOptionsController)
+  );
+  app.post(
+    "/step-card/options/slug/:slug",
+    middleware(optionSlugValidator),
+    asyncHandler(dropdownOptionsBySlugController)
   );
   app.post(
     "/step-card/row/reorder",

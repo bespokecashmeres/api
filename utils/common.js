@@ -1,6 +1,8 @@
 const fs = require("fs");
 const { config } = require("../config/config");
 const { findOneRecord } = require("../src/Modules/Admin/Yarn/dbQuery");
+const CostCalculations = require("../src/Modules/Admin/CostCalculation/schema");
+const AdditionalCostCalculations = require("../src/Modules/Admin/AdditionalCostCalculation/schema");
 const { ObjectId } = require("mongoose").Types;
 
 module.exports.getTokenTimeDifference = (decodedTime) => {
@@ -109,7 +111,7 @@ module.exports.generateYarnId = async () => {
   return yarnId; // Return the unique ID
 };
 
-module.exports.calculateFinalPrice = (initialPrice, calculations) => {
+const calculateFinalPrice = (initialPrice, calculations) => {
   let finalPrice = initialPrice;
 
   calculations.forEach(calculation => {
@@ -136,10 +138,49 @@ module.exports.calculateFinalPrice = (initialPrice, calculations) => {
         default:
           throw new Error(`Unsupported operation: ${operation}`);
       }
+    } else if (unit === "percentage") {
+      switch (operation) {
+        case "multiply":
+          finalPrice *= (value / 100);
+          break;
+        default:
+          throw new Error(`Unsupported operation: ${operation}`);
+      }
     } else {
       throw new Error(`Unsupported unit: ${unit}`);
     }
   });
 
-  return finalPrice;
+  return finalPrice?.toFixed(2);
+}
+
+module.exports.calculateFinalPrice = calculateFinalPrice;
+
+module.exports.getTotalCost = async ({ gauge, pattern, style, materialPrice, size = 'xs' }) => {
+  try {
+    const costCalculation = await CostCalculations.findOne({
+      gauge: gauge,
+      size: size,
+      pattern: pattern,
+    });
+
+    const additionalCostResponse = await AdditionalCostCalculations.findOne({
+      slug: style,
+    });
+
+    if (!costCalculation || !additionalCostResponse) {
+      throw new Error("Cost calculations not found");
+    }
+
+    const totalFactoryCost =
+      (materialPrice * costCalculation.weightPerGram * costCalculation.knitWastage) / 1000 +
+      costCalculation.manufacturingCost +
+      costCalculation.trimsCost +
+      costCalculation.laborCost;
+
+    return calculateFinalPrice(totalFactoryCost, additionalCostResponse.calculations);
+  } catch (error) {
+    console.error("Error calculating total cost:", error);
+    throw error;
+  }
 }

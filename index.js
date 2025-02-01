@@ -42,6 +42,9 @@ const faqModule = require("./src/Modules/Admin/FAQ/routes");
 const bannerModule = require("./src/Modules/Admin/Banner/routes")
 const fetchOurStory = require("./src/Modules/User/OurStory/routes")
 const fetchHomePage = require("./src/Modules/User/HomePage/routes")
+const userProductListingModule = require("./src/Modules/User/ProductListing/routes");
+const userProductSizeModule = require("./src/Modules/User/ProductSizes/routes");
+const userSweaterModule = require("./src/Modules/User/Sweater/routes");
 
 const { logger } = require("./utils/logger");
 const connectToDatabase = require("./database/db");
@@ -135,6 +138,9 @@ faqModule(app);
 bannerModule(app);
 fetchOurStory(app);
 fetchHomePage(app);
+userProductListingModule(app);
+userProductSizeModule(app);
+userSweaterModule(app);
 
 app.use(express.static(path.join(__dirname, 'public')));
 

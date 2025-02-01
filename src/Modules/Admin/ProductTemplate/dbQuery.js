@@ -28,19 +28,6 @@ module.exports.getPaginationData = async (qData) => {
     },
   };
 
-  // Project Stage for Translating Fields
-  // const projectStage = {
-  //   $project: {
-  //     _id: 1,
-  //     title: { $ifNull: [`$title.${language}`, ""] },
-  //     image: 1,
-  //     createdAt: 1,
-  //     status: 1,
-  //     yarn: 1,
-  //     steps: 1,
-  //   },
-  // };
-
   // Lookup Stage for Step Types
   const lookupStage = {
     $lookup: {
@@ -56,7 +43,9 @@ module.exports.getPaginationData = async (qData) => {
     $project: {
       _id: 1,
       title: { $ifNull: [`$title.${language}`, ""] },
-      image: 1,
+      image: {
+        $arrayElemAt: ["$images", 0]
+      },
       createdAt: 1,
       status: 1,
       yarn: 1,
@@ -131,9 +120,10 @@ module.exports.getById = async (id) => {
     $project: {
       _id: 1,
       title: 1,
-      image: 1,
+      images: 1,
       contents: 1,
       yarn: 1,
+      genderId: 1,
       steps: 1,
       productTypeId: 1,
       status: 1,
@@ -173,3 +163,21 @@ module.exports.updateStatus = async (id, status) => {
     )
     .lean();
 };
+
+module.exports.getDropdownOptions = async ({ _id }, language = DEFAULT_LOCALE) => {
+  return await database
+    .find(
+      {
+        _id: { $ne: new ObjectId(_id) },
+        status: true,
+      },
+      {
+        value: "$_id",
+        label: `$title.${language}`,
+        image: { $arrayElemAt: ["$images", 0] },
+      }
+    ).sort({
+      [`title.${language}`]: 1
+    })
+    .lean();
+}

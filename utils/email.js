@@ -3264,7 +3264,7 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_heading_1 .
   <br />
 <p style="font-size: 14px; line-height: 140%; margin: 0px;">Thank you for signing up with BESPOKE CASHMERES! We are thrilled to welcome you to our community. You are now officially part of our exciting competition, where you have the chance to win prizes worth USD 5,000 in exclusive cashmere sweaters over the next two months.</p>
 <br />
-  <p style="font-size: 14px; line-height: 140%; margin: 0px;">As a token of our appreciation, we’re delighted to offer you 20% off your total first order. Simply follow us on our new Instagram page [Instagram link], and you’ll receive your discount!</p>
+  <p style="font-size: 14px; line-height: 140%; margin: 0px;">As a token of our appreciation, we’re delighted to offer you 20% off your total first order. Simply follow us on our new Instagram page <a href="https://www.instagram.com/bespokecashmeres/">Instagram link</a>, and you’ll receive your discount!</p>
   <br />
   <p style="font-size: 14px; line-height: 140%; margin: 0px;">At BESPOKE CASHMERES, we are passionate about giving you the opportunity to design your own unique cashmere sweaters, tailored perfectly for both men and women. Our official launch is set for the end of January 2025, and we can’t wait to share our one-of-a-kind designs with you.</p>
   <br />
@@ -3356,7 +3356,7 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_heading_1 .
     <!--[if (mso)|(IE)]><td width="32" style="width:32px; padding-right: 0px;" valign="top"><![endif]-->
     <table border="0" cellspacing="0" cellpadding="0" width="32" height="32" style="width: 32px !important;height: 32px !important;display: inline-block;border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;margin-right: 0px">
       <tbody><tr style="vertical-align: top"><td valign="middle" style="word-break: break-word;border-collapse: collapse !important;vertical-align: top">
-<a href="https://instagram.com/" title="Instagram" target="_blank" style="color: rgb(0, 0, 238); text-decoration: underline; line-height: inherit;"><img src="${getAWSImageUrl(
+<a href="https://www.instagram.com/bespokecashmeres/" title="Instagram" target="_blank" style="color: rgb(0, 0, 238); text-decoration: underline; line-height: inherit;"><img src="${getAWSImageUrl(
     "maunual/images/instagram-1.png"
   )}" alt="Instagram" title="Instagram" width="32" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block !important;border: none;height: auto;float: none;max-width: 32px !important">
         </a>
